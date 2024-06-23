@@ -2,11 +2,11 @@ install:
 	poetry install --with dev,test,lint
 
 
-precommit_install:
+pre-commit-install:
 	poetry run pre-commit install
 
 
-precommit_uninstall:
+pre-commit-uninstall:
 	poetry run pre-commit install
 
 test:
