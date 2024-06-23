@@ -1499,6 +1499,18 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "result"
+version = "0.17.0"
+description = "A Rust-like result type for Python"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "result-0.17.0-py3-none-any.whl", hash = "sha256:49fd668b4951ad15800b8ccefd98b6b94effc789607e19c65064b775570933e8"},
+    {file = "result-0.17.0.tar.gz", hash = "sha256:b73da420c0cb1a3bf741dbd41ff96dedafaad6a1b3ef437a9e33e380bb0d91cf"},
+]
+
+[[package]]
 name = "rich"
 version = "13.7.1"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
@@ -2176,4 +2188,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4ba3cfda2931838085e68d0a4ac5271032c7ec0b27c78483ed45cbfa2d945cb7"
+content-hash = "c0aa8de571b1492002db5055e729ae302b94591538f688e202bb5d2a47e2458e"
