@@ -1,20 +1,41 @@
 import sys
 import uuid
-from dataclasses import dataclass, field
-from typing import List
+from dataclasses import dataclass
+from typing import List, Optional
+
+from result import Ok, Result
 
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
+from src.gym_management.domain.subscription.errors import SubscriptionErrors
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 
 
 @dataclass(kw_only=True)
 class Subscription(AggregateRoot):
-    type: SubscriptionType
+    def __init__(
+        self,
+        subscription_type: SubscriptionType,
+        admin_id: Optional[uuid.UUID],
+        gym_ids: Optional[List[uuid.UUID]] = None,
+    ) -> None:
+        super().__init__()
 
-    _gym_ids: List[uuid.UUID] = field(default_factory=list)
-    _admin_id: uuid.UUID
+        self.type = subscription_type
+
+        self._gym_ids = gym_ids or []
+        self._admin_id = admin_id
+
+    def add_gym(self, gym: Gym) -> Result:
+        if len(self._gym_ids) >= self.max_gyms:
+            return SubscriptionErrors.cannot_have_more_rooms_than_subscription_allows()
+        self._gym_ids.append(gym.id)
+        self._create_domain_event(GymAddedEvent(subscription=self, gym=gym))
+        return Ok(None)
+
+    def has_gym(self, gym_id: uuid.UUID) -> bool:
+        return gym_id in self._gym_ids
 
     @property
     def max_gyms(self) -> int:
@@ -51,14 +72,3 @@ class Subscription(AggregateRoot):
                 return sys.maxsize
             case _:
                 raise ValueError(f"Unknown subscription type: {self.type}")
-
-    def add_gym(self, gym: Gym) -> None:
-        if len(self._gym_ids) >= self.max_gyms:
-            # todo add error
-            return None
-
-        self._gym_ids.append(gym.id)
-        self._create_domain_event(GymAddedEvent(subscription=self, gym=gym))
-
-    def has_gym(self, gym_id: uuid.UUID) -> bool:
-        return gym_id in self._gym_ids
