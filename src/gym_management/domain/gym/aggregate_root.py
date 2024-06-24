@@ -1,6 +1,5 @@
 import uuid
-from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 from result import Ok, Result
 
@@ -11,18 +10,27 @@ from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedE
 from src.gym_management.domain.room.aggregate_root import Room
 
 
-@dataclass(kw_only=True)
 class Gym(AggregateRoot):
-    name: str
-    subscription_id: uuid.UUID
-    # todo: get to know how to make this property private while keeping it non-private in the constructor
-    max_rooms: int
+    def __init__(
+        self,
+        *,
+        name: str,
+        subscription_id: uuid.UUID,
+        max_rooms: int,
+        room_ids: Optional[List[uuid.UUID]] = None,
+        trainer_ids: Optional[List[uuid.UUID]] = None,
+    ) -> None:
+        super().__init__()
 
-    _room_ids: List[uuid.UUID] = field(default_factory=list)
-    _trainer_ids: List[uuid.UUID] = field(default_factory=list)
+        self.name = name
+        self.subscription_id = subscription_id
+
+        self._max_rooms = max_rooms
+        self._room_ids = room_ids or []
+        self._trainer_ids = trainer_ids or []
 
     def add_room(self, room: Room) -> Result:
-        if len(self._room_ids) >= self.max_rooms:
+        if len(self._room_ids) >= self._max_rooms:
             return GymErrors.cannot_have_more_rooms_than_subscription_allows()
 
         self._room_ids.append(room.id)
