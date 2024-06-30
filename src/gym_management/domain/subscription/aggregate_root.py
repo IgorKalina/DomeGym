@@ -1,6 +1,5 @@
 import sys
 import uuid
-from dataclasses import dataclass
 from typing import List, Optional
 
 from result import Ok, Result
@@ -12,7 +11,6 @@ from src.gym_management.domain.subscription.events.gym_added_event import GymAdd
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 
 
-@dataclass(kw_only=True)
 class Subscription(AggregateRoot):
     def __init__(
         self,
