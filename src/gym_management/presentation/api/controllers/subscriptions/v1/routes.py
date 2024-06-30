@@ -10,7 +10,8 @@ from src.gym_management.application.subscriptions.queries.list_subscriptions imp
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
-from src.gym_management.presentation.api.controllers.common.responses.base import OkResponse
+from src.gym_management.presentation.api.controllers.common.responses.base import ErrorData, ErrorResponse, OkResponse
+from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -32,10 +33,21 @@ async def create_subscription(
     command_handler: CreateSubscriptionHandler = Depends(
         Provide[DependencyContainer.app_container.create_subscription_handler]
     ),
-) -> OkResponse:
+) -> OkResponse | ORJSONResponse:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
     result = await command_handler.handle(command)
-    return OkResponse(status=status.HTTP_200_OK, result=result.value)
+    # todo: add mapping result to response function
+    if result.is_ok():
+        response: OkResponse | ORJSONResponse = OkResponse(status=status.HTTP_200_OK, result=result.value)
+    else:
+        response = ORJSONResponse(
+            ErrorResponse(
+                status=status.HTTP_400_BAD_REQUEST,
+                error=ErrorData(data=result.value),
+            ),
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    return response
 
 
 @router.get(

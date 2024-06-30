@@ -13,7 +13,7 @@ class AdminsMemoryRepository(AdminsRepository):
         self._admins.append(admin)
 
     async def get_by_id(self, admin_id: uuid.UUID) -> Optional[Admin]:
-        return next(adm for adm in self._admins if adm.id == admin_id)
+        return next((adm for adm in self._admins if adm.id == admin_id), None)
 
     async def get_multi(self) -> List[Admin]:
         return self._admins.copy()

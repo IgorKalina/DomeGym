@@ -17,10 +17,11 @@ class OkResponse(Response, Generic[TResult]):
     result: TResult | None = None
 
 
-class ErrorData(Generic[TError]):
+class ErrorData(BaseModel, Generic[TError]):
     title: str = "Unknown error occurred"
     data: TError | None = None
 
 
 class ErrorResponse(Response, Generic[TError]):
+    status: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     error: ErrorData[TError] = Field(default_factory=ErrorData)

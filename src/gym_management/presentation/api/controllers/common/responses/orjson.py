@@ -24,6 +24,8 @@ def additionally_serialize(obj: Any) -> Any:
 
 
 class ORJSONResponse(_ORJSONResponse):
+    media_type = "application/problem+json"
+
     def render(self, content: Any) -> bytes:
         return orjson.dumps(
             content,
