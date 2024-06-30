@@ -18,4 +18,5 @@ class AdminsMemoryRepository(AdminsRepository):
     async def update(self, admin: Admin) -> Admin:
         updated_admins = [adm for adm in self._admins if adm.id == admin.id]
         updated_admins.append(admin)
+        self._admins = updated_admins
         return admin

@@ -4,8 +4,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
+from src.gym_management import presentation
+
 from .config import APIConfig
 from .controllers.main import setup_controllers
+from .dependency_injection import DependencyContainer
 
 logger = logging.getLogger(__name__)
 
@@ -14,10 +17,14 @@ def init_api(debug: bool = True) -> FastAPI:
     logger.debug("Initialize API")
     app = FastAPI(
         debug=debug,
-        title="Chat",
+        title="Gym Management",
         version="1.0.0",
         default_response_class=ORJSONResponse,
     )
+    container = DependencyContainer()
+    # container.wire(modules=["src.gym_management.presentation.api.controllers.subscriptions.v1.routes"])
+    container.wire(packages=[presentation])
+    app.container = container
     setup_controllers(app)
     return app
 

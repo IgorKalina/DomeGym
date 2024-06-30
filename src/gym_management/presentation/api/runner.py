@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from src.presentation.api.config import APIConfig
-from src.presentation.api.main import init_api, run_api
+from src.gym_management.presentation.api.config import APIConfig
+from src.gym_management.presentation.api.main import init_api, run_api
 
 logger = logging.getLogger(__name__)
 
