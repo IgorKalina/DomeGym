@@ -23,9 +23,9 @@ class Subscription(AggregateRoot):
         super().__init__()
 
         self.type = subscription_type
+        self.admin_id = admin_id
 
         self._gym_ids = gym_ids or []
-        self._admin_id = admin_id
 
     def add_gym(self, gym: Gym) -> Result:
         if len(self._gym_ids) >= self.max_gyms:

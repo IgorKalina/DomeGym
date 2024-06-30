@@ -15,6 +15,9 @@ class AdminsMemoryRepository(AdminsRepository):
     async def get_by_id(self, admin_id: uuid.UUID) -> Optional[Admin]:
         return next(adm for adm in self._admins if adm.id == admin_id)
 
+    async def get_multi(self) -> List[Admin]:
+        return self._admins.copy()
+
     async def update(self, admin: Admin) -> Admin:
         updated_admins = [adm for adm in self._admins if adm.id == admin.id]
         updated_admins.append(admin)

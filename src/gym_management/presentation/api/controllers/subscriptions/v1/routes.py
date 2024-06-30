@@ -6,9 +6,16 @@ from src.gym_management.application.subscriptions.commands.create_subscription i
     CreateSubscription,
     CreateSubscriptionHandler,
 )
+from src.gym_management.application.subscriptions.queries.list_subscriptions import (
+    ListSubscriptions,
+    ListSubscriptionsHandler,
+)
 from src.gym_management.presentation.api.controllers.common.responses.base import OkResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
+)
+from src.gym_management.presentation.api.controllers.subscriptions.v1.responses.subscription_response import (
+    SubscriptionResponse,
 )
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
 
@@ -34,8 +41,23 @@ async def create_subscription(
 @router.get(
     "",
 )
-async def list_subscriptions() -> OkResponse:
-    """
-    List gyms
-    """
-    return OkResponse(status=status.HTTP_200_OK)
+@inject
+async def list_subscriptions(
+    query_handler: ListSubscriptionsHandler = Depends(
+        Provide[DependencyContainer.app_container.list_subscriptions_handler]
+    ),
+) -> OkResponse:
+    query = ListSubscriptions()
+    result = await query_handler.handle(query)
+    return OkResponse(
+        status=status.HTTP_200_OK,
+        result=[
+            SubscriptionResponse(
+                id=subscription.id,
+                type=subscription.type,
+                admin_id=subscription.admin_id,
+                created_at=subscription.created_at,
+            )
+            for subscription in result
+        ],
+    )

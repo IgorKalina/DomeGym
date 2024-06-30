@@ -1,29 +1,26 @@
-from dataclasses import dataclass, field
 from typing import Generic, TypeVar
 
 from fastapi import status
+from pydantic import BaseModel, Field
 
 TResult = TypeVar("TResult")
 TError = TypeVar("TError")
 
 
-@dataclass(frozen=True)
-class Response:
-    pass
+class Response(BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
 
 
-@dataclass(frozen=True)
 class OkResponse(Response, Generic[TResult]):
     status: int = status.HTTP_200_OK
     result: TResult | None = None
 
 
-@dataclass(frozen=True)
 class ErrorData(Generic[TError]):
     title: str = "Unknown error occurred"
     data: TError | None = None
 
 
-@dataclass(frozen=True)
 class ErrorResponse(Response, Generic[TError]):
-    error: ErrorData[TError] = field(default_factory=ErrorData)
+    error: ErrorData[TError] = Field(default_factory=ErrorData)

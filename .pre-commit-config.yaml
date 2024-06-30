@@ -26,3 +26,10 @@ repos:
       - id: mypy
         exclude: ^(docs/|typings/)
         additional_dependencies: []
+  - repo: local
+    hooks:
+      - id: unittests
+        name: run tests
+        entry: make tests
+        language: system
+        always_run: true
