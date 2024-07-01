@@ -22,7 +22,6 @@ def init_api(debug: bool = True) -> FastAPI:
         default_response_class=ORJSONResponse,
     )
     container = DependencyContainer()
-    # container.wire(modules=["src.gym_management.presentation.api.controllers.subscriptions.v1.routes"])
     container.wire(packages=[presentation])
     app.container = container
     setup_controllers(app)

@@ -2,7 +2,7 @@
 name = "domegym"
 version = "0.1.0"
 description = "Gym session scheduling & management application"
-authors = ["Igor Kalinichenko <igor.kalinichenko@consultant.lego.com>"]
+authors = ["Igor Kalinichenko <igorr.kalina@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -10,6 +10,7 @@ python = "^3.11"
 fastapi = "^0.111.0"
 result = "^0.17.0"
 dependency-injector = "^4.41.0"
+orjson = "^3.10.5"
 
 [tool.poetry.group.dev]
 optional = true
@@ -29,6 +30,7 @@ pytest-order = "^1.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 
 
 
