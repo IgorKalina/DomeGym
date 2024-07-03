@@ -1,5 +1,6 @@
 from typing import Generic, Iterable, List, Optional, Protocol, TypeVar
 
+from fastapi import status
 from pydantic import BaseModel
 from result import Result
 
@@ -27,8 +28,8 @@ class OkResponse(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    status: int
-    error: ErrorData
+    status: int = status.HTTP_500_INTERNAL_SERVER_ERROR
+    errors: List[ErrorData]
 
 
 class Response:
@@ -48,9 +49,9 @@ class Response:
         error_data: ErrorData = ErrorData(title=error_detail.title, detail=error_detail.description)
         error_response = ErrorResponse(
             status=status_code,
-            error=error_data,
+            errors=[error_data],  # todo: add support for multiple errors
         )
-        return ORJSONResponse(status_code=status_code, content=error_response)
+        return ORJSONResponse(media_type="application/problem+json", status_code=status_code, content=error_response)
 
     def _create_ok_response(self, result: Result) -> ORJSONResponse:
         if self._response_data_model is None:
