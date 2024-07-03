@@ -10,7 +10,7 @@ from src.gym_management.application.subscriptions.queries.list_subscriptions imp
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
-from src.gym_management.presentation.api.controllers.common.responses.base import ErrorData, ErrorResponse, OkResponse
+from src.gym_management.presentation.api.controllers.common.responses.base import Response
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
@@ -33,43 +33,27 @@ async def create_subscription(
     command_handler: CreateSubscriptionHandler = Depends(
         Provide[DependencyContainer.app_container.create_subscription_handler]
     ),
-) -> OkResponse | ORJSONResponse:
+) -> ORJSONResponse:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
     result = await command_handler.handle(command)
-    # todo: add mapping result to response function
-    if result.is_ok():
-        response: OkResponse | ORJSONResponse = OkResponse(status=status.HTTP_200_OK, result=result.value)
-    else:
-        response = ORJSONResponse(
-            ErrorResponse(
-                status=status.HTTP_400_BAD_REQUEST,
-                error=ErrorData(data=result.value),
-            ),
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-    return response
+    response = Response(
+        status=status.HTTP_201_CREATED,
+        response_data_model=SubscriptionResponse,
+    )
+    return response.from_result(result)
 
 
-@router.get(
-    "",
-)
+@router.get("")
 @inject
 async def list_subscriptions(
     query_handler: ListSubscriptionsHandler = Depends(
         Provide[DependencyContainer.app_container.list_subscriptions_handler]
     ),
-) -> OkResponse:
+) -> ORJSONResponse:
     query = ListSubscriptions()
     result = await query_handler.handle(query)
-    return OkResponse(
+    response = Response(
         status=status.HTTP_200_OK,
-        result=[
-            SubscriptionResponse(
-                id=subscription.id,
-                type=subscription.type,
-                admin_id=subscription.admin_id,
-                created_at=subscription.created_at,
-            )
-            for subscription in result
-        ],
+        response_data_model=SubscriptionResponse,
     )
+    return response.from_result(result)

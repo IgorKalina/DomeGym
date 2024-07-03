@@ -10,7 +10,7 @@ __all__ = [
 
 @dataclass(frozen=True)
 class Command(abc.ABC):
-    ...
+    pass
 
 
 CT = TypeVar("CT", bound=Command)
@@ -20,4 +20,4 @@ CR = TypeVar("CR", bound=Any)
 class CommandHandler(abc.ABC, Generic[CT, CR]):
     @abc.abstractmethod
     async def handle(self, command: CT) -> CR:
-        ...
+        pass

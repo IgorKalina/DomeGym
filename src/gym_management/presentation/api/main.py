@@ -9,6 +9,7 @@ from src.gym_management import presentation
 from .config import APIConfig
 from .controllers.main import setup_controllers
 from .dependency_injection import DependencyContainer
+from .middlewares import setup_middlewares
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ def init_api(debug: bool = True) -> FastAPI:
     container.wire(packages=[presentation])
     app.container = container
     setup_controllers(app)
+    setup_middlewares(app)
     return app
 
 

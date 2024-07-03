@@ -2,7 +2,7 @@ import logging
 import uuid
 from dataclasses import dataclass
 
-from result import Err as Error, Ok, Result
+from result import Ok, Result
 
 from src.gym_management.application.common.command import Command, CommandHandler
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
@@ -10,6 +10,7 @@ from src.gym_management.application.common.interfaces.persistence.subscriptions_
     SubscriptionsRepository,
 )
 from src.gym_management.domain.admin.aggregate_root import Admin
+from src.gym_management.domain.common import errors
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 
@@ -31,7 +32,10 @@ class CreateSubscriptionHandler(CommandHandler):
         admin = await self._admins_repository.get_by_id(command.admin_id)
         if admin is not None:
             # todo: create different types of errors: Conflict, Validation, NotFound etc.
-            return Error("Admin with the provided id already exists")
+            return errors.ConflictError(
+                title="Admin already exists",
+                description="Admin with the provided id already exists",
+            )
         admin = Admin(id=command.admin_id, user_id=uuid.uuid4())
         await self._admins_repository.create(admin)
         subscription = Subscription(
