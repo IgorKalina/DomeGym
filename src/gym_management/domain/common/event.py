@@ -22,4 +22,4 @@ ER = TypeVar("ER", bound=Any)
 class DomainEventHandler(ABC, Generic[ET, ER]):
     @abc.abstractmethod
     def handle(self, event: ET) -> ER:
-        ...
+        pass

@@ -31,7 +31,6 @@ class CreateSubscriptionHandler(CommandHandler):
     async def handle(self, command: CreateSubscription) -> Result:
         admin = await self._admins_repository.get_by_id(command.admin_id)
         if admin is not None:
-            # todo: create different types of errors: Conflict, Validation, NotFound etc.
             return errors.ConflictError(
                 title="Admin already exists",
                 description="Admin with the provided id already exists",

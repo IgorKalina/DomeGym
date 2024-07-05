@@ -32,20 +32,25 @@ class ErrorResponse(BaseModel):
     errors: List[ErrorData]
 
 
-class Response:
-    def __init__(self, status: int, response_data_model: Optional[ResponseData] = None) -> None:
-        self._status = status
+class ResultResponseAdapter:
+    def __init__(
+        self,
+        result: Result,
+        ok_status_code: int,
+        response_data_model: Optional[ResponseData] = None,
+    ) -> None:
+        self._ok_status_code = ok_status_code
         self._response_data_model: Optional[ResponseData] = response_data_model
+        self._result: Result | Error = result
 
-    def from_result(self, result: Result) -> ORJSONResponse:
-        if result.is_err():
-            return self._create_error_response(result)  # type: ignore
-        return self._create_ok_response(result)
+    def create_response(self) -> ORJSONResponse:
+        if self._result.is_err():
+            return self._create_error_response()  # type: ignore
+        return self._create_ok_response()
 
-    @staticmethod
-    def _create_error_response(result: Error) -> ORJSONResponse:
-        status_code = map_error_type_to_http_status(result.get_error_type())
-        error_detail = result.err()
+    def _create_error_response(self) -> ORJSONResponse:
+        status_code = map_error_type_to_http_status(self._result.get_error_type())
+        error_detail = self._result.err()
         error_data: ErrorData = ErrorData(title=error_detail.title, detail=error_detail.description)
         error_response = ErrorResponse(
             status=status_code,
@@ -53,22 +58,22 @@ class Response:
         )
         return ORJSONResponse(media_type="application/problem+json", status_code=status_code, content=error_response)
 
-    def _create_ok_response(self, result: Result) -> ORJSONResponse:
+    def _create_ok_response(self) -> ORJSONResponse:
         if self._response_data_model is None:
             return self._empty_ok_response
-        data = result.ok()
+        data = self._result.ok()
         if not data:
             return self._empty_ok_response
         if isinstance(data, Iterable):
             data = [self._response_data_model.from_domain_model(v) for v in data]
         else:
             data = [self._response_data_model.from_domain_model(data)]
-        data = OkResponse(status=self._status, data=data)
-        return ORJSONResponse(status_code=self._status, content=data)
+        data = OkResponse(status=self._ok_status_code, data=data)
+        return ORJSONResponse(status_code=self._ok_status_code, content=data)
 
     @property
     def _empty_ok_response(self) -> ORJSONResponse:
         return ORJSONResponse(
-            status_code=self._status,
-            content=OkResponse(status=self._status, data=[]),
+            status_code=self._ok_status_code,
+            content=OkResponse(status=self._ok_status_code, data=[]),
         )
