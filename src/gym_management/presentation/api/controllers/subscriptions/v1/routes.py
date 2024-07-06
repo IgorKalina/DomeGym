@@ -10,7 +10,7 @@ from src.gym_management.application.subscriptions.queries.list_subscriptions imp
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
-from src.gym_management.presentation.api.controllers.common.responses.base import ResultResponseAdapter
+from src.gym_management.presentation.api.controllers.common.responses.base import create_response
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
@@ -36,11 +36,7 @@ async def create_subscription(
 ) -> ORJSONResponse:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
     result = await command_handler.handle(command)
-    return ResultResponseAdapter(
-        result=result,
-        ok_status_code=status.HTTP_201_CREATED,
-        response_data_model=SubscriptionResponse,
-    ).create_response()
+    return create_response(result=result, ok_status_code=status.HTTP_201_CREATED)
 
 
 @router.get("")
@@ -52,8 +48,8 @@ async def list_subscriptions(
 ) -> ORJSONResponse:
     query = ListSubscriptions()
     result = await query_handler.handle(query)
-    return ResultResponseAdapter(
+    return create_response(
         result=result,
-        ok_status_code=status.HTTP_200_OK,
+        ok_status_code=status.HTTP_201_CREATED,
         response_data_model=SubscriptionResponse,
-    ).create_response()
+    )

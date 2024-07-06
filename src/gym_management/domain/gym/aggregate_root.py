@@ -1,8 +1,7 @@
 import uuid
 from typing import List, Optional
 
-from result import Ok, Result
-
+from src.common.error_or import ErrorOr, Result
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.errors import GymErrors
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
@@ -29,27 +28,27 @@ class Gym(AggregateRoot):
         self._room_ids = room_ids or []
         self._trainer_ids = trainer_ids or []
 
-    def add_room(self, room: Room) -> Result:
+    def add_room(self, room: Room) -> ErrorOr[Result]:
         if len(self._room_ids) >= self._max_rooms:
-            return GymErrors.cannot_have_more_rooms_than_subscription_allows()
+            return ErrorOr.from_error(GymErrors.cannot_have_more_rooms_than_subscription_allows())
 
         self._room_ids.append(room.id)
         self._create_domain_event(RoomAddedEvent(gym=self, room=room))
-        return Ok(None)
+        return ErrorOr(Result.created())
 
-    def remove_room(self, room: Room) -> Result:
+    def remove_room(self, room: Room) -> ErrorOr[Result]:
         if room.id not in self._room_ids:
-            return GymErrors.cannot_remove_not_existing_room()
+            return ErrorOr.from_error(GymErrors.cannot_remove_not_existing_room())
         self._room_ids.remove(room.id)
         self._create_domain_event(RoomRemovedEvent(gym=self, room_id=room.id))
-        return Ok(None)
+        return ErrorOr.from_result(Result.deleted())
 
     def has_room(self, room_id: uuid.UUID) -> bool:
         return room_id in self._room_ids
 
     def add_trainer(self, trainer_id: uuid.UUID) -> Result:
         self._trainer_ids.append(trainer_id)
-        return Ok(None)
+        return Result.created()
 
     def has_trainer(self, trainer_id: uuid.UUID) -> bool:
         return trainer_id in self._trainer_ids

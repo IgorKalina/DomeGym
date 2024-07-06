@@ -1,5 +1,6 @@
 import uuid
 
+from src.common.error_or import Result
 from src.gym_management.domain.gym.errors import GymErrors
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
@@ -14,7 +15,8 @@ class TestGymAggregate:
 
         add_room1_result = gym.add_room(room1)
 
-        assert add_room1_result.is_ok()
+        assert add_room1_result.is_error() is False
+        assert add_room1_result.value == Result.created()
         assert gym.has_room(room1.id)
         expected_domain_events = [
             RoomAddedEvent(
@@ -34,9 +36,9 @@ class TestGymAggregate:
         add_room1_result = gym.add_room(room1)
         add_room2_result = gym.add_room(room2)
 
-        assert add_room1_result.is_ok()
-        assert add_room2_result.is_err()
-        assert add_room2_result == GymErrors.cannot_have_more_rooms_than_subscription_allows()
+        assert add_room1_result.is_error() is False
+        assert add_room2_result.is_error()
+        assert add_room2_result.first_error == GymErrors.cannot_have_more_rooms_than_subscription_allows()
         assert gym.has_room(room2.id) is False
         expected_domain_events = [
             RoomAddedEvent(
@@ -55,7 +57,8 @@ class TestGymAggregate:
 
         remove_group_result = gym.remove_room(room1)
 
-        assert remove_group_result.is_ok()
+        assert remove_group_result.is_error() is False
+        assert remove_group_result.value == Result.deleted()
         assert gym.has_room(room1.id) is False
         expected_domain_events = [
             RoomAddedEvent(
@@ -77,8 +80,8 @@ class TestGymAggregate:
 
         remove_group_result = gym.remove_room(room1)
 
-        assert remove_group_result.is_err()
-        assert remove_group_result == GymErrors.cannot_remove_not_existing_room()
+        assert remove_group_result.is_error()
+        assert remove_group_result.first_error == GymErrors.cannot_remove_not_existing_room()
         assert gym.pop_domain_events() == []
 
     def test_add_trainer_should_succeed(self) -> None:
@@ -87,7 +90,7 @@ class TestGymAggregate:
 
         add_trainer_result = gym.add_trainer(trainer_id)
 
-        assert add_trainer_result.is_ok()
+        assert add_trainer_result == Result.created()
         assert gym.has_trainer(trainer_id)
         assert gym.pop_domain_events() == []
 

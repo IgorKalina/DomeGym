@@ -2,8 +2,7 @@ import sys
 import uuid
 from typing import List, Optional
 
-from result import Ok, Result
-
+from src.common.error_or import ErrorOr, Result
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.errors import SubscriptionErrors
@@ -25,12 +24,12 @@ class Subscription(AggregateRoot):
 
         self._gym_ids = gym_ids or []
 
-    def add_gym(self, gym: Gym) -> Result:
+    def add_gym(self, gym: Gym) -> ErrorOr[Result]:
         if len(self._gym_ids) >= self.max_gyms:
-            return SubscriptionErrors.cannot_have_more_rooms_than_subscription_allows()
+            return ErrorOr.from_error(SubscriptionErrors.cannot_have_more_rooms_than_subscription_allows())
         self._gym_ids.append(gym.id)
         self._create_domain_event(GymAddedEvent(subscription=self, gym=gym))
-        return Ok(None)
+        return ErrorOr.from_result(Result.success())
 
     def has_gym(self, gym_id: uuid.UUID) -> bool:
         return gym_id in self._gym_ids
