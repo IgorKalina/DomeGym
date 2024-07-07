@@ -12,7 +12,7 @@ from src.gym_management.presentation.api.dependency_injection import DependencyC
 
 router = APIRouter(
     prefix="/v1/subscriptions/{subscription_id}/gyms",
-    tags=["gyms"],
+    tags=["Gyms"],
 )
 
 

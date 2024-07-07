@@ -1,7 +1,7 @@
-from typing import Generic, Iterable, List, Optional, Protocol, TypeVar
+from typing import Any, Generic, Iterable, List, Optional, Protocol, TypeVar
 
 from fastapi import status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.common.error_or import Error, ErrorOr
 from src.gym_management.presentation.api.controllers.common.responses.mappers import map_error_type_to_http_status
@@ -9,6 +9,7 @@ from src.gym_management.presentation.api.controllers.common.responses.mappers im
 from .orjson import ORJSONResponse
 
 TError = TypeVar("TError")
+TData = TypeVar("TData", bound=Any)
 
 
 class ResponseData(Protocol):
@@ -21,9 +22,9 @@ class ErrorData(BaseModel, Generic[TError]):
     detail: TError | None = None
 
 
-class OkResponse(BaseModel):
-    status: int
-    data: List
+class OkResponse(BaseModel, Generic[TData]):
+    status: int = Field(examples=[status.HTTP_200_OK])
+    data: List[TData]
 
 
 class ErrorResponse(BaseModel):

@@ -10,8 +10,7 @@ from src.gym_management.application.subscriptions.queries.list_subscriptions imp
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
-from src.gym_management.presentation.api.controllers.common.responses.base import create_response
-from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
+from src.gym_management.presentation.api.controllers.common.responses.base import OkResponse, create_response
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -22,30 +21,30 @@ from src.gym_management.presentation.api.dependency_injection import DependencyC
 
 router = APIRouter(
     prefix="/v1/subscriptions",
-    tags=["subscriptions"],
+    tags=["Subscriptions"],
 )
 
 
-@router.post("/")
+@router.post("", response_model=OkResponse[SubscriptionResponse])
 @inject
 async def create_subscription(
     request: CreateSubscriptionRequest,
     command_handler: CreateSubscriptionHandler = Depends(
         Provide[DependencyContainer.app_container.create_subscription_handler]
     ),
-) -> ORJSONResponse:
+) -> OkResponse[SubscriptionResponse]:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
     result = await command_handler.handle(command)
     return create_response(result=result, ok_status_code=status.HTTP_201_CREATED)
 
 
-@router.get("")
+@router.get("", response_model=OkResponse[SubscriptionResponse])
 @inject
 async def list_subscriptions(
     query_handler: ListSubscriptionsHandler = Depends(
         Provide[DependencyContainer.app_container.list_subscriptions_handler]
     ),
-) -> ORJSONResponse:
+) -> SubscriptionResponse:
     query = ListSubscriptions()
     result = await query_handler.handle(query)
     return create_response(

@@ -1,6 +1,6 @@
 from fastapi import status
 
-from src.gym_management.domain.common.errors import ErrorType
+from src.common.error_or import ErrorType
 
 
 def map_error_type_to_http_status(error_type: ErrorType) -> int:
