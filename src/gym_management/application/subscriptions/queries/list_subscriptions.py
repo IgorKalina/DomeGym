@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from src.common.error_or import ErrorOr
+from src.common.error_or import ErrorOr, OkResult
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
@@ -20,4 +20,4 @@ class ListSubscriptionsHandler(QueryHandler):
 
     async def handle(self, query: ListSubscriptions) -> ErrorOr[List[Subscription]]:
         subscriptions = await self._subscriptions_repository.get_multi()
-        return ErrorOr.from_result(subscriptions)
+        return OkResult(subscriptions)

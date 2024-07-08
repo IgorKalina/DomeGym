@@ -1,7 +1,7 @@
-from enum import Enum, auto
+from enum import StrEnum, auto
 
 
-class ResultType(Enum):
+class ResultType(StrEnum):
     SUCCESS = auto()
     CREATED = auto()
     UPDATED = auto()

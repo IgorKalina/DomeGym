@@ -1,9 +1,12 @@
-from src.common.error_or import Error
+from dataclasses import dataclass
+
+from src.common.error_or import errors
 
 
-class SubscriptionErrors:
-    @staticmethod
-    def cannot_have_more_rooms_than_subscription_allows() -> Error:
-        return Error.validation(
-            description="A subscription cannot have more gyms than the subscription allows",
-        )
+@dataclass(frozen=True)
+class SubscriptionCannotHaveMoreGymsThanSubscriptionAllows(errors.ValidationError):
+    description: str = "A subscription cannot have more gyms than the subscription allows"
+
+    @property
+    def entity_name(self) -> str:
+        return "Subscription"

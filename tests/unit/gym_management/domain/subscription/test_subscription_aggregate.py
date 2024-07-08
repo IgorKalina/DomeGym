@@ -1,4 +1,4 @@
-from src.gym_management.domain.subscription.errors import SubscriptionErrors
+from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from tests.unit.utils.gym.gym_factory import GymFactory
@@ -11,7 +11,7 @@ class TestSubscriptionAggregate:
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
 
         add_gym_results = [subscription.add_gym(gym) for gym in gyms]
-        assert all([r.is_error() is False for r in add_gym_results])
+        assert all([r.is_ok() for r in add_gym_results])
         assert all([subscription.has_gym(gym.id) for gym in gyms])
         expected_domain_events = [
             GymAddedEvent(
@@ -32,9 +32,9 @@ class TestSubscriptionAggregate:
 
         add_gym_last_result = add_gym_results[-1]
         add_gym_results_before_last = add_gym_results[:-1]
-        assert all([r.is_error() is False for r in add_gym_results_before_last])
+        assert all([r.is_ok() for r in add_gym_results_before_last])
         assert add_gym_last_result.is_error()
-        assert add_gym_last_result.first_error == SubscriptionErrors.cannot_have_more_rooms_than_subscription_allows()
+        assert add_gym_last_result.first_error == SubscriptionCannotHaveMoreGymsThanSubscriptionAllows()
         expected_domain_events = [
             GymAddedEvent(
                 subscription=subscription,

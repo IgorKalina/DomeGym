@@ -5,7 +5,7 @@ from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
 from src.gym_management.application.gyms.commands.create_gym import CreateGym, CreateGymHandler
-from src.gym_management.presentation.api.controllers.common.responses.base import ResultResponseAdapter
+from src.gym_management.presentation.api.controllers.common.responses.base import create_response
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.gyms.v1.requests.create_gym_request import CreateGymRequest
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
@@ -25,4 +25,4 @@ async def create_gym(
 ) -> ORJSONResponse:
     command = CreateGym(name=request.name, subscription_id=subscription_id)
     result = await command_handler.handle(command)
-    return ResultResponseAdapter(result=result, ok_status_code=status.HTTP_200_OK).create_response()
+    return create_response(result=result, ok_status_code=status.HTTP_200_OK)

@@ -30,6 +30,6 @@ repos:
     hooks:
       - id: unittests
         name: run unittests
-        entry: make run-unittests
+        entry: make unittests
         language: system
         always_run: true

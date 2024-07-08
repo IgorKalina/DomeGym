@@ -12,11 +12,11 @@ pre-commit-install:
 pre-commit-uninstall:
 	poetry run pre-commit install
 
-.PHONY: run-all-tests
-run-all-tests:
+.PHONY: tests
+tests:
 	poetry run pytest -v .
 
 
-.PHONY: run-unittests
-run-unittests:
+.PHONY: unittests
+unittests:
 	poetry run pytest -v ./tests/unit

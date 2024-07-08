@@ -1,11 +1,21 @@
-from src.common.error_or import Error
+from dataclasses import dataclass
+
+from src.common.error_or import errors
 
 
-class GymErrors:
-    @staticmethod
-    def cannot_have_more_rooms_than_subscription_allows() -> Error:
-        return Error.validation(description="A gym cannot have more rooms than the subscription allows")
+@dataclass(frozen=True)
+class GymCannotHaveMoreRoomsThanSubscriptionAllows(errors.ValidationError):
+    description: str = "A gym cannot have more rooms than the subscription allows"
 
-    @staticmethod
-    def cannot_remove_not_existing_room() -> Error:
-        return Error.not_found(description="Given room does not exists in the gym")
+    @property
+    def entity_name(self) -> str:
+        return "Gym"
+
+
+@dataclass(frozen=True)
+class RoomDoesNotExist(errors.NotFoundError):
+    description: str = "Room does not exist in the gym"
+
+    @property
+    def entity_name(self) -> str:
+        return "Room"

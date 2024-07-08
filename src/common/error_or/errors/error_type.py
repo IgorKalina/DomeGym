@@ -1,7 +1,7 @@
-from enum import Enum, auto
+from enum import StrEnum, auto
 
 
-class ErrorType(Enum):
+class ErrorType(StrEnum):
     FAILURE = auto()
     UNEXPECTED = auto()
     VALIDATION = auto()

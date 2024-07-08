@@ -6,11 +6,13 @@ from src.gym_management.application.subscriptions.commands.create_subscription i
     CreateSubscription,
     CreateSubscriptionHandler,
 )
+from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.gym_management.application.subscriptions.queries.list_subscriptions import (
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
-from src.gym_management.presentation.api.controllers.common.responses.base import OkResponse, create_response
+from src.gym_management.presentation.api.controllers.common.responses.base import create_response
+from src.gym_management.presentation.api.controllers.common.responses.schema import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -25,7 +27,15 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=OkResponse[SubscriptionResponse])
+@router.post(
+    "",
+    responses={
+        status.HTTP_400_BAD_REQUEST: {
+            "model": ErrorResponse[AdminAlreadyExists],
+        },
+        # status.HTTP_409_CONFLICT: {"model": ErrorResponse[Union[UserIsDeleted, UsernameAlreadyExists]]},
+    },
+)
 @inject
 async def create_subscription(
     request: CreateSubscriptionRequest,
@@ -49,6 +59,6 @@ async def list_subscriptions(
     result = await query_handler.handle(query)
     return create_response(
         result=result,
-        ok_status_code=status.HTTP_201_CREATED,
+        ok_status_code=status.HTTP_200_OK,
         response_data_model=SubscriptionResponse,
     )
