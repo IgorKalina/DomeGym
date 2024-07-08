@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Generic, Iterable, List, Optional, Sequence, TypeVar
+from typing import Any, Generic, List, Optional, TypeVar
 
 from src.common.error_or.errors.base import Error
 from src.common.error_or.exceptions import InvalidOperationException
@@ -56,19 +56,3 @@ class ErrorOr(Generic[TValue]):
     @classmethod
     def from_multi_errors(cls, errors: List[Error]) -> "ErrorOr":
         return cls(_errors=errors)
-
-
-@dataclass
-class OkResult(ErrorOr[TValue]):
-    def __init__(self, value: TValue) -> None:
-        super().__init__(_value=value)
-
-
-@dataclass
-class ErrorResult(ErrorOr[TValue]):
-    def __init__(self, error: Error | Sequence[Error]) -> None:
-        if isinstance(error, Iterable):
-            errors = list(error)
-        else:
-            errors = [error]
-        super().__init__(_errors=errors)
