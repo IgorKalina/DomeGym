@@ -1,9 +1,10 @@
 import uuid
 
 from src.common.error_or import Result
-from src.gym_management.domain.gym.errors import GymCannotHaveMoreRoomsThanSubscriptionAllows, RoomDoesNotExist
+from src.gym_management.domain.gym.errors import GymCannotHaveMoreRoomsThanSubscriptionAllows
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
+from src.gym_management.domain.room.errors import RoomDoesNotExist
 from tests.unit.utils.gym.gym_factory import GymFactory
 from tests.unit.utils.room.room_factory import RoomFactory
 

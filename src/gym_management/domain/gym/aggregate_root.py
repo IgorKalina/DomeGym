@@ -3,10 +3,11 @@ from typing import List, Optional
 
 from src.common.error_or import ErrorOr, ErrorResult, OkResult, Result
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
-from src.gym_management.domain.gym.errors import GymCannotHaveMoreRoomsThanSubscriptionAllows, RoomDoesNotExist
+from src.gym_management.domain.gym.errors import GymCannotHaveMoreRoomsThanSubscriptionAllows
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
 from src.gym_management.domain.room.aggregate_root import Room
+from src.gym_management.domain.room.errors import RoomDoesNotExist
 
 
 class Gym(AggregateRoot):
