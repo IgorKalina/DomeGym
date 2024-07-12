@@ -44,15 +44,3 @@ class ErrorOr(Generic[TValue]):
 
     def is_ok(self) -> bool:
         return not self.is_error()
-
-    @classmethod
-    def from_result(cls, result: TValue) -> "ErrorOr":
-        return cls(_value=result)
-
-    @classmethod
-    def from_error(cls, error: Error) -> "ErrorOr":
-        return cls(_errors=[error])
-
-    @classmethod
-    def from_multi_errors(cls, errors: List[Error]) -> "ErrorOr":
-        return cls(_errors=errors)

@@ -1,18 +1,17 @@
+from typing import List
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
-from src.gym_management.application.subscriptions.commands.create_subscription import (
-    CreateSubscription,
-    CreateSubscriptionHandler,
-)
+from src.common.error_or import ErrorOr
+from src.common.mediator.interfaces import ICommandMediator, IQueryMediator
+from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
-from src.gym_management.application.subscriptions.queries.list_subscriptions import (
-    ListSubscriptions,
-    ListSubscriptionsHandler,
-)
+from src.gym_management.application.subscriptions.queries.list_subscriptions import ListSubscriptions
+from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.presentation.api.controllers.common.responses.base import create_response
-from src.gym_management.presentation.api.controllers.common.responses.schema import ErrorResponse, OkResponse
+from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -30,33 +29,32 @@ router = APIRouter(
 @router.post(
     "",
     responses={
-        status.HTTP_400_BAD_REQUEST: {
-            "model": ErrorResponse[AdminAlreadyExists],
-        },
-        # status.HTTP_409_CONFLICT: {"model": ErrorResponse[Union[UserIsDeleted, UsernameAlreadyExists]]},
+        status.HTTP_409_CONFLICT: {"model": ErrorResponse[AdminAlreadyExists]},
     },
 )
 @inject
 async def create_subscription(
     request: CreateSubscriptionRequest,
-    command_handler: CreateSubscriptionHandler = Depends(
-        Provide[DependencyContainer.app_container.create_subscription_handler]
-    ),
-) -> OkResponse[SubscriptionResponse]:
+    mediator: ICommandMediator = Depends(Provide[DependencyContainer.get_mediator()]),
+) -> OkResponse:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
-    result = await command_handler.handle(command)
+    result: ErrorOr = await mediator.send(command)
     return create_response(result=result, ok_status_code=status.HTTP_201_CREATED)
 
 
-@router.get("", response_model=OkResponse[SubscriptionResponse])
+@router.get(
+    "",
+    responses={
+        status.HTTP_200_OK: {"model": OkResponse[SubscriptionResponse]},
+    },
+    response_model=OkResponse[SubscriptionResponse],
+)
 @inject
 async def list_subscriptions(
-    query_handler: ListSubscriptionsHandler = Depends(
-        Provide[DependencyContainer.app_container.list_subscriptions_handler]
-    ),
+    mediator: IQueryMediator = Depends(Provide[DependencyContainer.get_mediator()]),
 ) -> SubscriptionResponse:
     query = ListSubscriptions()
-    result = await query_handler.handle(query)
+    result: List[Subscription] = await mediator.query(query)
     return create_response(
         result=result,
         ok_status_code=status.HTTP_200_OK,

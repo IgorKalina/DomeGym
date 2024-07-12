@@ -24,7 +24,6 @@ def init_api(debug: bool = True) -> FastAPI:
     )
     container = DependencyContainer()
     container.wire(packages=[presentation])
-    app.container = container
     setup_controllers(app)
     setup_middlewares(app)
     return app

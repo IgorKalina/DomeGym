@@ -1,10 +1,10 @@
-from typing import Iterable, List, Optional, Protocol
+from typing import Any, Iterable, List, Optional, Protocol
 
 from fastapi import status
 
 from src.common.error_or import Error, ErrorOr, ErrorType
+from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorData, ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
-from src.gym_management.presentation.api.controllers.common.responses.schema import ErrorData, ErrorResponse, OkResponse
 
 
 class ResponseData(Protocol):
@@ -15,7 +15,7 @@ class ResponseData(Protocol):
 class ErrorOrResponseAdapter:
     def __init__(
         self,
-        result: ErrorOr,
+        result: ErrorOr | Any,
         ok_status_code: int,
         response_data_model: Optional[ResponseData] = None,
     ) -> None:
@@ -24,9 +24,14 @@ class ErrorOrResponseAdapter:
         self._response_data_model: Optional[ResponseData] = response_data_model
 
     def create_response(self) -> ORJSONResponse:
+        if self._is_result_error_or():
+            return self._create_response_from_error_or()
+        return self._create_ok_response(self._result)
+
+    def _create_response_from_error_or(self) -> ORJSONResponse:
         if self._result.is_error():
             return self._create_error_response()  # type: ignore
-        return self._create_ok_response()
+        return self._create_ok_response(self._result.value)
 
     def _create_error_response(self) -> ORJSONResponse:
         error_status_code: int = self._map_error_type_to_http_status(self._result.first_error.type)
@@ -37,10 +42,9 @@ class ErrorOrResponseAdapter:
             media_type="application/problem+json", status_code=error_status_code, content=error_response
         )
 
-    def _create_ok_response(self) -> ORJSONResponse:
+    def _create_ok_response(self, data: Any) -> ORJSONResponse:
         if self._response_data_model is None:
             return self._empty_ok_response
-        data = self._result.value
         if not data:
             return self._empty_ok_response
         if isinstance(data, Iterable):
@@ -83,3 +87,6 @@ class ErrorOrResponseAdapter:
             case ErrorType.FORBIDDEN:
                 status_code = status.HTTP_403_FORBIDDEN
         return status_code
+
+    def _is_result_error_or(self) -> bool:
+        return isinstance(self._result, ErrorOr)

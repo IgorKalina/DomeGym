@@ -6,7 +6,7 @@ from tests.unit.utils.subscription.subscription_factory import SubscriptionFacto
 
 
 class TestSubscriptionAggregate:
-    def test_add_room_when_more_than_subscription_allows_should_succeed(self) -> None:
+    def test_add_room_when_less_or_equal_than_subscription_allows_should_succeed(self) -> None:
         subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
 

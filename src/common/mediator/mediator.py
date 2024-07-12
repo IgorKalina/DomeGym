@@ -4,7 +4,7 @@ from typing import Dict, List, Type
 from src.common.command import Command, CommandHandler, CommandResult, CommandType
 from src.common.event import DomainEvent, DomainEventHandler, EventType
 from src.common.mediator.exceptions import HandlerNotFoundException
-from src.common.mediator.interfaces import Mediator as MediatorInterface, QueryResult, QueryType
+from src.common.mediator.interfaces import IMediator as MediatorInterface, QueryResult, QueryType
 from src.common.query import Query, QueryHandler
 
 

@@ -9,7 +9,7 @@ class BaseMediator(Protocol):
     pass
 
 
-class CommandMediator(BaseMediator, Protocol):
+class ICommandMediator(BaseMediator, Protocol):
     async def send(self, command: Command, *args: Any, **kwargs: Any) -> CommandResult:
         raise NotImplementedError
 
@@ -19,7 +19,7 @@ class CommandMediator(BaseMediator, Protocol):
         raise NotImplementedError
 
 
-class QueryMediator(BaseMediator, Protocol):
+class IQueryMediator(BaseMediator, Protocol):
     async def query(self, query: Query, *args: Any, **kwargs: Any) -> QueryResult:
         raise NotImplementedError
 
@@ -27,7 +27,7 @@ class QueryMediator(BaseMediator, Protocol):
         raise NotImplementedError
 
 
-class EventMediator(BaseMediator, Protocol):
+class IEventMediator(BaseMediator, Protocol):
     async def publish(self, event: DomainEvent, *args: Any, **kwargs: Any) -> None:
         raise NotImplementedError
 
@@ -35,5 +35,5 @@ class EventMediator(BaseMediator, Protocol):
         raise NotImplementedError
 
 
-class Mediator(CommandMediator, QueryMediator, EventMediator, BaseMediator, Protocol):
+class IMediator(ICommandMediator, IQueryMediator, IEventMediator, BaseMediator, Protocol):
     pass

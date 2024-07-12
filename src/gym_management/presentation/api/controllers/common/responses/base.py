@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 from fastapi import status
 
@@ -10,7 +10,7 @@ from src.gym_management.presentation.api.controllers.common.responses.adapters.e
 
 
 def create_response(
-    result: ErrorOr, ok_status_code: int = status.HTTP_200_OK, response_data_model: Optional[ResponseData] = None
+    result: ErrorOr | Any, ok_status_code: int = status.HTTP_200_OK, response_data_model: Optional[ResponseData] = None
 ):
     return _ErrorOrResponseAdapter(
         result=result,

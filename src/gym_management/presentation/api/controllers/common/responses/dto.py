@@ -7,16 +7,20 @@ TError = TypeVar("TError")
 TData = TypeVar("TData", bound=Any)
 
 
+class Response(BaseModel):
+    pass
+
+
 class ErrorData(BaseModel, Generic[TError]):
     title: str = "Unknown error occurred"
     detail: TError | None = None
 
 
-class OkResponse(BaseModel, Generic[TData]):
+class OkResponse(Response, Generic[TData]):
     status: int = Field(examples=[status.HTTP_200_OK])
     data: List[TData]
 
 
-class ErrorResponse(BaseModel, Generic[TError]):
+class ErrorResponse(Response, Generic[TError]):
     status: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     errors: List[ErrorData]
