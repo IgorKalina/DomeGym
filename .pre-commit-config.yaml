@@ -26,11 +26,10 @@ repos:
       - id: mypy
         exclude: ^(docs/|typings/)
         additional_dependencies: []
-# todo: fix running unittests as a part of the pre-commit hook
-#  - repo: local
-#    hooks:
-#      - id: unittests
-#        name: run unittests
-#        entry: make unittests
-#        always_run: true
-#        language: python
+  - repo: local
+    hooks:
+      - id: unittests
+        name: run unittests
+        entry: make unittests
+        always_run: true
+        language: python_venv
