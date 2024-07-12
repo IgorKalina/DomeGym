@@ -22,3 +22,6 @@ class HandlerNotFoundException(MediatorException):
     @property
     def detail(self) -> str:
         return f"Handler for '{type(self.handlee).__name__}' was not registered"
+
+    def __str__(self) -> str:
+        return self.detail
