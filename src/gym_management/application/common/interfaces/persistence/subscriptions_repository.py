@@ -11,7 +11,11 @@ class SubscriptionsRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_by_id(self, id: uuid.UUID) -> Optional[Subscription]:
+    async def get_by_id(self, subscription_id: uuid.UUID) -> Optional[Subscription]:
+        pass
+
+    @abc.abstractmethod
+    async def get_by_admin_id(self, admin_id: uuid.UUID) -> Optional[Subscription]:
         pass
 
     @abc.abstractmethod

@@ -14,6 +14,9 @@ class SubscriptionsMemoryRepository(SubscriptionsRepository):
     async def get_by_id(self, subscription_id: uuid.UUID) -> Optional[Subscription]:
         return next((sub for sub in self._subscriptions if sub.id == subscription_id), None)
 
+    async def get_by_admin_id(self, admin_id: uuid.UUID) -> Optional[Subscription]:
+        return next((sub for sub in self._subscriptions if sub.admin_id == admin_id), None)
+
     async def create(self, subscription: Subscription) -> None:
         self._subscriptions.append(subscription)
 

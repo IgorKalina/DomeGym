@@ -10,7 +10,6 @@ from src.gym_management.application.subscriptions.queries.list_subscriptions imp
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
-from src.gym_management.infrastructure.dependency_injection import InfrastructureContainer
 
 
 class CommandsContainer(containers.DeclarativeContainer):
@@ -79,11 +78,11 @@ class MediatorContainer(containers.DeclarativeContainer):
 
 
 class ApplicationContainer(containers.DeclarativeContainer):
-    _infrastructure_container = providers.Container(InfrastructureContainer)
+    infrastructure_container = providers.DependenciesContainer()
 
-    _commands_container = providers.Container(CommandsContainer, infrastructure=_infrastructure_container)
-    _queries_container = providers.Container(QueriesContainer, infrastructure=_infrastructure_container)
-    _events_container = providers.Container(EventsContainer, infrastructure=_infrastructure_container)
+    _commands_container = providers.Container(CommandsContainer, infrastructure=infrastructure_container)
+    _queries_container = providers.Container(QueriesContainer, infrastructure=infrastructure_container)
+    _events_container = providers.Container(EventsContainer, infrastructure=infrastructure_container)
 
     mediator = providers.Container(
         MediatorContainer,

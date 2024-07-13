@@ -14,7 +14,7 @@ class Subscription(AggregateRoot):
     def __init__(
         self,
         subscription_type: SubscriptionType,
-        admin_id: Optional[uuid.UUID],
+        admin_id: uuid.UUID,
         gym_ids: Optional[List[uuid.UUID]] = None,
     ) -> None:
         super().__init__()
