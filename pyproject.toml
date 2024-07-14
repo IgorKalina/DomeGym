@@ -21,15 +21,14 @@ pre-commit = "^3.3.2"
 optional = true
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.1.1"
-pytest-asyncio = "^0.20.3"
+pytest = "^8.2.2"
+pytest-asyncio = "^0.23.7"
 testcontainers = {version = "^3.7.1", extras = ["postgresql"]}
 pytest-order = "^1.1.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
 
 
 

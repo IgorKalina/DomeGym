@@ -3,7 +3,7 @@ import uuid
 from dataclasses import dataclass
 
 from src.common.command import Command, CommandHandler
-from src.common.error_or import ErrorOr, ErrorResult, OkResult, Result
+from src.common.error_or import ErrorOr, ErrorResult, OkResult
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
@@ -23,15 +23,15 @@ class CreateGymHandler(CommandHandler):
     def __init__(self, subscriptions_repository: SubscriptionsRepository) -> None:
         self._subscriptions_repository = subscriptions_repository
 
-    async def handle(self, command: CreateGym) -> ErrorOr[Result]:
+    async def handle(self, command: CreateGym) -> ErrorOr[Gym]:
         subscription = await self._subscriptions_repository.get_by_id(command.subscription_id)
         if subscription is None:
             return ErrorResult(SubscriptionDoesNotExist())
 
         gym = Gym(name=command.name, max_rooms=subscription.max_rooms, subscription_id=command.subscription_id)
-        add_gym_result = subscription.add_gym(gym)
+        add_gym_result: ErrorOr[Gym] = subscription.add_gym(gym)
         if add_gym_result.is_error():
             return add_gym_result
 
         await self._subscriptions_repository.update(subscription)
-        return OkResult(Result.created())
+        return OkResult(gym)
