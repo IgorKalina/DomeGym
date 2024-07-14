@@ -16,6 +16,11 @@ pre-commit-uninstall:
 pre-commit-check:
 	pre-commit run --all-file
 
+
+.PHONY: start-services
+start-services:
+	docker-compose --profile api up --build
+
 .PHONY: tests
 tests:
 	poetry run pytest -v .

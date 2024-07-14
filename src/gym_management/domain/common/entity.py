@@ -25,7 +25,3 @@ class Entity(ABC):
         if not isinstance(other, Entity):
             return False
         return self.id == other.id
-
-    @classmethod
-    def create(cls, *args, **kwargs) -> "Entity":
-        raise NotImplementedError
