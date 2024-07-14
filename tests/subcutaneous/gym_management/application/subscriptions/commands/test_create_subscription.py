@@ -1,6 +1,6 @@
 import pytest
 
-from src.common.error_or import ErrorOr
+from src.common.error_or import ErrorOr, Result
 from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
@@ -32,6 +32,7 @@ class TestCreateSubscription:
         result: ErrorOr = await self._mediator.send(create_subscription_command)
 
         assert result.is_ok()
+        assert result.value == Result.created()
         await self._assert_subscription_in_db(create_subscription_command)
         await self._assert_admin_in_db(create_subscription_command)
 

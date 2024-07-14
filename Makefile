@@ -24,3 +24,8 @@ tests:
 .PHONY: unittests
 unittests:
 	poetry run pytest -v ./tests/unit
+
+
+.PHONY: subcutaneous-tests
+subcutaneous-tests:
+	poetry run pytest -v ./tests/subcutaneous
