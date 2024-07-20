@@ -1,0 +1,14 @@
+[local]
+environment = "local"
+
+[local.database]
+# Postgres
+host = "localhost"
+port = 15432
+name = "domegym"
+driver = "postgresql+asyncpg"
+full_url = "@format {this.database.driver}://{this.database.user}:{this.database.password}@{this.database.host}:{this.database.port}/{this.database.name}"
+
+# Postgres backup
+backup_schedule = "@daily"
+backup_dir = "./.backups/postgres"

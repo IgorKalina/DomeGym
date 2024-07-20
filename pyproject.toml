@@ -10,6 +10,9 @@ python = "^3.11"
 fastapi = "^0.111.0"
 dependency-injector = "^4.41.0"
 orjson = "^3.10.5"
+sqlalchemy = "^2.0.31"
+asyncpg = "^0.29.0"
+dynaconf = "^3.2.5"
 
 [tool.poetry.group.dev]
 optional = true
@@ -29,10 +32,6 @@ pytest-order = "^1.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-
-
-
 
 [tool.poetry.group.lint]
 optional = true
