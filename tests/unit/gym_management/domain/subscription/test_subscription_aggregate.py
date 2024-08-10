@@ -10,6 +10,7 @@ class TestSubscriptionAggregate:
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
 
         add_gym_results = [subscription.add_gym(gym) for gym in gyms]
+
         assert all([r.is_ok() for r in add_gym_results])
         assert all([subscription.has_gym(gym.id) for gym in gyms])
 

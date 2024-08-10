@@ -1,8 +1,8 @@
 from dependency_injector import containers, providers
 
-from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.dependency_injection import ApplicationContainer
 from src.gym_management.infrastructure.dependency_injection import InfrastructureContainer
+from src.shared_kernel.mediator.interfaces import IMediator
 
 
 class DependencyContainer(containers.DeclarativeContainer):
@@ -14,4 +14,4 @@ class DependencyContainer(containers.DeclarativeContainer):
 
     @classmethod
     def get_mediator(cls) -> IMediator:
-        return cls.app.mediator.mediator  # type: ignore
+        return cls.app.mediator  # type: ignore

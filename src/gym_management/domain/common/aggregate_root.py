@@ -6,7 +6,7 @@ from src.gym_management.domain.common.entity import Entity
 from src.gym_management.domain.common.event import DomainEvent
 
 
-@dataclass
+@dataclass(kw_only=True)
 class AggregateRoot(Entity):
     _domain_events: list[DomainEvent] = field(
         default_factory=list,

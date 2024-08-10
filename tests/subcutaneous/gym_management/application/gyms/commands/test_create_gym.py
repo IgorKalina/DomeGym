@@ -3,8 +3,6 @@ from typing import List, Optional
 
 import pytest
 
-from src.common.error_or import ErrorOr
-from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
@@ -13,6 +11,8 @@ from src.gym_management.application.subscriptions.errors import SubscriptionDoes
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
+from src.shared_kernel.error_or import ErrorOr
+from src.shared_kernel.mediator.interfaces import IMediator
 from tests.common.gym.subscription_command_factory import GymCommandFactory
 
 

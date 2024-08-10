@@ -1,13 +1,13 @@
 import sys
 import uuid
-from typing import List, Optional
+from typing import Any, Dict, List
 
-from src.common.error_or import ErrorOr, ErrorResult, OkResult
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
+from src.shared_kernel.error_or import ErrorOr, ErrorResult, OkResult
 
 
 class Subscription(AggregateRoot):
@@ -15,14 +15,18 @@ class Subscription(AggregateRoot):
         self,
         subscription_type: SubscriptionType,
         admin_id: uuid.UUID,
-        gym_ids: Optional[List[uuid.UUID]] = None,
+        id: uuid.UUID | None = None,
+        gym_ids: List[uuid.UUID] | None = None,
     ) -> None:
-        super().__init__()
+        super_kwargs: Dict[str, Any] = {}
+        if id is not None:
+            super_kwargs["id"] = id
+        super().__init__(**super_kwargs)
 
         self.type = subscription_type
         self.admin_id = admin_id
 
-        self._gym_ids = gym_ids or []
+        self._gym_ids: List[uuid.UUID] = gym_ids or []
 
     def add_gym(self, gym: Gym) -> ErrorOr[Gym]:
         if len(self._gym_ids) >= self.max_gyms:

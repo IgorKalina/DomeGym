@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.common.error_or.errors import errors
+from src.shared_kernel.error_or.errors import errors
 
 
 @dataclass(frozen=True)

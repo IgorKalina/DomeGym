@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Dict, List, Type
 
-from src.common.command import Command, CommandHandler, CommandResult, CommandType
-from src.common.event import DomainEvent, DomainEventHandler, EventType
-from src.common.mediator.exceptions import HandlerNotFoundException
-from src.common.mediator.interfaces import IMediator as MediatorInterface, QueryResult, QueryType
-from src.common.query import Query, QueryHandler
+from src.shared_kernel.command import Command, CommandHandler, CommandResult, CommandType
+from src.shared_kernel.event import DomainEvent, DomainEventHandler, EventType
+from src.shared_kernel.mediator.exceptions import HandlerNotFoundException
+from src.shared_kernel.mediator.interfaces import IMediator as MediatorInterface, QueryResult, QueryType
+from src.shared_kernel.query import Query, QueryHandler
 
 
 class Mediator(MediatorInterface):

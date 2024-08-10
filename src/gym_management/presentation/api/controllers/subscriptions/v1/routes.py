@@ -4,8 +4,6 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
-from src.common.error_or import ErrorOr
-from src.common.mediator.interfaces import ICommandMediator, IQueryMediator
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.gym_management.application.subscriptions.queries.list_subscriptions import ListSubscriptions
@@ -19,6 +17,8 @@ from src.gym_management.presentation.api.controllers.subscriptions.v1.responses.
     SubscriptionResponse,
 )
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
+from src.shared_kernel.error_or import ErrorOr
+from src.shared_kernel.mediator.interfaces import ICommandMediator, IQueryMediator
 
 router = APIRouter(
     prefix="/v1/subscriptions",

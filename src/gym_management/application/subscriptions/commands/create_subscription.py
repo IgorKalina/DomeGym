@@ -2,8 +2,6 @@ import logging
 import uuid
 from dataclasses import dataclass
 
-from src.common.command import Command, CommandHandler
-from src.common.error_or import ErrorOr, ErrorResult, OkResult, Result
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
@@ -12,6 +10,8 @@ from src.gym_management.application.subscriptions.errors import AdminAlreadyExis
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
+from src.shared_kernel.command import Command, CommandHandler
+from src.shared_kernel.error_or import ErrorOr, ErrorResult, OkResult, Result
 
 logger = logging.getLogger(__name__)
 

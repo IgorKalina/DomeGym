@@ -2,9 +2,9 @@ from typing import Any, Iterable, List, Optional, Protocol
 
 from fastapi import status
 
-from src.common.error_or import Error, ErrorOr, ErrorType
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorData, ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
+from src.shared_kernel.error_or import Error, ErrorOr, ErrorType
 
 
 class ResponseData(Protocol):

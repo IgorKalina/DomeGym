@@ -2,11 +2,11 @@ from typing import List
 
 import pytest
 
-from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
+from src.shared_kernel.mediator.interfaces import IMediator
 from tests.common.subscription.subscription_factory import SubscriptionFactory
 from tests.common.subscription.subscription_query_factory import SubscriptionQueryFactory
 

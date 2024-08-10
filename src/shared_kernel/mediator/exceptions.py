@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from src.common.command import Command
-from src.common.event import DomainEvent
-from src.common.query import Query
+from src.shared_kernel.command import Command
+from src.shared_kernel.event import DomainEvent
+from src.shared_kernel.query import Query
 
 
 @dataclass

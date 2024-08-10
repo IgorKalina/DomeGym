@@ -1,13 +1,13 @@
 import pytest
 
-from src.common.error_or import ErrorOr, Result
-from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
+from src.shared_kernel.error_or import ErrorOr, Result
+from src.shared_kernel.mediator.interfaces import IMediator
 from tests.common.subscription.subscription_command_factory import SubscriptionCommandFactory
 
 

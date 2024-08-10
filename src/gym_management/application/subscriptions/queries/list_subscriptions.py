@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import List
 
-from src.common.query import Query, QueryHandler
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
+from src.shared_kernel.query import Query, QueryHandler
 
 
 @dataclass(frozen=True)
