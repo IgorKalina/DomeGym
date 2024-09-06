@@ -13,7 +13,7 @@ from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from src.shared_kernel.error_or import ErrorOr
 from src.shared_kernel.mediator.interfaces import IMediator
-from tests.common.gym.subscription_command_factory import GymCommandFactory
+from tests.common.gym.factories.gym_command_factory import GymCommandFactory
 
 
 class TestCreateGym:

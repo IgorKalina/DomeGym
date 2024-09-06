@@ -1,7 +1,7 @@
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
-from tests.common.gym.gym_factory import GymFactory
-from tests.common.room.room_factory import RoomFactory
-from tests.common.subscription.subscription_factory import SubscriptionFactory
+from tests.common.gym.factories.gym_factory import GymFactory
+from tests.common.room.factories.room_factory import RoomFactory
+from tests.common.subscription.factories.subscription_factory import SubscriptionFactory
 
 
 class TestGymDomainEvents:

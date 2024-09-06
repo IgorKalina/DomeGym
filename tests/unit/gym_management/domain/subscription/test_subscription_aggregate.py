@@ -1,7 +1,7 @@
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
-from tests.common.gym.gym_factory import GymFactory
-from tests.common.subscription.subscription_factory import SubscriptionFactory
+from tests.common.gym.factories.gym_factory import GymFactory
+from tests.common.subscription.factories.subscription_factory import SubscriptionFactory
 
 
 class TestSubscriptionAggregate:

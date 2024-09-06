@@ -8,7 +8,7 @@ from src.gym_management.application.subscriptions.commands.create_subscription i
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.shared_kernel.error_or import ErrorOr, Result
 from src.shared_kernel.mediator.interfaces import IMediator
-from tests.common.subscription.subscription_command_factory import SubscriptionCommandFactory
+from tests.common.subscription.factories.subscription_command_factory import SubscriptionCommandFactory
 
 
 class TestCreateSubscription:

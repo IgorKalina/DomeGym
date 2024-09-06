@@ -5,8 +5,8 @@ from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from src.gym_management.common.settings.config import settings
-from src.gym_management.infrastructure.admins.repositories.memory_repository import AdminsMemoryRepository
 from src.gym_management.infrastructure.db.repositories.subscriptions_repository import SubscriptionsPostgresRepository
+from tests.common.admin.repositories import AdminsMemoryRepository
 
 
 async def build_sa_engine() -> AsyncGenerator[AsyncEngine, None]:

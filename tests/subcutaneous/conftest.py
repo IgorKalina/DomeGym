@@ -1,22 +1,25 @@
 from typing import Generator
 
 import pytest
-from dependency_injector import containers
+from dependency_injector import containers, providers
 
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
+from src.gym_management.application.dependency_injection import ApplicationContainer
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
 from src.shared_kernel.mediator.interfaces import IMediator
-from tests.common.subscription.subscription_factory import SubscriptionFactory
+from tests.common.containers.infrastructure import InfrastructureTestContainer
+from tests.common.subscription.factories.subscription_factory import SubscriptionFactory
 
 
 @pytest.fixture
 def di_container() -> Generator[containers.DeclarativeContainer, None, None]:
-    container = DependencyContainer()
-    yield container
+    di_container = DependencyContainer()
+    di_container.infrastructure.override(providers.Container(InfrastructureTestContainer))
+    yield di_container
 
 
 @pytest.fixture

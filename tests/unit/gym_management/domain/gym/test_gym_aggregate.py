@@ -3,8 +3,8 @@ import uuid
 from src.gym_management.domain.gym.errors import GymCannotHaveMoreRoomsThanSubscriptionAllows
 from src.gym_management.domain.room.errors import RoomDoesNotExist
 from src.shared_kernel.error_or import Result
-from tests.common.gym.gym_factory import GymFactory
-from tests.common.room.room_factory import RoomFactory
+from tests.common.gym.factories.gym_factory import GymFactory
+from tests.common.room.factories.room_factory import RoomFactory
 
 
 class TestGymAggregate:

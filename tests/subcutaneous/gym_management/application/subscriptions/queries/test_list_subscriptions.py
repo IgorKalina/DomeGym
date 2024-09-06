@@ -7,8 +7,8 @@ from src.gym_management.application.common.interfaces.persistence.subscriptions_
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.mediator.interfaces import IMediator
-from tests.common.subscription.subscription_factory import SubscriptionFactory
-from tests.common.subscription.subscription_query_factory import SubscriptionQueryFactory
+from tests.common.subscription.factories.subscription_factory import SubscriptionFactory
+from tests.common.subscription.factories.subscription_query_factory import SubscriptionQueryFactory
 
 
 class TestListSubscriptions:
