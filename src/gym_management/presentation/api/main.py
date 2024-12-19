@@ -1,42 +1,26 @@
 import logging
 
-import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
-
-from src.gym_management import presentation
-
-from .config import APIConfig
-from .controllers.main import setup_controllers
-from .dependency_injection import DependencyContainer
-from .middlewares import setup_middlewares
+from src.gym_management.infrastructure.config import load_config
+from src.gym_management.presentation.api.api import init_api, run_api
 
 logger = logging.getLogger(__name__)
 
 
-def init_api(debug: bool = True) -> FastAPI:
-    logger.debug("Initialize API")
-    app = FastAPI(
-        debug=debug,
-        title="Gym Management",
-        version="1.0.0",
-        default_response_class=ORJSONResponse,
+# todo: replace this with a json logger
+def setup_logger(level: int | str = logging.INFO) -> None:
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s: [%(name)s] %(levelname)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
-    container = DependencyContainer()
-    container.wire(packages=[presentation])
-    setup_controllers(app)
-    setup_middlewares(app)
-    return app
 
 
-async def run_api(app: FastAPI, api_config: APIConfig) -> None:
-    config = uvicorn.Config(
-        app,
-        host=api_config.host,
-        port=api_config.port,
-        log_level=logging.DEBUG,
-        log_config=None,
-    )
-    server = uvicorn.Server(config)
-    logger.info("Running API")
-    await server.serve()
+def start_api() -> None:
+    config = load_config()
+    setup_logger(config.logger.level)
+    api = init_api(config.api)
+    run_api(app=api, config=config.uvicorn)
+
+
+if __name__ == "__main__":
+    start_api()

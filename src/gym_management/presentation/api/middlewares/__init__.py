@@ -1,5 +1,4 @@
 from typing import Awaitable, Callable
-from uuid import uuid4
 
 from fastapi import FastAPI
 from fastapi.requests import Request
@@ -11,9 +10,8 @@ async def dummy_dispatcher(
     request: Request,
     call_next: Callable[[Request], Awaitable[Response]],
 ) -> Response:
-    response = await call_next(request)
-    return response
+    return await call_next(request)
 
 
-def setup_middlewares(app: FastAPI):
+def setup_middlewares(app: FastAPI) -> None:
     app.add_middleware(BaseHTTPMiddleware, dispatch=dummy_dispatcher)

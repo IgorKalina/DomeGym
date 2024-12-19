@@ -1,11 +1,10 @@
+import typing
 import uuid
 from typing import List, Optional
 
 import pytest
 
-from src.common.error_or import ErrorOr
 from src.common.mediator.interfaces import IMediator
-from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
@@ -15,17 +14,17 @@ from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from tests.common.gym.subscription_command_factory import GymCommandFactory
 
+if typing.TYPE_CHECKING:
+    from src.common.error_or import ErrorOr
+
 
 class TestCreateGym:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        *args,
         mediator: IMediator,
-        admins_repository: AdminsRepository,
         subscriptions_repository: SubscriptionsRepository,
         subscription: Subscription,
-        **kwargs,
     ) -> None:
         self._mediator = mediator
         self._subscriptions_repository = subscriptions_repository

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Generic, List, Optional, TypeVar
 
 from src.common.error_or.errors.base import Error
-from src.common.error_or.exceptions import InvalidOperationException
+from src.common.error_or.exceptions import InvalidOperationError
 
 TValue = TypeVar("TValue", bound=Any)
 
@@ -15,7 +15,7 @@ class ErrorOr(Generic[TValue]):
     @property
     def value(self) -> Optional[TValue]:
         if self.is_error():
-            raise InvalidOperationException(
+            raise InvalidOperationError(
                 "The 'value' property cannot be accessed when errors have been recorded. "
                 "Check 'is_error()' before accessing value."
             )
@@ -24,7 +24,7 @@ class ErrorOr(Generic[TValue]):
     @property
     def errors(self) -> List[Error]:
         if not self.is_error():
-            raise InvalidOperationException(
+            raise InvalidOperationError(
                 "The 'errors' property cannot be accessed when no errors have been recorded. "
                 "Check 'is_error()'  before accessing errors."
             )
@@ -33,7 +33,7 @@ class ErrorOr(Generic[TValue]):
     @property
     def first_error(self) -> Error:
         if not self.is_error():
-            raise InvalidOperationException(
+            raise InvalidOperationError(
                 "The 'first_error' property cannot be accessed when no errors have been recorded. "
                 "Check 'is_error()' before accessing errors."
             )

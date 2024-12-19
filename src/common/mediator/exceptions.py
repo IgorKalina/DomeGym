@@ -6,7 +6,7 @@ from src.common.query import Query
 
 
 @dataclass
-class MediatorException(Exception):
+class MediatorError(Exception):
     title: str = "Unknown exception has occurred"
 
     @property
@@ -15,7 +15,7 @@ class MediatorException(Exception):
 
 
 @dataclass(kw_only=True)
-class HandlerNotFoundException(MediatorException):
+class HandlerNotFoundError(MediatorError):
     handlee: Command | Query | DomainEvent
     title: str = "Handler not found"
 

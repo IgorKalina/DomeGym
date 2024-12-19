@@ -15,11 +15,9 @@ class TestCreateSubscription:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        *args,
         mediator: IMediator,
         admins_repository: AdminsRepository,
         subscriptions_repository: SubscriptionsRepository,
-        **kwargs,
     ) -> None:
         self._mediator = mediator
         self._admins_repository = admins_repository

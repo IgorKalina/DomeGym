@@ -8,28 +8,15 @@ repos:
       - id: check-toml
       - id: detect-private-key
       - id: check-added-large-files
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.2
     hooks:
-      - id: black
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
+      - id: ruff
+        args: [ --fix ]
+      - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.3.0
+    rev: v1.13.0
     hooks:
       - id: mypy
-        exclude: ^(docs/|typings/)
-        additional_dependencies: []
-  - repo: local
-    hooks:
-      - id: unittests
-        name: unittests
-        entry: make unittests
-        always_run: true
-        language: python_venv
+        name: mypy
+        args: ["--config-file", "mypy.ini", "--install-types"]

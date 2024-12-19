@@ -21,11 +21,9 @@ class Error:
         if not isinstance(other, self.__class__):
             return False
 
-        if self.code == other.code and self.description == other.description and self.type == other.type:
-            return True
-        return False
+        return self.code == other.code and self.description == other.description and self.type == other.type
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:

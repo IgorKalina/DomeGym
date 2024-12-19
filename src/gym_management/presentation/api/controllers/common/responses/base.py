@@ -9,7 +9,7 @@ from src.gym_management.presentation.api.controllers.common.responses.adapters i
 from src.gym_management.presentation.api.controllers.common.responses.adapters.error_or_adapter import ResponseData
 
 
-def create_response(
+def create_response(  # noqa: ANN201
     result: ErrorOr | Any, ok_status_code: int = status.HTTP_200_OK, response_data_model: Optional[ResponseData] = None
 ):
     return _ErrorOrResponseAdapter(

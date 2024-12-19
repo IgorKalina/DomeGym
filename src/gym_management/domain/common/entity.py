@@ -2,6 +2,7 @@ import uuid
 from abc import ABC
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
 from uuid import uuid4
 
 __all__ = [
@@ -21,7 +22,7 @@ class Entity(ABC):
     def __hash__(self) -> int:
         return hash(self.id)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Entity):
             return False
         return self.id == other.id

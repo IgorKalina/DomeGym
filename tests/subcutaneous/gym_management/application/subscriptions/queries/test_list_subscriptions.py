@@ -1,3 +1,4 @@
+import typing
 from typing import List
 
 import pytest
@@ -6,19 +7,19 @@ from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
-from src.gym_management.domain.subscription.aggregate_root import Subscription
 from tests.common.subscription.subscription_factory import SubscriptionFactory
 from tests.common.subscription.subscription_query_factory import SubscriptionQueryFactory
+
+if typing.TYPE_CHECKING:
+    from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 
 class TestListSubscriptions:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        *args,
         mediator: IMediator,
         subscriptions_repository: SubscriptionsRepository,
-        **kwargs,
     ) -> None:
         self._mediator = mediator
         self._subscriptions_repository = subscriptions_repository

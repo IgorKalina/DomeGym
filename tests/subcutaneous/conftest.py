@@ -13,22 +13,21 @@ from tests.common.subscription.subscription_factory import SubscriptionFactory
 
 @pytest.fixture
 def di_container() -> containers.DeclarativeContainer:
-    container = DependencyContainer()
-    yield container
+    return DependencyContainer()
 
 
 @pytest.fixture
-def mediator(di_container) -> IMediator:
+def mediator(di_container: containers.DeclarativeContainer) -> IMediator:
     return di_container.app.mediator.mediator()
 
 
 @pytest.fixture
-def admins_repository(di_container) -> AdminsRepository:
+def admins_repository(di_container: containers.DeclarativeContainer) -> AdminsRepository:
     return di_container.infrastructure.admins_repository()
 
 
 @pytest.fixture
-def subscriptions_repository(di_container) -> SubscriptionsRepository:
+def subscriptions_repository(di_container: containers.DeclarativeContainer) -> SubscriptionsRepository:
     return di_container.infrastructure.subscriptions_repository()
 
 

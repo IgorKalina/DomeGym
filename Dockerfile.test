@@ -1,0 +1,15 @@
+ARG PYTHON_VERSION=3.11.10
+FROM python:${PYTHON_VERSION}-slim
+
+ARG POETRY_VERSION=1.8.4
+
+RUN pip install --no-cache-dir "poetry==${POETRY_VERSION}"
+
+COPY . /app
+COPY .env.test /app/.env
+WORKDIR /app
+
+# Installing git to be able to run pre-commit for checking
+RUN apt-get update && apt-get install -y make git
+RUN make install
+RUN git init . && make pre-commit-install

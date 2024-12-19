@@ -10,8 +10,8 @@ class TestSubscriptionAggregate:
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
 
         add_gym_results = [subscription.add_gym(gym) for gym in gyms]
-        assert all([r.is_ok() for r in add_gym_results])
-        assert all([subscription.has_gym(gym.id) for gym in gyms])
+        assert all(r.is_ok() for r in add_gym_results)
+        assert all(subscription.has_gym(gym.id) for gym in gyms)
 
     def test_add_room_when_more_than_subscription_allows_should_fail(self) -> None:
         subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
@@ -21,6 +21,6 @@ class TestSubscriptionAggregate:
 
         add_gym_last_result = add_gym_results[-1]
         add_gym_results_before_last = add_gym_results[:-1]
-        assert all([r.is_ok() for r in add_gym_results_before_last])
+        assert all(r.is_ok() for r in add_gym_results_before_last)
         assert add_gym_last_result.is_error()
         assert add_gym_last_result.first_error == SubscriptionCannotHaveMoreGymsThanSubscriptionAllows()

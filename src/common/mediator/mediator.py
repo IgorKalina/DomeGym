@@ -3,8 +3,9 @@ from typing import Dict, List, Type
 
 from src.common.command import Command, CommandHandler, CommandResult, CommandType
 from src.common.event import DomainEvent, DomainEventHandler, EventType
-from src.common.mediator.exceptions import HandlerNotFoundException
-from src.common.mediator.interfaces import IMediator as MediatorInterface, QueryResult, QueryType
+from src.common.mediator.exceptions import HandlerNotFoundError
+from src.common.mediator.interfaces import IMediator as MediatorInterface
+from src.common.mediator.interfaces import QueryResult, QueryType
 from src.common.query import Query, QueryHandler
 
 
@@ -25,21 +26,19 @@ class Mediator(MediatorInterface):
     def register_event_handler(self, event: Type[EventType], handler: DomainEventHandler[EventType]) -> None:
         self.__event_handlers[event].append(handler)
 
-    async def send(self, command: Command, *args, **kwargs) -> CommandResult:
+    async def send(self, command: Command) -> CommandResult:
         handler = self.__command_handlers.get(type(command))
         if handler is None:
-            raise HandlerNotFoundException(handlee=command)
-        result = await handler.handle(command)
-        return result
+            raise HandlerNotFoundError(handlee=command)
+        return await handler.handle(command)
 
-    async def query(self, query: Query, *args, **kwargs) -> CommandResult:
+    async def query(self, query: Query) -> CommandResult:
         handler = self.__query_handlers.get(type(query))
         if handler is None:
-            raise HandlerNotFoundException(handlee=query)
-        result = await handler.handle(query)
-        return result
+            raise HandlerNotFoundError(handlee=query)
+        return await handler.handle(query)
 
-    async def publish(self, event: DomainEvent, *args, **kwargs) -> None:
+    async def publish(self, event: DomainEvent) -> None:
         handlers = self.__event_handlers.get(type(event), [])
         for handler in handlers:
             await handler.handle(event)

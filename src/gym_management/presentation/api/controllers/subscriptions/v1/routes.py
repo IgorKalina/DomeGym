@@ -1,15 +1,14 @@
+import typing
 from typing import List
 
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
-from src.common.error_or import ErrorOr
 from src.common.mediator.interfaces import ICommandMediator, IQueryMediator
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.gym_management.application.subscriptions.queries.list_subscriptions import ListSubscriptions
-from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.presentation.api.controllers.common.responses.base import create_response
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
@@ -19,6 +18,11 @@ from src.gym_management.presentation.api.controllers.subscriptions.v1.responses.
     SubscriptionResponse,
 )
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
+
+if typing.TYPE_CHECKING:
+    from src.common.error_or import ErrorOr
+    from src.gym_management.domain.subscription.aggregate_root import Subscription
+
 
 router = APIRouter(
     prefix="/v1/subscriptions",
@@ -58,5 +62,5 @@ async def list_subscriptions(
     return create_response(
         result=result,
         ok_status_code=status.HTTP_200_OK,
-        response_data_model=SubscriptionResponse,
+        response_data_model=SubscriptionResponse,  # type: ignore
     )

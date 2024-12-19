@@ -1,4 +1,4 @@
-from typing import Any, Protocol, Type
+from typing import Protocol, Type
 
 from src.common.command import Command, CommandHandler, CommandResult, CommandType
 from src.common.event import DomainEvent, DomainEventHandler, EventType
@@ -10,7 +10,7 @@ class BaseMediator(Protocol):
 
 
 class ICommandMediator(BaseMediator, Protocol):
-    async def send(self, command: Command, *args: Any, **kwargs: Any) -> CommandResult:
+    async def send(self, command: Command) -> CommandResult:
         raise NotImplementedError
 
     def register_command_handler(
@@ -20,7 +20,7 @@ class ICommandMediator(BaseMediator, Protocol):
 
 
 class IQueryMediator(BaseMediator, Protocol):
-    async def query(self, query: Query, *args: Any, **kwargs: Any) -> QueryResult:
+    async def query(self, query: Query) -> QueryResult:
         raise NotImplementedError
 
     def register_query_handler(self, query: Type[QueryType], handler: QueryHandler[QueryType, QueryResult]) -> None:
@@ -28,7 +28,7 @@ class IQueryMediator(BaseMediator, Protocol):
 
 
 class IEventMediator(BaseMediator, Protocol):
-    async def publish(self, event: DomainEvent, *args: Any, **kwargs: Any) -> None:
+    async def publish(self, event: DomainEvent) -> None:
         raise NotImplementedError
 
     def register_event_handler(self, event: Type[EventType], handler: DomainEventHandler[EventType]) -> None:

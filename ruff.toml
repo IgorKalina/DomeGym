@@ -1,0 +1,86 @@
+    # Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+
+# Same as Black.
+line-length = 120
+indent-width = 4
+
+target-version = "py311"
+
+[lint]
+select = [
+    "E",  # pycodestyle
+    "N",  # pep8-naming
+    "F",  # pyflakes
+    "I",  # isort
+    "PL",  # pylint
+    "ANN",  # flake8-annotations
+    "ARG",  # flake8-unused-arguments
+    "RET",  # flake8-return
+    "S", # flake8-bandit
+    "DTZ", # flake8-datetimez
+    "T20", # flake8-print,
+    "PT", # flake8-pytest-style
+    "SLOT", # flake8-slots
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking,
+    "C4", # flake8-comprehensions
+]
+
+ignore = [
+    "ANN101",  # missing-type-self
+    "ANN102",  # missing-type-cls
+    "ANN002",  # missing-type-args
+    "ANN003",  # missing-type-kwargs
+    "S104",  # hardcoded-bind-all-interfaces
+    "PT004",  # pytest-missing-fixture-name-underscore
+    "ANN401", # any-type
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[lint.per-file-ignores]
+"tests/*" = ["S"]
+
+[format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"

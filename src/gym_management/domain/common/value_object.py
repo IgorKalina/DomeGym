@@ -14,7 +14,7 @@ VT = TypeVar("VT", bound=Any)
 class ValueObject(ABC, Generic[VT]):
     value: VT
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self._validate()
 
     @abstractmethod
@@ -22,5 +22,5 @@ class ValueObject(ABC, Generic[VT]):
         pass
 
     @abstractmethod
-    def _validate(self):
+    def _validate(self) -> None:
         pass
