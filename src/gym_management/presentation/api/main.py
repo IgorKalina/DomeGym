@@ -1,6 +1,6 @@
 import logging
 
-from src.gym_management.infrastructure.config import load_config
+from src.gym_management.infrastructure.common.config import load_config
 from src.gym_management.presentation.api.api import init_api, run_api
 
 logger = logging.getLogger(__name__)

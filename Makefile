@@ -15,23 +15,11 @@ pre-commit-uninstall:
 
 .PHONY: run
 run:
-	poetry run python src/presentation/api/main.py
+	poetry run python src/gym_management/presentation/api/main.py
 
 .PHONY: lint
 lint:
 	SKIP=${SKIP} poetry run pre-commit run --all-file
-
-.PHONY: test
-test:
-	poetry run pytest --cov src --cov-report xml:coverage/coverage.xml -v ./tests
-
-.PHONY: test-unit
-test-unit:
-	poetry run pytest -v ./tests/unit
-
-.PHONY: test-integration
-test-integration:
-	poetry run pytest -v ./tests/integration
 
 # Docker-specific commands
 .PHONY: build
@@ -58,19 +46,16 @@ test-docker: build-test
 
 .PHONY: lint-docker
 lint-docker: build-test
-	docker run ${TEST_CONTAINER_NAME} make lint SKIP=trufflehog
+	docker run ${TEST_CONTAINER_NAME} make lint
 
-
-.PHONY: tests
-tests:
+.PHONY: test
+test:
 	poetry run pytest -v .
 
-
-.PHONY: tests-unit
-tests-unit:
+.PHONY: test-unit
+test-unit:
 	poetry run pytest -v ./tests/unit
 
-
-.PHONY: tests-integration
-tests-subcutaneous:
+.PHONY: test-subcutaneous
+test-subcutaneous:
 	poetry run pytest -v ./tests/subcutaneous

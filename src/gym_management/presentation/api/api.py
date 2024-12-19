@@ -8,7 +8,7 @@ from fastapi.responses import (
     ORJSONResponse,
 )
 
-from src.gym_management.infrastructure.config.api import ApiConfig, UvicornConfig
+from src.gym_management.infrastructure.common.config.api import ApiConfig, UvicornConfig
 
 logger = logging.getLogger(__name__)
 

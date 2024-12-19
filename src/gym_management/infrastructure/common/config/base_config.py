@@ -9,10 +9,6 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-from src.gym_management.infrastructure.config.api import ApiConfig, UvicornConfig
-from src.gym_management.infrastructure.config.enums.environment import Environment
-from src.gym_management.infrastructure.config.logger import LoggerConfig
-
 ENV_PREFIX = "GYM_MANAGEMENT_"
 ENV_NESTED_DELIMITED = "__"
 
@@ -23,18 +19,13 @@ def _find_yaml_configs(folder: str) -> List[str]:
     ]
 
 
-class Config(BaseSettings):
+class BaseConfig(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(find_dotenv(".env"),),
         env_prefix=ENV_PREFIX,
         env_nested_delimiter=ENV_NESTED_DELIMITED,
         yaml_file=_find_yaml_configs("configs"),
     )
-
-    env: Environment
-    api: ApiConfig
-    uvicorn: UvicornConfig
-    logger: LoggerConfig
 
     @classmethod
     def settings_customise_sources(
