@@ -2,12 +2,12 @@ import sys
 import uuid
 from typing import List, Optional
 
-from src.common.error_or import ErrorOr, ErrorResult, OkResult
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
+from src.shared_kernel.application.error_or import ErrorOr, ErrorResult, OkResult
 
 
 class Subscription(AggregateRoot):

@@ -4,7 +4,6 @@ from typing import List, Optional
 
 import pytest
 
-from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
@@ -12,10 +11,11 @@ from src.gym_management.application.subscriptions.errors import SubscriptionDoes
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
+from src.shared_kernel.application.mediator.interfaces import IMediator
 from tests.common.gym_management.gym.subscription_command_factory import GymCommandFactory
 
 if typing.TYPE_CHECKING:
-    from src.common.error_or import ErrorOr
+    from src.shared_kernel.application.error_or import ErrorOr
 
 
 class TestCreateGym:

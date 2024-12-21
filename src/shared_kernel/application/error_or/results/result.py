@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.common.error_or.results.result_type import ResultType
+from src.shared_kernel.application.error_or.results.result_type import ResultType
 
 
 @dataclass(kw_only=True, frozen=True)

@@ -1,6 +1,5 @@
 from dependency_injector import containers, providers
 
-from src.common.mediator.mediator import Mediator
 from src.gym_management.application.gyms.commands.create_gym import CreateGym, CreateGymHandler
 from src.gym_management.application.subscriptions.commands.create_subscription import (
     CreateSubscription,
@@ -10,6 +9,7 @@ from src.gym_management.application.subscriptions.queries.list_subscriptions imp
     ListSubscriptions,
     ListSubscriptionsHandler,
 )
+from src.shared_kernel.application.mediator.mediator import Mediator
 
 
 class CommandsContainer(containers.DeclarativeContainer):

@@ -2,11 +2,11 @@ from typing import Any, Optional
 
 from fastapi import status
 
-from src.common.error_or import ErrorOr
 from src.gym_management.presentation.api.controllers.common.responses.adapters import (
     ErrorOrResponseAdapter as _ErrorOrResponseAdapter,
 )
 from src.gym_management.presentation.api.controllers.common.responses.adapters.error_or_adapter import ResponseData
+from src.shared_kernel.application.error_or import ErrorOr
 
 
 def create_response(  # noqa: ANN201

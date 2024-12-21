@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Generic, List, Optional, TypeVar
 
-from src.common.error_or.errors.base import Error
-from src.common.error_or.exceptions import InvalidOperationError
+from src.shared_kernel.application.error_or.errors.base import Error
+from src.shared_kernel.application.error_or.exceptions import InvalidOperationError
 
 TValue = TypeVar("TValue", bound=Any)
 

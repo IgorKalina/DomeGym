@@ -1,13 +1,13 @@
 import pytest
 from dependency_injector import containers
 
-from src.common.mediator.interfaces import IMediator
 from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
+from src.shared_kernel.application.mediator.interfaces import IMediator
 from tests.common.gym_management.subscription.subscription_factory import SubscriptionFactory
 
 

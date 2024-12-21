@@ -1,8 +1,8 @@
 from typing import Protocol, Type
 
-from src.common.command import Command, CommandHandler, CommandResult, CommandType
-from src.common.event import DomainEvent, DomainEventHandler, EventType
-from src.common.query import Query, QueryHandler, QueryResult, QueryType
+from src.shared_kernel.application.command import Command, CommandHandler, CommandResult, CommandType
+from src.shared_kernel.application.event import DomainEvent, DomainEventHandler, EventType
+from src.shared_kernel.application.query import Query, QueryHandler, QueryResult, QueryType
 
 
 class BaseMediator(Protocol):
