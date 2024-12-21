@@ -12,7 +12,7 @@ from src.gym_management.application.subscriptions.errors import SubscriptionDoes
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
-from tests.common.gym.subscription_command_factory import GymCommandFactory
+from tests.common.gym_management.gym.subscription_command_factory import GymCommandFactory
 
 if typing.TYPE_CHECKING:
     from src.common.error_or import ErrorOr

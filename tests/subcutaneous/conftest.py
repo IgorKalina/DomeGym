@@ -8,7 +8,7 @@ from src.gym_management.application.common.interfaces.persistence.subscriptions_
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.presentation.api.dependency_injection import DependencyContainer
-from tests.common.subscription.subscription_factory import SubscriptionFactory
+from tests.common.gym_management.subscription.subscription_factory import SubscriptionFactory
 
 
 @pytest.fixture

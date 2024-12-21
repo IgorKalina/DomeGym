@@ -2,7 +2,7 @@ import uuid
 
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
-from tests.common import constants
+from tests.common.gym_management import constants
 
 
 class SubscriptionCommandFactory:

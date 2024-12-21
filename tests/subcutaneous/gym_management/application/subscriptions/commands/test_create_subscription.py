@@ -8,7 +8,7 @@ from src.gym_management.application.common.interfaces.persistence.subscriptions_
 )
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
-from tests.common.subscription.subscription_command_factory import SubscriptionCommandFactory
+from tests.common.gym_management.subscription.subscription_command_factory import SubscriptionCommandFactory
 
 
 class TestCreateSubscription:

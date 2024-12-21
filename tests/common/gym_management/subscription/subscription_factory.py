@@ -3,7 +3,7 @@ from typing import List
 
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
-from tests.common import constants
+from tests.common.gym_management import constants
 
 
 class SubscriptionFactory:
