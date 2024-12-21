@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Optional
 
-from src.gym_management.application.common.interfaces.persistence.subscriptions_repository import (
+from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription

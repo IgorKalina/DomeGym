@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Optional
 
-from src.gym_management.application.common.interfaces.persistence.admins_repository import AdminsRepository
+from src.gym_management.application.common.interfaces.repository.admins_repository import AdminsRepository
 from src.gym_management.domain.admin.aggregate_root import Admin
 
 

@@ -15,12 +15,9 @@ def setup_logger(level: int | str = logging.INFO) -> None:
     )
 
 
-def start_api() -> None:
-    config = load_config()
-    setup_logger(config.logger.level)
-    api = init_api(config.api)
-    run_api(app=api, config=config.uvicorn)
-
+config = load_config()
+api = init_api(config.api)
 
 if __name__ == "__main__":
-    start_api()
+    setup_logger(config.logger.level)
+    run_api(app="main:api", config=config.uvicorn)

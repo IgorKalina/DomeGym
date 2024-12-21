@@ -1,0 +1,9 @@
+@subscriptionId=9cc4641b-5f68-43f8-834e-da7f10da2aae
+
+
+POST http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms
+Content-Type: application/json
+
+{
+  "name": "Hello my gym"
+}

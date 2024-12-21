@@ -15,3 +15,4 @@ class UvicornConfig(BaseModel):
     host: str
     port: int
     log_level: UvicornLogLevel
+    reload: bool
