@@ -10,6 +10,8 @@ from fastapi.responses import (
 
 from src.gym_management.infrastructure.common.config.api import ApiConfig, UvicornConfig
 from src.gym_management.presentation.api.controllers.main import setup_controllers
+from src.gym_management.presentation.api.injection import setup_dependency_injection
+from src.gym_management.presentation.api.middlewares import setup_middlewares
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,8 @@ def init_api(
         default_response_class=ORJSONResponse,
     )
     setup_controllers(app)
+    setup_middlewares(app)
+    setup_dependency_injection(app)
     return app
 
 
