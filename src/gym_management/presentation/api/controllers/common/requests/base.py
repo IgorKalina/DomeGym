@@ -1,5 +1,9 @@
-from pydantic import BaseModel
+from uuid import UUID
+
+from pydantic import BaseModel, field_serializer
 
 
 class ApiRequest(BaseModel):
-    pass
+    @field_serializer("*")
+    def serialize_uuid(self, uuid: UUID) -> str:
+        return str(uuid)

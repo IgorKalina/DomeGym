@@ -17,7 +17,8 @@ from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.c
 from src.gym_management.presentation.api.controllers.subscriptions.v1.responses.subscription_response import (
     SubscriptionResponse,
 )
-from src.shared_kernel.application.mediator.interfaces import ICommandMediator, IQueryMediator
+from src.shared_kernel.application.command import CommandInvoker
+from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
 
 if typing.TYPE_CHECKING:
     from src.gym_management.domain.subscription.aggregate_root import Subscription
@@ -39,10 +40,10 @@ router = APIRouter(
 @inject
 async def create_subscription(
     request: CreateSubscriptionRequest,
-    mediator: ICommandMediator = Depends(Provide[DiContainer.command_invoker]),
+    command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
 ) -> OkResponse:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
-    result: ErrorOr = await mediator.send(command)
+    result: ErrorOr = await command_invoker.invoke(command)
     return create_response(result=result, ok_status_code=status.HTTP_201_CREATED)
 
 
@@ -55,10 +56,10 @@ async def create_subscription(
 )
 @inject
 async def list_subscriptions(
-    mediator: IQueryMediator = Depends(Provide[DiContainer.command_invoker]),
+    query_invoker: QueryInvoker = Depends(Provide[DiContainer.command_invoker]),
 ) -> SubscriptionResponse:
     query = ListSubscriptions()
-    result: List[Subscription] = await mediator.query(query)
+    result: List[Subscription] = await query_invoker.invoke(query)
     return create_response(
         result=result,
         ok_status_code=status.HTTP_200_OK,
