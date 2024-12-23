@@ -11,7 +11,7 @@ from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.error_or import ErrorOr, ErrorResult, OkResult, Result
+from src.shared_kernel.application.error_or import ErrorOr, ErrorResult, OkResult
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class CreateSubscriptionHandler(CommandHandler):
         self._admins_repository = admins_repository
         self._subscriptions_repository = subscriptions_repository
 
-    async def handle(self, command: CreateSubscription) -> ErrorOr[Result]:
+    async def handle(self, command: CreateSubscription) -> ErrorOr[Subscription]:
         admin = await self._admins_repository.get_by_id(command.admin_id)
         if admin is not None:
             return ErrorResult(AdminAlreadyExists())
@@ -41,4 +41,4 @@ class CreateSubscriptionHandler(CommandHandler):
         await self._subscriptions_repository.create(subscription)
         admin.set_subscription(subscription)
         await self._admins_repository.update(admin)
-        return OkResult(Result.created())
+        return OkResult(subscription)

@@ -1,34 +1,33 @@
 import pytest
-from dependency_injector import containers
 
-from src.gym_management.application.common.interfaces.repository.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.gym_management.presentation.api.dependency_injection import DependencyContainer
-from src.shared_kernel.application.mediator.interfaces import IMediator
+from src.gym_management.infrastructure.admins.repository.repository_memory import AdminsMemoryRepository
+from src.gym_management.infrastructure.common.injection.main import DiContainer
+from src.shared_kernel.application.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.subscription.subscription_factory import SubscriptionFactory
 
 
 @pytest.fixture
-def di_container() -> containers.DeclarativeContainer:
-    return DependencyContainer()
+def di_container() -> DiContainer:
+    return DiContainer()
 
 
 @pytest.fixture
-def mediator(di_container: containers.DeclarativeContainer) -> IMediator:
-    return di_container.app.mediator.mediator()
+def command_invoker(di_container: DiContainer) -> CommandInvokerMemory:
+    return di_container.command_invoker()
 
 
 @pytest.fixture
-def admins_repository(di_container: containers.DeclarativeContainer) -> AdminsRepository:
-    return di_container.infrastructure.admins_repository()
+def admins_repository(di_container: DiContainer) -> AdminsMemoryRepository:
+    return di_container.repositories.admins_repository()
 
 
 @pytest.fixture
-def subscriptions_repository(di_container: containers.DeclarativeContainer) -> SubscriptionsRepository:
-    return di_container.infrastructure.subscriptions_repository()
+def subscriptions_repository(di_container: DiContainer) -> SubscriptionsRepository:
+    return di_container.repositories.subscriptions_repository()
 
 
 @pytest.fixture

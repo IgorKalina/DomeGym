@@ -11,7 +11,7 @@ from src.gym_management.application.subscriptions.errors import SubscriptionDoes
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
-from src.shared_kernel.application.mediator.interfaces import IMediator
+from src.shared_kernel.application.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.gym.subscription_command_factory import GymCommandFactory
 
 if typing.TYPE_CHECKING:
@@ -22,11 +22,11 @@ class TestCreateGym:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        mediator: IMediator,
+        command_invoker: CommandInvokerMemory,
         subscriptions_repository: SubscriptionsRepository,
         subscription: Subscription,
     ) -> None:
-        self._mediator = mediator
+        self._command_invoker = command_invoker
         self._subscriptions_repository = subscriptions_repository
         self._subscription = subscription
 
@@ -34,7 +34,7 @@ class TestCreateGym:
     async def test_create_gym_when_valid_command_should_create_gym(self) -> None:
         create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription.id)
 
-        result: ErrorOr[Gym] = await self._mediator.send(create_gym_command)
+        result: ErrorOr[Gym] = await self._command_invoker.invoke(create_gym_command)
 
         assert result.is_ok()
         assert isinstance(result.value, Gym)
@@ -49,9 +49,9 @@ class TestCreateGym:
         add_gym_expected_to_succeed: List[ErrorOr[Gym]] = []
         create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription.id)
         for _ in range(self._subscription.max_gyms):
-            add_gym_expected_to_succeed.append(await self._mediator.send(create_gym_command))
+            add_gym_expected_to_succeed.append(await self._command_invoker.invoke(create_gym_command))
 
-        add_gym_expected_to_fail: ErrorOr[Gym] = await self._mediator.send(create_gym_command)
+        add_gym_expected_to_fail: ErrorOr[Gym] = await self._command_invoker.invoke(create_gym_command)
 
         assert all(add_gym_result.is_ok() for add_gym_result in add_gym_expected_to_succeed)
         assert add_gym_expected_to_fail.is_error()
@@ -62,7 +62,7 @@ class TestCreateGym:
         subscription_id_not_existing = uuid.UUID("a1111a11-12ca-4dd5-8f23-5f965a999aa9")
         create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription_id_not_existing)
 
-        add_gym_result: ErrorOr[Gym] = await self._mediator.send(create_gym_command)
+        add_gym_result: ErrorOr[Gym] = await self._command_invoker.invoke(create_gym_command)
 
         assert add_gym_result.is_error()
         assert add_gym_result.first_error == SubscriptionDoesNotExist()
