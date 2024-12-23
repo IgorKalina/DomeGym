@@ -5,7 +5,7 @@ from src.gym_management.application.common.interfaces.repository.subscriptions_r
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.shared_kernel.application.query import Query, QueryHandler
+from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler
 
 
 @dataclass(frozen=True)

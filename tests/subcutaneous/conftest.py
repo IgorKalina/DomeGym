@@ -6,7 +6,8 @@ from src.gym_management.application.common.interfaces.repository.subscriptions_r
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.infrastructure.admins.repository.repository_memory import AdminsMemoryRepository
 from src.gym_management.infrastructure.common.injection.main import DiContainer
-from src.shared_kernel.application.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.subscription.subscription_factory import SubscriptionFactory
 
 
@@ -18,6 +19,11 @@ def di_container() -> DiContainer:
 @pytest.fixture
 def command_invoker(di_container: DiContainer) -> CommandInvokerMemory:
     return di_container.command_invoker()
+
+
+@pytest.fixture
+def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
+    return di_container.query_invoker()
 
 
 @pytest.fixture

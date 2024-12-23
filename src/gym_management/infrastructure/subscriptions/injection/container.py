@@ -4,6 +4,10 @@ from src.gym_management.application.subscriptions.commands.create_subscription i
     CreateSubscription,
     CreateSubscriptionHandler,
 )
+from src.gym_management.application.subscriptions.queries.list_subscriptions import (
+    ListSubscriptions,
+    ListSubscriptionsHandler,
+)
 
 
 class SubscriptionsContainer(containers.DeclarativeContainer):
@@ -15,6 +19,14 @@ class SubscriptionsContainer(containers.DeclarativeContainer):
                 CreateSubscriptionHandler,
                 admins_repository=repositories.admins_repository,
                 subscriptions_repository=repositories.subscriptions_repository,
+            )
+        }
+    )
+
+    queries = providers.Dict(
+        {
+            ListSubscriptions: providers.Factory(
+                ListSubscriptionsHandler, subscriptions_repository=repositories.subscriptions_repository
             )
         }
     )

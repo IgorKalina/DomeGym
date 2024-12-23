@@ -13,11 +13,13 @@ from src.shared_kernel.application.error_or import ErrorOr, ErrorResult, OkResul
 class Subscription(AggregateRoot):
     def __init__(
         self,
+        *args,
         subscription_type: SubscriptionType,
         admin_id: uuid.UUID,
         gym_ids: Optional[List[uuid.UUID]] = None,
+        **kwargs,
     ) -> None:
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.type = subscription_type
         self.admin_id = admin_id

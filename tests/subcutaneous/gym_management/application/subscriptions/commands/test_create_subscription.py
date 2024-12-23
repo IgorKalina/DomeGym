@@ -8,7 +8,7 @@ from src.gym_management.application.common.interfaces.repository.subscriptions_r
 )
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
-from src.shared_kernel.application.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.subscription.subscription_command_factory import SubscriptionCommandFactory
 
 if typing.TYPE_CHECKING:
@@ -29,23 +29,27 @@ class TestCreateSubscription:
 
     @pytest.mark.asyncio
     async def test_create_subscription_when_valid_command_should_create_subscription(self) -> None:
+        # Arrange
         create_subscription_command = SubscriptionCommandFactory.create_create_subscription_command()
 
+        # Act
         result: ErrorOr = await self._command_invoker.invoke(create_subscription_command)
 
+        # Assert
         assert result.is_ok()
-        # todo: make a check that the result is the actual sbuscription
-        # assert result.value == Result.created()
         await self._assert_subscription_in_db(create_subscription_command)
         await self._assert_admin_in_db(create_subscription_command)
 
     @pytest.mark.asyncio
     async def test_create_subscription_when_admin_already_exists_should_fail(self) -> None:
+        # Arrange
         create_subscription_command = SubscriptionCommandFactory.create_create_subscription_command()
         await self._command_invoker.invoke(create_subscription_command)
 
+        # Act
         result: ErrorOr = await self._command_invoker.invoke(create_subscription_command)
 
+        # Assert
         assert result.is_error()
         assert result.first_error == AdminAlreadyExists()
 

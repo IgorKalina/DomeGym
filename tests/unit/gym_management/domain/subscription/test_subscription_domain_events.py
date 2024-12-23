@@ -6,12 +6,9 @@ from tests.common.gym_management.subscription.subscription_factory import Subscr
 
 class TestSubscriptionDomainEvents:
     def test_subscription_add_gym_when_added_should_create_domain_event(self) -> None:
+        # Arrange
         subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
-
-        for gym in gyms:
-            subscription.add_gym(gym)
-
         expected_domain_events = [
             GymAddedEvent(
                 subscription=subscription,
@@ -20,9 +17,15 @@ class TestSubscriptionDomainEvents:
             for gym in gyms
         ]
 
+        # Act
+        for gym in gyms:
+            subscription.add_gym(gym)
+
+        # Assert
         assert subscription.pop_domain_events() == expected_domain_events
 
     def test_subscription_add_gym_when_error_should_not_create_domain_event(self) -> None:
+        # Arrange
         subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
         for gym in gyms:
@@ -30,6 +33,8 @@ class TestSubscriptionDomainEvents:
         # flush domain events created for valid number of gyms
         subscription.pop_domain_events()
 
+        # Act
         subscription.add_gym(GymFactory.create_gym())
 
+        # Assert
         assert subscription.pop_domain_events() == []

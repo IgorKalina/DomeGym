@@ -75,6 +75,9 @@ asyncio_mode = "auto"
 addopts = "--ignore=tests/common"
 timeout = 30
 timeout_func_only = true
+filterwarnings = [
+    "ignore:Please use `import python_multipart` instead:PendingDeprecationWarning"
+]
 
 [tool.coverage.report]
 skip_empty = true
