@@ -1,16 +1,15 @@
-from typing import Any, Iterable, List, Optional, Protocol
+from typing import Any, List
 
 from fastapi import status
 
-from src.gym_management.domain.common.aggregate_root import AggregateRoot
-from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorData, ErrorResponse, OkResponse
+from src.gym_management.presentation.api.controllers.common.responses.dto import (
+    ErrorData,
+    ErrorResponse,
+    OkResponse,
+    ResponseData,
+)
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.shared_kernel.application.error_or import Error, ErrorOr, ErrorType
-
-
-class ResponseData(Protocol):
-    def from_domain_model(self, data: AggregateRoot) -> "ResponseData":
-        pass
 
 
 class ErrorOrResponseAdapter:
@@ -18,21 +17,21 @@ class ErrorOrResponseAdapter:
         self,
         result: ErrorOr | Any,
         ok_status_code: int,
-        response_data_model: Optional[ResponseData] = None,
+        data: List[ResponseData],
     ) -> None:
         self._result: ErrorOr = result
         self._ok_status_code = ok_status_code
-        self._response_data_model: Optional[ResponseData] = response_data_model
+        self._data: List[ResponseData] = data
 
     def create_response(self) -> ORJSONResponse:
         if self._is_result_error_or():
             return self._create_response_from_error_or()
-        return self._create_ok_response(self._result)
+        return self._create_ok_response()
 
     def _create_response_from_error_or(self) -> ORJSONResponse:
         if self._result.is_error():
             return self._create_error_response()  # type: ignore
-        return self._create_ok_response(self._result.value)
+        return self._create_ok_response()
 
     def _create_error_response(self) -> ORJSONResponse:
         error_status_code: int = self._map_error_type_to_http_status(self._result.first_error.type)
@@ -43,16 +42,8 @@ class ErrorOrResponseAdapter:
             media_type="application/problem+json", status_code=error_status_code, content=error_response
         )
 
-    def _create_ok_response(self, data: Any) -> ORJSONResponse:
-        if self._response_data_model is None:
-            return self._empty_ok_response
-        if not data:
-            return self._empty_ok_response
-        if isinstance(data, Iterable):
-            data = [self._response_data_model.from_domain_model(v) for v in data]
-        else:
-            data = [self._response_data_model.from_domain_model(data)]
-        data = OkResponse(status=self._ok_status_code, data=data)
+    def _create_ok_response(self) -> ORJSONResponse:
+        data: OkResponse = OkResponse(status=self._ok_status_code, data=self._data)
         return ORJSONResponse(status_code=self._ok_status_code, content=data)
 
     @property

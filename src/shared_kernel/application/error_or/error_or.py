@@ -1,24 +1,26 @@
 from dataclasses import dataclass, field
-from typing import Any, Generic, List, Optional, TypeVar
+from typing import Any, Generic, List, TypeVar
 
 from src.shared_kernel.application.error_or.errors.base import Error
 from src.shared_kernel.application.error_or.exceptions import InvalidOperationError
 
-TValue = TypeVar("TValue", bound=Any)
+ValueType = TypeVar("ValueType", bound=Any)
 
 
 @dataclass
-class ErrorOr(Generic[TValue]):
-    _value: Optional[TValue] = None
+class ErrorOr(Generic[ValueType]):
+    _value: ValueType | None = None
     _errors: List[Error] = field(default_factory=list)
 
     @property
-    def value(self) -> Optional[TValue]:
+    def value(self) -> ValueType:
         if self.is_error():
             raise InvalidOperationError(
                 "The 'value' property cannot be accessed when errors have been recorded. "
                 "Check 'is_error()' before accessing value."
             )
+        if self._value is None:
+            raise InvalidOperationError("The 'value' property has not been set")
         return self._value
 
     @property

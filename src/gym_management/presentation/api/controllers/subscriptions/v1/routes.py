@@ -31,22 +31,6 @@ router = APIRouter(
 )
 
 
-@router.post(
-    "",
-    responses={
-        status.HTTP_409_CONFLICT: {"model": ErrorResponse[AdminAlreadyExists]},
-    },
-)
-@inject
-async def create_subscription(
-    request: CreateSubscriptionRequest,
-    command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
-) -> OkResponse:
-    command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
-    result: ErrorOr = await command_invoker.invoke(command)
-    return create_response(result=result, ok_status_code=status.HTTP_201_CREATED)
-
-
 @router.get(
     "",
     responses={
@@ -63,5 +47,43 @@ async def list_subscriptions(
     return create_response(
         result=result,
         ok_status_code=status.HTTP_200_OK,
-        response_data_model=SubscriptionResponse,  # type: ignore
+        data=[
+            SubscriptionResponse(
+                id=subscription.id,
+                type=subscription.type,
+                created_at=subscription.created_at,
+                admin_id=subscription.admin_id,
+            )
+            for subscription in result
+        ],
+    )
+
+
+@router.post(
+    "",
+    responses={
+        status.HTTP_409_CONFLICT: {"model": ErrorResponse[AdminAlreadyExists]},
+    },
+    response_model=OkResponse[SubscriptionResponse],
+)
+@inject
+async def create_subscription(
+    request: CreateSubscriptionRequest,
+    command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
+) -> OkResponse:
+    command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
+    result: ErrorOr[Subscription] = await command_invoker.invoke(command)
+    return create_response(
+        result=result,
+        ok_status_code=status.HTTP_201_CREATED,
+        data=[
+            SubscriptionResponse(
+                id=result.value.id,
+                type=result.value.type,
+                created_at=result.value.created_at,
+                admin_id=result.value.admin_id,
+            )
+        ]
+        if result.is_ok()
+        else [],
     )

@@ -1,9 +1,8 @@
-import uuid
 from abc import ABC
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 __all__ = [
     "Entity",
@@ -12,7 +11,7 @@ __all__ = [
 
 @dataclass(kw_only=True)
 class Entity(ABC):
-    id: uuid.UUID = field(
+    id: UUID = field(
         default_factory=uuid4,
     )
     created_at: datetime = field(

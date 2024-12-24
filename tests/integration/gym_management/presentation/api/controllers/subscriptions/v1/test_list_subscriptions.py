@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 import pytest
-from starlette.testclient import TestClient
 
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
@@ -12,9 +11,8 @@ from tests.common.gym_management.subscription.service.api_v1 import Subscription
 
 class TestListSubscriptions:
     @pytest.fixture(autouse=True)
-    def setup_method(self, api_client: TestClient) -> None:
-        self._api_client = api_client
-        self._subscriptions_api = SubscriptionV1ApiService(self._api_client)
+    def setup_method(self, subscription_v1_api: SubscriptionV1ApiService) -> None:
+        self._subscriptions_api = subscription_v1_api
 
     @pytest.mark.asyncio
     async def test_when_no_subscriptions_exist_should_return_empty_list(self) -> None:
