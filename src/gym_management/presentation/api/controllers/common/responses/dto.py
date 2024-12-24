@@ -24,5 +24,5 @@ class OkResponse(Response, Generic[TData]):
 
 
 class ErrorResponse(Response, Generic[TError]):
-    errors: List[ErrorData]
+    errors: List[ErrorData[TError]]
     data: List = []

@@ -3,6 +3,7 @@ from http import HTTPStatus
 import pytest
 from fastapi.testclient import TestClient
 
+from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -25,10 +26,11 @@ class TestCreateSubscription:
         )
 
         # Act
-        response, ok_response = self._subscriptions_api.create(request)
+        response, response_data = self._subscriptions_api.create(request)
 
         # Assert
         assert response.status_code == HTTPStatus.CREATED
+        assert response_data.status == HTTPStatus.CREATED
         _, ok_response = self._subscriptions_api.list()
         assert len(ok_response.data) == 1
 
@@ -39,12 +41,20 @@ class TestCreateSubscription:
             admin_id=constants.admin.ADMIN_ID,
             subscription_type=constants.subscription.DEFAULT_SUBSCRIPTION_TYPE,
         )
+        expected_error = AdminAlreadyExists()
         self._subscriptions_api.create(request)
 
         # Act
-        response, ok_response = self._subscriptions_api.create(request)
+        response, response_data = self._subscriptions_api.create(request)
 
         # Assert
         assert response.status_code == HTTPStatus.CONFLICT
+        assert response_data.status == HTTPStatus.CONFLICT
+        assert response_data.data == []
+        assert len(response_data.errors) == 1
+        error = response_data.errors[0]
+        assert error.title == expected_error.code
+        assert error.detail == expected_error.description
+
         _, ok_response = self._subscriptions_api.list()
         assert len(ok_response.data) == 1
