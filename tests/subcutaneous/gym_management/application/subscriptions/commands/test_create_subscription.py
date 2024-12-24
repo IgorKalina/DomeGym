@@ -2,12 +2,12 @@ import typing
 
 import pytest
 
-from src.gym_management.application.common.interfaces.repository.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
+from src.gym_management.infrastructure.admins.repository.repository_memory import AdminsMemoryRepository
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.subscription.factory.subscription_command_factory import SubscriptionCommandFactory
 
@@ -20,7 +20,7 @@ class TestCreateSubscription:
     def setup_method(
         self,
         command_invoker: CommandInvokerMemory,
-        admins_repository: AdminsRepository,
+        admins_repository: AdminsMemoryRepository,
         subscriptions_repository: SubscriptionsRepository,
     ) -> None:
         self._command_invoker = command_invoker
