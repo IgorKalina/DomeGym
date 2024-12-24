@@ -64,7 +64,7 @@ class ErrorOrResponseAdapter:
 
     @staticmethod
     def _map_errors_to_error_data(errors: List[Error]) -> List[ErrorData]:
-        errors_data: List[ErrorData] = []
+        errors_data: List[ErrorData[Error]] = []
         for error in errors:
             errors_data.append(ErrorData(title=error.code, detail=error.description))
         return errors_data

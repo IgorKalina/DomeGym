@@ -8,7 +8,7 @@ from src.gym_management.infrastructure.admins.repository.repository_memory impor
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
-from tests.common.gym_management.subscription.subscription_factory import SubscriptionFactory
+from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 
 @pytest.fixture

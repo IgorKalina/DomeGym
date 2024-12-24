@@ -56,8 +56,8 @@ async def create_subscription(
 )
 @inject
 async def list_subscriptions(
-    query_invoker: QueryInvoker = Depends(Provide[DiContainer.command_invoker]),
-) -> SubscriptionResponse:
+    query_invoker: QueryInvoker = Depends(Provide[DiContainer.query_invoker]),
+) -> List[SubscriptionResponse]:
     query = ListSubscriptions()
     result: List[Subscription] = await query_invoker.invoke(query)
     return create_response(

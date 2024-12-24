@@ -5,8 +5,8 @@ import pytest
 
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import SubscriptionsRepository
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
-from tests.common.gym_management.subscription.subscription_factory import SubscriptionFactory
-from tests.common.gym_management.subscription.subscription_query_factory import SubscriptionQueryFactory
+from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
+from tests.common.gym_management.subscription.factory.subscription_query_factory import SubscriptionQueryFactory
 
 if typing.TYPE_CHECKING:
     from src.gym_management.domain.subscription.aggregate_root import Subscription

@@ -9,7 +9,7 @@ from src.gym_management.application.common.interfaces.repository.subscriptions_r
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
-from tests.common.gym_management.subscription.subscription_command_factory import SubscriptionCommandFactory
+from tests.common.gym_management.subscription.factory.subscription_command_factory import SubscriptionCommandFactory
 
 if typing.TYPE_CHECKING:
     from src.shared_kernel.application.error_or import ErrorOr

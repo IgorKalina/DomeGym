@@ -3,24 +3,26 @@ from typing import Any, Generic, List, TypeVar
 from fastapi import status
 from pydantic import BaseModel, Field
 
-TError = TypeVar("TError")
-TData = TypeVar("TData", bound=Any)
-
-
-class Response(BaseModel):
-    pass
+TError = TypeVar("TError", bound=Any)
+TData = TypeVar("TData", bound=BaseModel)
 
 
 class ErrorData(BaseModel, Generic[TError]):
     title: str = "Unknown error occurred"
-    detail: TError | None = None
+    detail: str
+
+
+class Response(BaseModel):
+    status: int = Field(examples=[status.HTTP_200_OK])
+    data: List
+    errors: List
 
 
 class OkResponse(Response, Generic[TData]):
-    status: int = Field(examples=[status.HTTP_200_OK])
     data: List[TData]
+    errors: List = []
 
 
 class ErrorResponse(Response, Generic[TError]):
-    status: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     errors: List[ErrorData]
+    data: List = []

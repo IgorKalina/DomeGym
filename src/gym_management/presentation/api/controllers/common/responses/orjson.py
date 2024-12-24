@@ -17,7 +17,7 @@ def additionally_serialize(obj: Any) -> Any:
         case UUID():
             return str(obj)
         case pydantic.BaseModel():
-            return obj.dict()
+            return obj.model_dump()
 
     logger.warning("Type is not JSON serializable: %s", type(obj), extra={"obj": repr(obj)})
     return repr(obj)
