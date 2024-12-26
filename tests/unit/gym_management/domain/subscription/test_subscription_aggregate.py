@@ -34,9 +34,9 @@ class TestSubscriptionAggregate:
         # Assert
         assert err.value.max_gyms == subscription.max_gyms
         assert err.value.title == "Subscription.Validation"
-        assert (
-            err.value.detail
-            == f"A subscription cannot have more gyms than the subscription allows ({subscription.max_gyms})"
+        assert err.value.detail == (
+            f"A subscription cannot have more gyms than the subscription allows. "
+            f"Max gyms allowed: {subscription.max_gyms}"
         )
         assert err.value.error_type == ErrorType.VALIDATION
         assert all(subscription.has_gym(gym.id) for gym in gyms_allowed)

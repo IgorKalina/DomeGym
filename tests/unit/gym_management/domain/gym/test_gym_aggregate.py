@@ -35,7 +35,7 @@ class TestGymAggregate:
         # Assert
         assert err.value.max_rooms == 1
         assert err.value.title == "Gym.Validation"
-        assert err.value.detail == "A gym cannot have more rooms than the subscription allows (1)"
+        assert err.value.detail == "A gym cannot have more rooms than the subscription allows. Max rooms allowed: 1"
         assert err.value.error_type == ErrorType.VALIDATION
         assert gym.has_room(room2.id) is False
 

@@ -20,4 +20,4 @@ class GymCannotHaveMoreRoomsThanSubscriptionAllowsError(GymDomainError):
 
     @property
     def detail(self) -> str:
-        return f"A gym cannot have more rooms than the subscription allows ({self.max_rooms})"
+        return f"A gym cannot have more rooms than the subscription allows. Max rooms allowed: {self.max_rooms}"

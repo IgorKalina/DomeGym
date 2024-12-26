@@ -58,9 +58,9 @@ class TestCreateGym:
         # Assert
         assert err.value.max_gyms == self._subscription.max_gyms
         assert err.value.title == "Subscription.Validation"
-        assert (
-            err.value.detail
-            == f"A subscription cannot have more gyms than the subscription allows ({self._subscription.max_gyms})"
+        assert err.value.detail == (
+            f"A subscription cannot have more gyms than the subscription allows. "
+            f"Max gyms allowed: {self._subscription.max_gyms}"
         )
         assert err.value.error_type == ErrorType.VALIDATION
         assert len(created_gyms) == self._subscription.max_gyms
