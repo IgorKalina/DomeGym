@@ -1,33 +1,42 @@
-from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
+import pytest
+
+from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
+from src.shared_kernel.application.error_or import ErrorType
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 
 class TestSubscriptionAggregate:
-    def test_add_room_when_less_or_equal_than_subscription_allows_should_succeed(self) -> None:
+    def test_add_gym_when_less_or_equal_than_subscription_allows_should_succeed(self) -> None:
         # Arrange
         subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
-        gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
+        gyms_allowed = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
 
         # Act
-        add_gym_results = [subscription.add_gym(gym) for gym in gyms]
+        for gym in gyms_allowed:
+            subscription.add_gym(gym)
 
         # Assert
-        assert all(r.is_ok() for r in add_gym_results)
-        assert all(subscription.has_gym(gym.id) for gym in gyms)
+        assert all(subscription.has_gym(gym.id) for gym in gyms_allowed)
 
-    def test_add_room_when_more_than_subscription_allows_should_fail(self) -> None:
+    def test_add_gym_when_more_than_subscription_allows_should_fail(self) -> None:
         # Arrange
         subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
-        gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms + 1)]
+        gyms_allowed = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
+        for gym in gyms_allowed:
+            subscription.add_gym(gym=gym)
 
         # Act
-        add_gym_results = [subscription.add_gym(gym) for gym in gyms]
+        with pytest.raises(SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError) as err:
+            subscription.add_gym(GymFactory.create_gym())
 
         # Assert
-        add_gym_last_result = add_gym_results[-1]
-        add_gym_results_before_last = add_gym_results[:-1]
-        assert all(r.is_ok() for r in add_gym_results_before_last)
-        assert add_gym_last_result.is_error()
-        assert add_gym_last_result.first_error == SubscriptionCannotHaveMoreGymsThanSubscriptionAllows()
+        assert err.value.max_gyms == subscription.max_gyms
+        assert err.value.title == "Subscription.Validation"
+        assert err.value.detail == (
+            f"A subscription cannot have more gyms than the subscription allows. "
+            f"Max gyms allowed: {subscription.max_gyms}"
+        )
+        assert err.value.error_type == ErrorType.VALIDATION
+        assert all(subscription.has_gym(gym.id) for gym in gyms_allowed)

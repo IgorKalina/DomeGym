@@ -1,4 +1,7 @@
+import pytest
+
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
+from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
@@ -34,7 +37,8 @@ class TestSubscriptionDomainEvents:
         subscription.pop_domain_events()
 
         # Act
-        subscription.add_gym(GymFactory.create_gym())
+        with pytest.raises(SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError):
+            subscription.add_gym(GymFactory.create_gym())
 
         # Assert
         assert subscription.pop_domain_events() == []

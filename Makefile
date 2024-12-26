@@ -59,3 +59,7 @@ test-unit:
 .PHONY: test-subcutaneous
 test-subcutaneous:
 	poetry run pytest -v ./tests/subcutaneous
+
+.PHONY: test-integration
+test-integration:
+	poetry run pytest -v ./tests/integration

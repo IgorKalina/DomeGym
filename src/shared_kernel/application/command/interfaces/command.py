@@ -1,11 +1,11 @@
 import abc
-from dataclasses import dataclass
+import dataclasses
 from typing import Any, Generic, TypeVar
 
 __all__ = ["Command", "CommandHandler", "CommandType", "CommandResult"]
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class Command(abc.ABC):
     pass
 
