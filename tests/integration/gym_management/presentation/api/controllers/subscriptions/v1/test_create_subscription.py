@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
+from src.gym_management.application.admins.exceptions import AdminAlreadyExistsError
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -39,7 +39,7 @@ class TestCreateSubscription:
             admin_id=constants.admin.ADMIN_ID,
             subscription_type=constants.subscription.DEFAULT_SUBSCRIPTION_TYPE,
         )
-        expected_error = AdminAlreadyExists()
+        expected_error = AdminAlreadyExistsError()
         self._subscriptions_api.create(request)
 
         # Act
@@ -51,8 +51,8 @@ class TestCreateSubscription:
         assert response_data.data == []
         assert len(response_data.errors) == 1
         error = response_data.errors[0]
-        assert error.title == expected_error.code
-        assert error.detail == expected_error.description
+        assert error.title == expected_error.title
+        assert error.detail == expected_error.detail
 
         _, ok_response = self._subscriptions_api.list()
         assert len(ok_response.data) == 1

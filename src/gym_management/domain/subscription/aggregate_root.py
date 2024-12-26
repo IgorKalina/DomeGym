@@ -4,10 +4,9 @@ from typing import List, Optional
 
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
-from src.gym_management.domain.subscription.errors import SubscriptionCannotHaveMoreGymsThanSubscriptionAllows
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
+from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
-from src.shared_kernel.application.error_or import ErrorOr, ErrorResult, OkResult
 
 
 class Subscription(AggregateRoot):
@@ -26,12 +25,11 @@ class Subscription(AggregateRoot):
 
         self._gym_ids = gym_ids or []
 
-    def add_gym(self, gym: Gym) -> ErrorOr[Gym]:
+    def add_gym(self, gym: Gym) -> None:
         if len(self._gym_ids) >= self.max_gyms:
-            return ErrorResult(SubscriptionCannotHaveMoreGymsThanSubscriptionAllows())
+            raise SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError(max_gyms=self.max_gyms)
         self._gym_ids.append(gym.id)
         self._create_domain_event(GymAddedEvent(subscription=self, gym=gym))
-        return OkResult(gym)
 
     def has_gym(self, gym_id: uuid.UUID) -> bool:
         return gym_id in self._gym_ids

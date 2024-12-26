@@ -7,15 +7,14 @@ from fastapi.routing import APIRouter
 
 from src.gym_management.application.gyms.commands.create_gym import CreateGym
 from src.gym_management.infrastructure.common.injection.main import DiContainer
-from src.gym_management.presentation.api.controllers.common.responses.base import create_response
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
+from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.gyms.v1.requests.create_gym_request import CreateGymRequest
 from src.gym_management.presentation.api.controllers.gyms.v1.responses.gym_response import GymResponse
 from src.shared_kernel.application.command import CommandInvoker
 
 if typing.TYPE_CHECKING:
     from src.gym_management.domain.gym.aggregate_root import Gym
-    from src.shared_kernel.application.error_or import ErrorOr
 
 
 router = APIRouter(
@@ -24,26 +23,19 @@ router = APIRouter(
 )
 
 
-@router.post("")
+@router.post(
+    "",
+    response_model=OkResponse[GymResponse],
+)
 @inject
 async def create_gym(
     request: CreateGymRequest,
     subscription_id: uuid.UUID,
     command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
-) -> OkResponse[GymResponse]:
+) -> ORJSONResponse:
     command = CreateGym(name=request.name, subscription_id=subscription_id)
-    result: ErrorOr[Gym] = await command_invoker.invoke(command)
-    return create_response(
-        result=result,
-        ok_status_code=status.HTTP_201_CREATED,
-        data=[
-            GymResponse(
-                id=result.value.id,
-                subscription_id=result.value.subscription_id,
-                name=result.value.name,
-                created_at=result.value.created_at,
-            )
-        ]
-        if result.is_ok()
-        else [],
+    gym: Gym = await command_invoker.invoke(command)
+    gym_response: GymResponse = GymResponse(
+        id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
     )
+    return OkResponse(status=status.HTTP_201_CREATED, data=[gym_response]).to_orjson()

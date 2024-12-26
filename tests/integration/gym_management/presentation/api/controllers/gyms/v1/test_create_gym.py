@@ -29,6 +29,7 @@ class TestCreateGym:
         # Assert
         assert response.status_code == HTTPStatus.NOT_FOUND
         assert response_data.status == HTTPStatus.NOT_FOUND
+        assert response.headers["content-type"] == "application/problem+json"
 
     def test_when_subscription_exists_should_create_gym(self) -> None:
         # Arrange

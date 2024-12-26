@@ -1,18 +1,14 @@
-import typing
-
 import pytest
 
+from src.gym_management.application.admins.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
 from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
-from src.gym_management.application.subscriptions.errors import AdminAlreadyExists
 from src.gym_management.infrastructure.admins.repository.repository_memory import AdminsMemoryRepository
+from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.subscription.factory.subscription_command_factory import SubscriptionCommandFactory
-
-if typing.TYPE_CHECKING:
-    from src.shared_kernel.application.error_or import ErrorOr
 
 
 class TestCreateSubscription:
@@ -33,10 +29,9 @@ class TestCreateSubscription:
         create_subscription_command = SubscriptionCommandFactory.create_create_subscription_command()
 
         # Act
-        result: ErrorOr = await self._command_invoker.invoke(create_subscription_command)
+        await self._command_invoker.invoke(create_subscription_command)
 
         # Assert
-        assert result.is_ok()
         await self._assert_subscription_in_db(create_subscription_command)
         await self._assert_admin_in_db(create_subscription_command)
 
@@ -47,11 +42,13 @@ class TestCreateSubscription:
         await self._command_invoker.invoke(create_subscription_command)
 
         # Act
-        result: ErrorOr = await self._command_invoker.invoke(create_subscription_command)
+        with pytest.raises(AdminAlreadyExistsError) as err:
+            await self._command_invoker.invoke(create_subscription_command)
 
         # Assert
-        assert result.is_error()
-        assert result.first_error == AdminAlreadyExists()
+        assert err.value.title == "Admin.Conflict"
+        assert err.value.detail == "Admin with the provided id not found"
+        assert err.value.error_type == ErrorType.CONFLICT
 
     async def _assert_subscription_in_db(self, create_subscription: CreateSubscription) -> None:
         subscriptions_in_db = await self._subscriptions_repository.get_multi()

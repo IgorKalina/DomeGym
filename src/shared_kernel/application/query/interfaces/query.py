@@ -9,8 +9,10 @@ __all__ = [
     "QueryResult",
 ]
 
+query_dataclass = dataclass(frozen=True)
 
-@dataclass(frozen=True)
+
+@query_dataclass
 class Query(abc.ABC):
     pass
 
