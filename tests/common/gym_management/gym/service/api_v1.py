@@ -18,8 +18,8 @@ class GymV1ApiService:
     def create(self, request: CreateGymRequest, subscription_id: uuid.UUID) -> Tuple[httpx.Response, Response]:
         response = self._api_client.post(self._get_url(subscription_id), json=request.model_dump())
         if response.status_code != HTTPStatus.CREATED:
-            return response, ErrorResponse(**response.json())
-        return response, OkResponse(**response.json())
+            return response, ErrorResponse(status=response.status_code, **response.json())
+        return response, OkResponse(status=response.status_code, **response.json())
 
     def _get_url(self, subscription_id: uuid.UUID) -> str:
         return f"{self._version}/subscriptions/{str(subscription_id)}/gyms"

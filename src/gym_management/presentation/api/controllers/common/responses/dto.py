@@ -2,7 +2,6 @@ import abc
 from abc import abstractmethod
 from typing import Any, Generic, List, TypeVar
 
-from fastapi import status
 from pydantic import BaseModel, Field
 
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
@@ -22,7 +21,7 @@ class ErrorData(BaseModel, Generic[ErrorType]):
 
 
 class Response(abc.ABC, BaseModel):
-    status: int
+    status: int = Field(exclude=True)
     data: List
     errors: List
 
@@ -32,7 +31,6 @@ class Response(abc.ABC, BaseModel):
 
 
 class OkResponse(Response, Generic[DataType]):
-    status: int
     data: List[DataType]
     errors: List = []
 
@@ -41,7 +39,6 @@ class OkResponse(Response, Generic[DataType]):
 
 
 class ErrorResponse(Response, Generic[ErrorType]):
-    status: int = Field(examples=[status.HTTP_400_BAD_REQUEST])
     errors: List[ErrorData[ErrorType]]
     data: List = []
 

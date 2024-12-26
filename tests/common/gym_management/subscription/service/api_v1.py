@@ -25,14 +25,14 @@ class SubscriptionV1ApiService:
     def create(self, request: CreateSubscriptionRequest) -> Tuple[httpx.Response, Response]:
         response = self._api_client.post(self._url, json=request.model_dump())
         if response.status_code != HTTPStatus.CREATED:
-            return response, ErrorResponse(**response.json())
-        return response, OkResponse[SubscriptionResponse](**response.json())
+            return response, ErrorResponse(status=response.status_code, **response.json())
+        return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
 
     def list(self) -> Tuple[httpx.Response, Response]:
         response = self._api_client.get(self._url)
         if response.status_code != HTTPStatus.OK:
-            return response, ErrorResponse(**response.json())
-        return response, OkResponse[SubscriptionResponse](**response.json())
+            return response, ErrorResponse(status=response.status_code, **response.json())
+        return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
 
     def get_subscription_by_admin_id(self, admin_id: uuid.UUID) -> SubscriptionResponse:
         response, subscriptions = self.list()

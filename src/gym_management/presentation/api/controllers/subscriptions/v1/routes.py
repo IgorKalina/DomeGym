@@ -39,7 +39,7 @@ router = APIRouter(
 @inject
 async def list_subscriptions(
     query_invoker: QueryInvoker = Depends(Provide[DiContainer.query_invoker]),
-) -> List[SubscriptionResponse]:
+) -> OkResponse[SubscriptionResponse]:
     query = ListSubscriptions()
     result: List[Subscription] = await query_invoker.invoke(query)
     subscriptions_response = [
