@@ -53,6 +53,7 @@ class TestCreateSubscription:
         error = response_data.errors[0]
         assert error.title == expected_error.title
         assert error.detail == expected_error.detail
+        assert response.headers["content-type"] == "application/problem+json"
 
         _, ok_response = self._subscriptions_api.list()
         assert len(ok_response.data) == 1
