@@ -16,6 +16,7 @@ class CommandInvokerMemory(CommandInvoker):
         handler = self.__command_handlers.get(type(command))
         if handler is None:
             raise HandlerNotFoundError(handlee=command)
+        logger.debug(f"Handling '{command.__class__.__name__}' command by '{handler.__class__.__name__}' handler")
         return await handler.handle(command)
 
     def register_command_handler(

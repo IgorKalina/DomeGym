@@ -16,6 +16,7 @@ class QueryInvokerMemory(QueryInvoker):
         handler = self.__query_handlers.get(type(query))
         if handler is None:
             raise HandlerNotFoundError(handlee=query)
+        logger.debug(f"Handling '{query.__class__.__name__}' query by '{handler.__class__.__name__}' handler")
         return await handler.handle(query)
 
     def register_query_handler(self, query: Type[QueryType], handler: QueryHandler[QueryType, QueryResult]) -> None:
