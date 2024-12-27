@@ -4,8 +4,10 @@ from dependency_injector import containers, providers
 
 from src.gym_management.infrastructure.common.injection.containers.repository import RepositoryContainer
 from src.gym_management.infrastructure.gyms.injection.container import GymContainer
+from src.gym_management.infrastructure.rooms.injection.container import RoomContainer
 from src.gym_management.infrastructure.subscriptions.injection.container import SubscriptionsContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.event.domain_eventbus_memory import DomainEventBusMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 
 
@@ -31,11 +33,24 @@ def register_queries(
     return query_invoker
 
 
+async def register_domain_events(
+    domain_eventbus: DomainEventBusMemory, containers: List[containers.DeclarativeContainer]
+) -> DomainEventBusMemory:
+    for container in containers:
+        if not hasattr(container, "domain_events"):
+            continue
+        for event, handler in container.domain_events().items():
+            await domain_eventbus.subscribe(event, handler)
+    return domain_eventbus
+
+
 class DiContainer(containers.DeclarativeContainer):
     repositories = providers.Container(RepositoryContainer)
+    __domain_eventbus = providers.Singleton(DomainEventBusMemory)
     __containers = [
         providers.Container(SubscriptionsContainer, repositories=repositories),
-        providers.Container(GymContainer, repositories=repositories),
+        providers.Container(GymContainer, repositories=repositories, domain_eventbus=__domain_eventbus),
+        providers.Container(RoomContainer, repositories=repositories),
     ]
 
     command_invoker = providers.Resource(
@@ -47,5 +62,11 @@ class DiContainer(containers.DeclarativeContainer):
     query_invoker = providers.Resource(
         register_queries,
         query_invoker=providers.Singleton(QueryInvokerMemory),
+        containers=__containers,
+    )
+
+    domain_eventbus = providers.Resource(
+        register_domain_events,
+        domain_eventbus=__domain_eventbus,
         containers=__containers,
     )

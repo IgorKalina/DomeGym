@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from src.gym_management.domain.common.entity import Entity
-from src.gym_management.domain.common.event import DomainEvent
+from src.shared_kernel.domain.event import DomainEvent
 
 
 @dataclass

@@ -24,7 +24,7 @@ class SubscriptionsMemoryRepository(SubscriptionsRepository):
         return self._subscriptions.copy()
 
     async def update(self, subscription: Subscription) -> Subscription:
-        updated_subscriptions = [sub for sub in self._subscriptions if sub.id == subscription.id]
+        updated_subscriptions = [sub for sub in self._subscriptions if sub.id != subscription.id]
         updated_subscriptions.append(subscription)
         self._subscriptions = updated_subscriptions
         return subscription

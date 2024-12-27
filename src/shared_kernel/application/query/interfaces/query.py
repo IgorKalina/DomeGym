@@ -1,5 +1,4 @@
 import abc
-from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
 __all__ = [
@@ -10,7 +9,6 @@ __all__ = [
 ]
 
 
-@dataclass(kw_only=True, frozen=True)
 class Query(abc.ABC):
     pass
 

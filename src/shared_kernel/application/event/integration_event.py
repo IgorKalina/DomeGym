@@ -3,19 +3,18 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
-__all__ = ["DomainEvent", "DomainEventHandler", "EventType"]
+__all__ = ["IntegrationEvent", "IntegrationEventHandler", "EventType"]
 
 
-@dataclass(kw_only=True)
-class DomainEvent(ABC):
+class IntegrationEvent(ABC):
     pass
 
 
-EventType = TypeVar("EventType", bound=DomainEvent)
+EventType = TypeVar("EventType", bound=IntegrationEvent)
 
 
 @dataclass
-class DomainEventHandler(ABC, Generic[EventType]):
+class IntegrationEventHandler(ABC, Generic[EventType]):
     @abc.abstractmethod
     async def handle(self, event: EventType) -> None:
         pass

@@ -26,9 +26,9 @@ def init_api(
         version=config.version,
         default_response_class=ORJSONResponse,
     )
+    setup_dependency_injection(app)
     setup_controllers(app)
     setup_middlewares(app)
-    setup_dependency_injection(app)
     return app
 
 
