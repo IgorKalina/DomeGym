@@ -1,0 +1,40 @@
+name: Code quality check
+on:
+  workflow_dispatch: {}
+  workflow_call: {}
+  pull_request:
+    branches: [ main ]
+
+
+env:
+  TEST_DOCKERFILE_NAME: "Dockerfile.test"
+  TEST_IMAGE_NAME: "gym-management-test"
+
+jobs:
+  linting-source-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint
+        run: |
+          make lint-docker
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build test image
+        run: |
+          docker build -f ${{ env.TEST_DOCKERFILE_NAME }} . -t ${{ env.TEST_IMAGE_NAME }}
+
+      - name: Tests
+        run: |
+          docker run -e ENV=test -v $(pwd)/coverage:/app/coverage ${{ env.TEST_IMAGE_NAME }} make test
+
+      - name: Add coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          pytest-xml-coverage-path: coverage/coverage.xml
+          coverage-path-prefix: src/
