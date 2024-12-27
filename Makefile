@@ -50,7 +50,7 @@ lint-docker: build-test
 
 .PHONY: test
 test:
-	poetry run pytest -v .
+	poetry run pytest --cov src --cov-report xml:coverage/coverage.xml -v ./tests
 
 .PHONY: test-unit
 test-unit:
