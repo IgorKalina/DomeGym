@@ -17,10 +17,9 @@ ARG PYTHON_VERSION=3.11
 COPY --from=app_build /usr/local/lib/python${PYTHON_VERSION}/site-packages /usr/local/lib/python${PYTHON_VERSION}/site-packages
 
 # Copy only files required for runnning the application
-COPY src /app/src
-COPY configs /app/configs
-
 WORKDIR /app
+COPY src /src
+COPY configs /configs
 
 ENV PYTHONPATH=/usr/local/lib/python${PYTHON_VERSION}/site-packages:/app
 EXPOSE 8000
