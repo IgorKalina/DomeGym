@@ -41,6 +41,10 @@ async def domain_exception_handler(request: Request, err: DomainError) -> ORJSON
 async def unknown_exception_handler(request: Request, err: Exception) -> ORJSONResponse:  # noqa: ARG001
     logger.error("Handle error", exc_info=err, extra={"error": err})
     logger.exception("Unknown error occurred", exc_info=err, extra={"error": err})
+    error_data: ErrorData = ErrorData(
+        title="Unknown error occurred", detail="Unknown internal service error has occurred"
+    )
     return ErrorResponse(
-        errors=[ErrorData(title="Unknown error occurred", detail="Unknown internal service error has occurred")]
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        errors=[error_data],
     ).to_orjson()
