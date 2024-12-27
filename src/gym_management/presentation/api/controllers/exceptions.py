@@ -25,7 +25,7 @@ async def domain_exception_handler(request: Request, err: DomainError) -> ORJSON
         case ErrorType.UNEXPECTED:
             status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         case ErrorType.VALIDATION:
-            status_code = status.HTTP_400_BAD_REQUEST
+            status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
         case ErrorType.CONFLICT:
             status_code = status.HTTP_409_CONFLICT
         case ErrorType.NOT_FOUND:
