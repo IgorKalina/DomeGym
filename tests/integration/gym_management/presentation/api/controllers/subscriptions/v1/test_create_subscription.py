@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 import pytest
 
-from src.gym_management.application.admins.exceptions import AdminAlreadyExistsError
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
@@ -29,8 +28,12 @@ class TestCreateSubscription:
         # Assert
         assert response.status_code == HTTPStatus.CREATED
         assert response_data.status == HTTPStatus.CREATED
-        _, ok_response = self._subscriptions_api.list()
-        assert len(ok_response.data) == 1
+        assert response.headers["content-type"] == "application/json"
+        assert len(response_data.data) == 1
+        assert len(response_data.errors) == 0
+        data = response_data.data[0]
+        assert data.admin_id == constants.admin.ADMIN_ID
+        assert data.type == constants.subscription.DEFAULT_SUBSCRIPTION_TYPE
 
     @pytest.mark.asyncio
     async def test_when_subscription_for_admin_already_exists_should_return_409(self) -> None:
@@ -39,7 +42,6 @@ class TestCreateSubscription:
             admin_id=constants.admin.ADMIN_ID,
             subscription_type=constants.subscription.DEFAULT_SUBSCRIPTION_TYPE,
         )
-        expected_error = AdminAlreadyExistsError()
         self._subscriptions_api.create(request)
 
         # Act
@@ -48,12 +50,12 @@ class TestCreateSubscription:
         # Assert
         assert response.status_code == HTTPStatus.CONFLICT
         assert response_data.status == HTTPStatus.CONFLICT
-        assert response_data.data == []
+        assert response.headers["content-type"] == "application/problem+json"
+        assert len(response_data.data) == 0
         assert len(response_data.errors) == 1
         error = response_data.errors[0]
-        assert error.title == expected_error.title
-        assert error.detail == expected_error.detail
-        assert response.headers["content-type"] == "application/problem+json"
+        assert error.title == "Admin.Conflict"
+        assert error.detail == "Admin with the provided id not found"
 
         _, ok_response = self._subscriptions_api.list()
         assert len(ok_response.data) == 1
