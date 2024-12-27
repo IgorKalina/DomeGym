@@ -8,7 +8,7 @@ on:
 
 env:
   TEST_DOCKERFILE_NAME: "Dockerfile.test"
-  TEST_IMAGE_NAME: "gym-management-test"
+  TEST_IMAGE_NAME: "domegym-test"
 
 jobs:
   linting-source-code:
