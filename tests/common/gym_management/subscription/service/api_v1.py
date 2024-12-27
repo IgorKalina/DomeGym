@@ -19,19 +19,19 @@ ResponseData: TypeAlias = OkResponse[SubscriptionResponse] | ErrorResponse
 
 class SubscriptionV1ApiService:
     def __init__(self, api_client: TestClient) -> None:
-        self._api_client = api_client
+        self.__api_client = api_client
 
-        self._version = "v1"
-        self._url = f"{self._version}/subscriptions"
+        self.__version = "v1"
+        self.__url = f"{self.__version}/subscriptions"
 
     def create(self, request: CreateSubscriptionRequest) -> Tuple[httpx.Response, ResponseData]:
-        response = self._api_client.post(self._url, json=request.model_dump())
+        response = self.__api_client.post(self.__url, json=request.model_dump())
         if response.status_code != HTTPStatus.CREATED:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
 
     def list(self) -> Tuple[httpx.Response, ResponseData]:
-        response = self._api_client.get(self._url)
+        response = self.__api_client.get(self.__url)
         if response.status_code != HTTPStatus.OK:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())

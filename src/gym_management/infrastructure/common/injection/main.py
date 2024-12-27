@@ -48,7 +48,7 @@ class DiContainer(containers.DeclarativeContainer):
     repositories = providers.Container(RepositoryContainer)
     __domain_eventbus = providers.Singleton(DomainEventBusMemory)
     __containers = [
-        providers.Container(SubscriptionsContainer, repositories=repositories),
+        providers.Container(SubscriptionsContainer, repositories=repositories, domain_eventbus=__domain_eventbus),
         providers.Container(GymContainer, repositories=repositories, domain_eventbus=__domain_eventbus),
         providers.Container(RoomContainer, repositories=repositories),
     ]

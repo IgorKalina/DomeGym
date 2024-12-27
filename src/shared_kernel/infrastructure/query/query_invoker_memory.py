@@ -1,8 +1,11 @@
+import logging
 from typing import Dict, Type
 
 from src.shared_kernel.application.exceptions import HandlerNotFoundError
 from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler, QueryResult, QueryType
 from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+
+logger = logging.getLogger(__name__)
 
 
 class QueryInvokerMemory(QueryInvoker):
@@ -17,3 +20,4 @@ class QueryInvokerMemory(QueryInvoker):
 
     def register_query_handler(self, query: Type[QueryType], handler: QueryHandler[QueryType, QueryResult]) -> None:
         self.__query_handlers[query] = handler
+        logger.debug(f"Query Handler '{handler.__class__.__name__}' was registered for '{query.__name__}' query")

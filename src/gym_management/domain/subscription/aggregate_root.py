@@ -23,16 +23,16 @@ class Subscription(AggregateRoot):
         self.type = subscription_type
         self.admin_id = admin_id
 
-        self._gym_ids = gym_ids or []
+        self.__gym_ids = gym_ids or []
 
     def add_gym(self, gym: Gym) -> None:
-        if len(self._gym_ids) >= self.max_gyms:
+        if len(self.__gym_ids) >= self.max_gyms:
             raise SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError(max_gyms=self.max_gyms)
-        self._gym_ids.append(gym.id)
+        self.__gym_ids.append(gym.id)
         self._create_domain_event(GymAddedEvent(subscription=self, gym=gym))
 
     def has_gym(self, gym_id: uuid.UUID) -> bool:
-        return gym_id in self._gym_ids
+        return gym_id in self.__gym_ids
 
     @property
     def max_gyms(self) -> int:

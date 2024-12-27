@@ -14,9 +14,9 @@ class Admin(AggregateRoot):
 
     @property
     def subscription_id(self) -> Optional[uuid.UUID]:
-        return self._subscription_id
+        return self.__subscription_id
 
     def set_subscription(self, subscription: Subscription) -> None:
-        self._subscription_id = subscription.id
+        self.__subscription_id = subscription.id
 
         self._create_domain_event(SubscriptionSetEvent(subscription=subscription))

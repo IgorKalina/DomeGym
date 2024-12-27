@@ -25,16 +25,16 @@ class CreateGymHandler(CommandHandler):
         subscriptions_repository: SubscriptionsRepository,
         eventbus: EventBus,
     ) -> None:
-        self._subscriptions_repository = subscriptions_repository
-        self._eventbus = eventbus
+        self.__subscriptions_repository = subscriptions_repository
+        self.__eventbus = eventbus
 
     async def handle(self, command: CreateGym) -> Gym:
-        subscription = await self._subscriptions_repository.get_by_id(command.subscription_id)
+        subscription = await self.__subscriptions_repository.get_by_id(command.subscription_id)
         if subscription is None:
             raise SubscriptionDoesNotExistError()
 
         gym = Gym(name=command.name, max_rooms=subscription.max_rooms, subscription_id=command.subscription_id)
         subscription.add_gym(gym)
-        await self._subscriptions_repository.update(subscription)
-        await self._eventbus.publish(subscription.pop_domain_events())
+        await self.__subscriptions_repository.update(subscription)
+        await self.__eventbus.publish(subscription.pop_domain_events())
         return gym

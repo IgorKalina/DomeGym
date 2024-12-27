@@ -1,8 +1,11 @@
+import logging
 from typing import Dict, Type
 
 from src.shared_kernel.application.command.interfaces.command import Command, CommandHandler, CommandResult, CommandType
 from src.shared_kernel.application.command.interfaces.command_invoker import CommandInvoker
 from src.shared_kernel.application.exceptions import HandlerNotFoundError
+
+logger = logging.getLogger(__name__)
 
 
 class CommandInvokerMemory(CommandInvoker):
@@ -19,3 +22,4 @@ class CommandInvokerMemory(CommandInvoker):
         self, command: Type[CommandType], handler: CommandHandler[CommandType, CommandResult]
     ) -> None:
         self.__command_handlers[command] = handler
+        logger.debug(f"Command Handler '{handler.__class__.__name__}' was registered for '{command.__name__}' command")

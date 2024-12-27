@@ -20,6 +20,7 @@ class DomainEventBusMemory(EventBus):
             raise EventHandlerAlreadyExistsError(event=event, handler=handler)
 
         self.__subscribers[event].append(handler)
+        logger.debug(f"Domain Event Handler '{handler.__class__.__name__}' is subscribed to '{event.__name__}'")
 
     async def publish(self, events: List[DomainEvent]) -> None:
         for event in events:
