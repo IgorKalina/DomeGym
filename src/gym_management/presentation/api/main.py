@@ -1,5 +1,7 @@
 import logging
 
+from fastapi import FastAPI
+
 from src.gym_management.infrastructure.common.config import load_config
 from src.gym_management.presentation.api.api import init_api, run_api
 
@@ -15,9 +17,12 @@ def setup_logger(level: int | str = logging.INFO) -> None:
     )
 
 
-config = load_config()
-setup_logger(config.logger.level)
-api = init_api(config.api)
+def create_app() -> FastAPI:
+    config = load_config()
+    setup_logger(config.logger.level)
+    return init_api(config.api)
+
 
 if __name__ == "__main__":
-    run_api(app="main:api", config=config.uvicorn)
+    config = load_config()
+    run_api(app="main:create_app", factory=True, config=config.uvicorn)

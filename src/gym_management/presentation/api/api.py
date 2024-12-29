@@ -1,4 +1,6 @@
 import logging
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import (
@@ -16,6 +18,16 @@ from src.gym_management.presentation.api.middlewares import setup_middlewares
 logger = logging.getLogger(__name__)
 
 
+@asynccontextmanager
+async def api_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    di_container = setup_dependency_injection(app)
+    await di_container.init_resources()
+    try:
+        yield
+    finally:
+        await di_container.shutdown_resources()
+
+
 def init_api(
     config: ApiConfig,
 ) -> FastAPI:
@@ -25,6 +37,7 @@ def init_api(
         title=config.title,
         version=config.version,
         default_response_class=ORJSONResponse,
+        lifespan=api_lifespan,
     )
     setup_dependency_injection(app)
     setup_controllers(app)
@@ -34,7 +47,10 @@ def init_api(
 
 def run_api(
     app: FastAPI | str,
+    factory: bool,
     config: UvicornConfig,
 ) -> None:
     logger.info("Running API")
-    uvicorn.run(app, host=config.host, port=config.port, log_level=config.log_level, reload=config.reload)
+    uvicorn.run(
+        app, factory=factory, host=config.host, port=config.port, log_level=config.log_level, reload=config.reload
+    )
