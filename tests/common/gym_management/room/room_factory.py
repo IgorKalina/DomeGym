@@ -1,15 +1,15 @@
 import uuid
-from typing import Optional
 
 from src.gym_management.domain.room.aggregate_root import Room
+from tests.common.gym_management import constants
 
 
 class RoomFactory:
     @staticmethod
     def create_room(
-        name: Optional[str] = None,
-        gym_id: Optional[uuid.UUID] = None,
-        max_daily_sessions: int = 3,  # todo: add this to constants
+        name: str | None = None,
+        gym_id: uuid.UUID | None = None,
+        max_daily_sessions: int = constants.subscription.MAX_SESSIONS_FREE_TIER,
     ) -> Room:
         if name is None:
             name = f"room_{gym_id}"

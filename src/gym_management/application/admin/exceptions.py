@@ -4,7 +4,7 @@ from src.gym_management.application.common.exceptions import AppError
 from src.shared_kernel.application.error_or import ErrorType
 
 
-@dataclass(kw_only=True, frozen=True)
+@dataclass(kw_only=True)
 class AdminAppError(AppError):
     entity_name: str = "Admin"
 
@@ -13,7 +13,7 @@ class AdminAppError(AppError):
         return "Unknown Admin error has occurred"
 
 
-@dataclass(kw_only=True, frozen=True)
+@dataclass(kw_only=True)
 class AdminAlreadyExistsError(AdminAppError):
     error_type: ErrorType = ErrorType.CONFLICT
 

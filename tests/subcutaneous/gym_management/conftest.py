@@ -1,10 +1,10 @@
 import pytest
 
-from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
-    SubscriptionsRepository,
+from src.gym_management.application.common.interfaces.repository.subscription_repository import (
+    SubscriptionRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.gym_management.infrastructure.admin.repository.repository_memory import AdminsMemoryRepository
+from src.gym_management.infrastructure.admin.repository.repository_memory import AdminMemoryRepository
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
@@ -27,17 +27,17 @@ def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
 
 
 @pytest.fixture
-def admins_repository(di_container: DiContainer) -> AdminsMemoryRepository:
-    return di_container.repositories.admins_repository()
+def admin_repository(di_container: DiContainer) -> AdminMemoryRepository:
+    return di_container.repositories.admin_repository()
 
 
 @pytest.fixture
-def subscriptions_repository(di_container: DiContainer) -> SubscriptionsRepository:
-    return di_container.repositories.subscriptions_repository()
+def subscription_repository(di_container: DiContainer) -> SubscriptionRepository:
+    return di_container.repositories.subscription_repository()
 
 
 @pytest.fixture
-async def subscription(subscriptions_repository: SubscriptionsRepository) -> Subscription:
+async def subscription(subscription_repository: SubscriptionRepository) -> Subscription:
     subscription = SubscriptionFactory.create_subscription()
-    await subscriptions_repository.create(subscription=subscription)
+    await subscription_repository.create(subscription=subscription)
     return subscription

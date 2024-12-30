@@ -10,7 +10,7 @@ from src.gym_management.domain.subscription.aggregate_root import Subscription
 @dataclass(kw_only=True)
 class Admin(AggregateRoot):
     user_id: uuid.UUID
-    _subscription_id: Optional[uuid.UUID] = None
+    __subscription_id: uuid.UUID | None = None
 
     @property
     def subscription_id(self) -> Optional[uuid.UUID]:

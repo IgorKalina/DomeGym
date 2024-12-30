@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
-from src.gym_management.presentation.api.controllers.gyms.v1.requests.create_gym_request import CreateGymRequest
-from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
+from src.gym_management.presentation.api.controllers.gym.v1.requests.create_gym_request import CreateGymRequest
+from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
 from tests.common.gym_management import constants

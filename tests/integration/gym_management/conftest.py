@@ -1,10 +1,10 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
-    SubscriptionsRepository,
+from src.gym_management.application.common.interfaces.repository.subscription_repository import (
+    SubscriptionRepository,
 )
-from src.gym_management.infrastructure.admin.repository.repository_memory import AdminsMemoryRepository
+from src.gym_management.infrastructure.admin.repository.repository_memory import AdminMemoryRepository
 from src.gym_management.infrastructure.common.config import load_config
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.api import init_api
@@ -30,13 +30,13 @@ def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
 
 
 @pytest.fixture
-def admins_repository(di_container: DiContainer) -> AdminsMemoryRepository:
-    return di_container.repositories.admins_repository()
+def admin_repository(di_container: DiContainer) -> AdminMemoryRepository:
+    return di_container.repositories.admin_repository()
 
 
 @pytest.fixture
-def subscriptions_repository(di_container: DiContainer) -> SubscriptionsRepository:
-    return di_container.repositories.subscriptions_repository()
+def subscription_repository(di_container: DiContainer) -> SubscriptionRepository:
+    return di_container.repositories.subscription_repository()
 
 
 @pytest.fixture

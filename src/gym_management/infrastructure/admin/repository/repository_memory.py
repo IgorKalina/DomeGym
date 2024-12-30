@@ -1,11 +1,11 @@
 import uuid
 from typing import List, Optional
 
-from src.gym_management.application.common.interfaces.repository.admins_repository import AdminsRepository
+from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.domain.admin.aggregate_root import Admin
 
 
-class AdminsMemoryRepository(AdminsRepository):
+class AdminMemoryRepository(AdminRepository):
     def __init__(self) -> None:
         self.__admins: List[Admin] = []
 

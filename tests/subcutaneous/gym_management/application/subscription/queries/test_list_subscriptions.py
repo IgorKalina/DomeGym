@@ -3,7 +3,7 @@ from typing import List
 
 import pytest
 
-from src.gym_management.application.common.interfaces.repository.subscriptions_repository import SubscriptionsRepository
+from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 from tests.common.gym_management.subscription.factory.subscription_query_factory import SubscriptionQueryFactory
@@ -17,16 +17,16 @@ class TestListSubscriptions:
     def setup_method(
         self,
         query_invoker: QueryInvokerMemory,
-        subscriptions_repository: SubscriptionsRepository,
+        subscription_repository: SubscriptionRepository,
     ) -> None:
         self._query_invoker = query_invoker
-        self._subscriptions_repository = subscriptions_repository
+        self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
     async def test_list_subscriptions_when_exists_should_return_all_subscriptions(self) -> None:
         # Arrange
         subscription = SubscriptionFactory.create_subscription()
-        await self._subscriptions_repository.create(subscription)
+        await self._subscription_repository.create(subscription)
         query = SubscriptionQueryFactory.create_list_subscription_query()
 
         # Act

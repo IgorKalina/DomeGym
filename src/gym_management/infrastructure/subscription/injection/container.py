@@ -21,8 +21,8 @@ class SubscriptionsContainer(containers.DeclarativeContainer):
         {
             CreateSubscription: providers.Factory(
                 CreateSubscriptionHandler,
-                admins_repository=repositories.admins_repository,
-                subscriptions_repository=repositories.subscriptions_repository,
+                admin_repository=repositories.admin_repository,
+                subscription_repository=repositories.subscription_repository,
                 eventbus=domain_eventbus,
             )
         }
@@ -31,7 +31,7 @@ class SubscriptionsContainer(containers.DeclarativeContainer):
     queries = providers.Dict(
         {
             ListSubscriptions: providers.Factory(
-                ListSubscriptionsHandler, subscriptions_repository=repositories.subscriptions_repository
+                ListSubscriptionsHandler, subscription_repository=repositories.subscription_repository
             )
         }
     )

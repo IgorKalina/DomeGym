@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Optional
+from typing import List
 
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
@@ -16,8 +16,8 @@ class Gym(AggregateRoot):
         name: str,
         subscription_id: uuid.UUID,
         max_rooms: int,
-        room_ids: Optional[List[uuid.UUID]] = None,
-        trainer_ids: Optional[List[uuid.UUID]] = None,
+        room_ids: List[uuid.UUID] | None = None,
+        trainer_ids: List[uuid.UUID] | None = None,
     ) -> None:
         super().__init__()
 

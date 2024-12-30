@@ -3,9 +3,9 @@ import uuid
 from dataclasses import dataclass
 
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
-from src.gym_management.application.common.interfaces.repository.admins_repository import AdminsRepository
-from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
-    SubscriptionsRepository,
+from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
+from src.gym_management.application.common.interfaces.repository.subscription_repository import (
+    SubscriptionRepository,
 )
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
@@ -25,27 +25,27 @@ class CreateSubscription(Command):
 class CreateSubscriptionHandler(CommandHandler):
     def __init__(
         self,
-        admins_repository: AdminsRepository,
-        subscriptions_repository: SubscriptionsRepository,
+        admin_repository: AdminRepository,
+        subscription_repository: SubscriptionRepository,
         eventbus: EventBus,
     ) -> None:
-        self.__admins_repository = admins_repository
-        self.__subscriptions_repository = subscriptions_repository
+        self.__admin_repository = admin_repository
+        self.__subscription_repository = subscription_repository
         self.__event_bus = eventbus
 
     async def handle(self, command: CreateSubscription) -> Subscription:
-        admin = await self.__admins_repository.get_by_id(command.admin_id)
+        admin = await self.__admin_repository.get_by_id(command.admin_id)
         if admin is not None:
             raise AdminAlreadyExistsError()
 
         admin = Admin(id=command.admin_id, user_id=uuid.uuid4())
-        await self.__admins_repository.create(admin)
+        await self.__admin_repository.create(admin)
         subscription = Subscription(
             admin_id=command.admin_id,
             subscription_type=command.subscription_type,
         )
-        await self.__subscriptions_repository.create(subscription)
+        await self.__subscription_repository.create(subscription)
         admin.set_subscription(subscription)
-        await self.__admins_repository.update(admin)
+        await self.__admin_repository.update(admin)
         await self.__event_bus.publish(admin.pop_domain_events())
         return subscription

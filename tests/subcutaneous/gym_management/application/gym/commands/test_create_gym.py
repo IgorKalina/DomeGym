@@ -1,15 +1,13 @@
 import uuid
-from typing import List, Optional
+from typing import List
 
 import pytest
 
-from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
-    SubscriptionsRepository,
-)
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
+from src.gym_management.infrastructure.subscription.repository.repository_memory import SubscriptionMemoryRepository
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
@@ -20,11 +18,11 @@ class TestCreateGym:
     def setup_method(
         self,
         command_invoker: CommandInvokerMemory,
-        subscriptions_repository: SubscriptionsRepository,
+        subscription_repository: SubscriptionMemoryRepository,
         subscription: Subscription,
     ) -> None:
         self._command_invoker = command_invoker
-        self._subscriptions_repository = subscriptions_repository
+        self._subscription_repository = subscription_repository
         self._subscription = subscription
 
     @pytest.mark.asyncio
@@ -37,7 +35,7 @@ class TestCreateGym:
 
         # Assert
         assert isinstance(gym, Gym)
-        subscription_in_db: Optional[Subscription] = await self._subscriptions_repository.get_by_id(
+        subscription_in_db: Subscription | None = await self._subscription_repository.get_by_id(
             subscription_id=create_gym_command.subscription_id
         )
         assert subscription_in_db is not None

@@ -1,6 +1,6 @@
 import sys
 import uuid
-from typing import List, Optional
+from typing import List
 
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
@@ -15,7 +15,7 @@ class Subscription(AggregateRoot):
         *args,
         subscription_type: SubscriptionType,
         admin_id: uuid.UUID,
-        gym_ids: Optional[List[uuid.UUID]] = None,
+        gym_ids: List[uuid.UUID] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)

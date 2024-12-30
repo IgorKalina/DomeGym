@@ -10,10 +10,10 @@ from src.gym_management.application.subscription.commands.create_subscription im
 from src.gym_management.application.subscription.queries.list_subscriptions import ListSubscriptions
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
-from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
+from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
-from src.gym_management.presentation.api.controllers.subscriptions.v1.responses.subscription_response import (
+from src.gym_management.presentation.api.controllers.subscription.v1.responses.subscription_response import (
     SubscriptionResponse,
 )
 from src.shared_kernel.application.command import CommandInvoker

@@ -7,10 +7,10 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
-from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (
+from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
-from src.gym_management.presentation.api.controllers.subscriptions.v1.responses.subscription_response import (
+from src.gym_management.presentation.api.controllers.subscription.v1.responses.subscription_response import (
     SubscriptionResponse,
 )
 

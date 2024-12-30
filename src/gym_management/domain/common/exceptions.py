@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from src.shared_kernel.application.error_or import ErrorType
 
 
-@dataclass(kw_only=True, frozen=True)
+@dataclass(kw_only=True)
 class DomainError(Exception):
     entity_name: str = "Unknown"
     error_type: ErrorType = ErrorType.UNEXPECTED

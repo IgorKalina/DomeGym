@@ -2,8 +2,8 @@ from fastapi import FastAPI
 
 from .default import default_router
 from .exceptions import setup_exception_handlers
-from .gyms.main import setup_gym_controllers
-from .subscriptions.main import setup_subscription_controllers
+from .gym.main import setup_gym_controllers
+from .subscription.main import setup_subscription_controllers
 
 
 def setup_controllers(app: FastAPI) -> None:
