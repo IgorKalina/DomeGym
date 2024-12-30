@@ -4,7 +4,7 @@ from src.gym_management.domain.common.exceptions import DomainError
 from src.shared_kernel.application.error_or import ErrorType
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class RoomError(DomainError):
     entity_name: str = "Room"
 
@@ -13,7 +13,7 @@ class RoomError(DomainError):
         return "Unknown Room error has occurred"
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class RoomDoesNotExistError(RoomError):
     error_type: ErrorType = ErrorType.NOT_FOUND
 

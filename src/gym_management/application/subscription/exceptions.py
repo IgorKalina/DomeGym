@@ -4,7 +4,7 @@ from src.gym_management.application.common.exceptions import AppError
 from src.shared_kernel.application.error_or import ErrorType
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class SubscriptionAppError(AppError):
     entity_name: str = "Subscription"
 
@@ -13,7 +13,7 @@ class SubscriptionAppError(AppError):
         return "Unknown Subscription error has occurred"
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class SubscriptionDoesNotExistError(SubscriptionAppError):
     error_type: ErrorType = ErrorType.NOT_FOUND
 

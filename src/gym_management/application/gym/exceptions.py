@@ -4,7 +4,7 @@ from src.gym_management.application.common.exceptions import AppError
 from src.shared_kernel.application.error_or import ErrorType
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class GymAppError(AppError):
     entity_name: str = "Gym"
 
@@ -13,7 +13,7 @@ class GymAppError(AppError):
         return "Unknown Gym error has occurred"
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class GymDoesNotExistError(GymAppError):
     error_type: ErrorType = ErrorType.NOT_FOUND
 
