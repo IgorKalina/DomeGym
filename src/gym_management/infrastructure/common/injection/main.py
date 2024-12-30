@@ -3,9 +3,9 @@ from typing import List
 from dependency_injector import containers, providers
 
 from src.gym_management.infrastructure.common.injection.containers.repository import RepositoryContainer
-from src.gym_management.infrastructure.gyms.injection.container import GymContainer
-from src.gym_management.infrastructure.rooms.injection.container import RoomContainer
-from src.gym_management.infrastructure.subscriptions.injection.container import SubscriptionsContainer
+from src.gym_management.infrastructure.gym.injection.container import GymContainer
+from src.gym_management.infrastructure.room.injection.container import RoomContainer
+from src.gym_management.infrastructure.subscription.injection.container import SubscriptionsContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.event.domain_eventbus_memory import DomainEventBusMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory

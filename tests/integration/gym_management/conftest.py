@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
-from src.gym_management.infrastructure.admins.repository.repository_memory import AdminsMemoryRepository
+from src.gym_management.infrastructure.admin.repository.repository_memory import AdminsMemoryRepository
 from src.gym_management.infrastructure.common.config import load_config
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.api import init_api

@@ -1,4 +1,4 @@
-from src.gym_management.application.subscriptions.queries.list_subscriptions import ListSubscriptions
+from src.gym_management.application.subscription.queries.list_subscriptions import ListSubscriptions
 
 
 class SubscriptionQueryFactory:

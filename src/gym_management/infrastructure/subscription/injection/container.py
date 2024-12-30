@@ -1,11 +1,11 @@
 from dependency_injector import containers, providers
 
-from src.gym_management.application.rooms.domain_events.gym_added_handler import GymAddedEventHandler
-from src.gym_management.application.subscriptions.commands.create_subscription import (
+from src.gym_management.application.room.domain_events.gym_added_handler import GymAddedEventHandler
+from src.gym_management.application.subscription.commands.create_subscription import (
     CreateSubscription,
     CreateSubscriptionHandler,
 )
-from src.gym_management.application.subscriptions.queries.list_subscriptions import (
+from src.gym_management.application.subscription.queries.list_subscriptions import (
     ListSubscriptions,
     ListSubscriptionsHandler,
 )

@@ -5,9 +5,9 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
-from src.gym_management.application.admins.exceptions import AdminAlreadyExistsError
-from src.gym_management.application.subscriptions.commands.create_subscription import CreateSubscription
-from src.gym_management.application.subscriptions.queries.list_subscriptions import ListSubscriptions
+from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
+from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
+from src.gym_management.application.subscription.queries.list_subscriptions import ListSubscriptions
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.subscriptions.v1.requests.create_subscription_request import (

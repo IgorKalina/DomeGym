@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
-from src.gym_management.application.subscriptions.exceptions import SubscriptionDoesNotExistError
+from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.eventbus import EventBus

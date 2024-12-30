@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from src.gym_management.application.gyms.commands.create_gym import CreateGym, CreateGymHandler
+from src.gym_management.application.gym.commands.create_gym import CreateGym, CreateGymHandler
 from src.shared_kernel.application.event.eventbus import EventBus
 
 

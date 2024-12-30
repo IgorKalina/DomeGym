@@ -1,6 +1,6 @@
 import uuid
 
-from src.gym_management.application.gyms.commands.create_gym import CreateGym
+from src.gym_management.application.gym.commands.create_gym import CreateGym
 from tests.common.gym_management import constants
 
 

@@ -2,7 +2,7 @@ import logging
 import uuid
 from dataclasses import dataclass
 
-from src.gym_management.application.admins.exceptions import AdminAlreadyExistsError
+from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.common.interfaces.repository.admins_repository import AdminsRepository
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,

@@ -5,7 +5,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
-from src.gym_management.application.gyms.commands.create_gym import CreateGym
+from src.gym_management.application.gym.commands.create_gym import CreateGym
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse

@@ -4,7 +4,7 @@ from src.gym_management.application.common.interfaces.repository.subscriptions_r
     SubscriptionsRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.gym_management.infrastructure.admins.repository.repository_memory import AdminsMemoryRepository
+from src.gym_management.infrastructure.admin.repository.repository_memory import AdminsMemoryRepository
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory

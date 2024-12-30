@@ -6,7 +6,7 @@ import pytest
 from src.gym_management.application.common.interfaces.repository.subscriptions_repository import (
     SubscriptionsRepository,
 )
-from src.gym_management.application.subscriptions.exceptions import SubscriptionDoesNotExistError
+from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
