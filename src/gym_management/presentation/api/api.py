@@ -1,6 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from typing import AsyncContextManager, AsyncGenerator, Callable
 
 import uvicorn
 from fastapi import (
@@ -11,37 +11,41 @@ from fastapi.responses import (
 )
 
 from src.gym_management.infrastructure.common.config.api import ApiConfig, UvicornConfig
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.main import setup_controllers
-from src.gym_management.presentation.api.injection import setup_dependency_injection
+from src.gym_management.presentation.api.injection import create_dependency_injection_container
 from src.gym_management.presentation.api.middlewares import setup_middlewares
 
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
-async def api_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    di_container = setup_dependency_injection(app)
-    await di_container.init_resources()
-    try:
-        yield
-    finally:
-        await di_container.shutdown_resources()
+def api_lifespan(di_container: DiContainer) -> Callable[[FastAPI], AsyncContextManager[None]]:
+    @asynccontextmanager
+    async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
+        await di_container.init_resources()
+        try:
+            yield
+        finally:
+            await di_container.shutdown_resources()
+
+    return _lifespan
 
 
 def init_api(
     config: ApiConfig,
 ) -> FastAPI:
     logger.debug("Initialize API")
+    di_container = create_dependency_injection_container()
     app = FastAPI(
         debug=config.debug,
         title=config.title,
         version=config.version,
         default_response_class=ORJSONResponse,
-        lifespan=api_lifespan,
+        lifespan=api_lifespan(di_container),
     )
-    setup_dependency_injection(app)
     setup_controllers(app)
     setup_middlewares(app)
+    app.container = di_container
     return app
 
 
