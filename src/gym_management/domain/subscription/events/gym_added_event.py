@@ -12,3 +12,8 @@ if TYPE_CHECKING:
 class GymAddedEvent(DomainEvent):
     subscription: "Subscription"
     gym: Gym
+
+
+@dataclass
+class SomeEvent(DomainEvent):
+    pass

@@ -4,7 +4,7 @@ from typing import List, Type
 from src.shared_kernel.domain.event import DomainEvent, DomainEventHandler
 
 
-class EventBus(abc.ABC):
+class DomainEventBus(abc.ABC):
     async def publish(self, events: List[DomainEvent]) -> None:
         pass
 

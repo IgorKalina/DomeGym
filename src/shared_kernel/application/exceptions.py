@@ -40,3 +40,12 @@ class EventHandlerAlreadyExistsError(AppError):
     @property
     def detail(self) -> str:
         return f"Handler '{self.handler.__class__.__name__}' for '{type(self.event).__name__}' event already exists"
+
+
+@dataclass(kw_only=True, frozen=True)
+class EventualConsistencyError(AppError):
+    title: str = "Eventual Consistency Error"
+
+    @property
+    def detail(self) -> str:
+        return "Eventual consistency error"

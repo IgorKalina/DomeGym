@@ -11,7 +11,7 @@ from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.eventbus import EventBus
+from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class CreateSubscriptionHandler(CommandHandler):
         self,
         admin_repository: AdminRepository,
         subscription_repository: SubscriptionRepository,
-        eventbus: EventBus,
+        eventbus: DomainEventBus,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository

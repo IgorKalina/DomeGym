@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncContextManager, AsyncGenerator, Callable
@@ -15,6 +16,7 @@ from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.main import setup_controllers
 from src.gym_management.presentation.api.injection import create_dependency_injection_container
 from src.gym_management.presentation.api.middlewares import setup_middlewares
+from src.shared_kernel.infrastructure.event.domain.functions import reprocess_failed_domain_events
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,12 @@ def api_lifespan(di_container: DiContainer) -> Callable[[FastAPI], AsyncContextM
     @asynccontextmanager
     async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
         await di_container.init_resources()
+        asyncio.create_task(
+            reprocess_failed_domain_events(
+                failed_events_repository=di_container.repositories.failed_domain_event_repository(),
+                domain_eventbus=await di_container.domain_eventbus(),
+            )
+        )
         try:
             yield
         finally:

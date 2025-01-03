@@ -9,7 +9,7 @@ from src.gym_management.application.common.interfaces.repository.subscription_re
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.eventbus import EventBus
+from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class CreateGymHandler(CommandHandler):
         self,
         subscription_repository: SubscriptionRepository,
         gym_repository: GymRepository,
-        eventbus: EventBus,
+        eventbus: DomainEventBus,
     ) -> None:
         self.__subscription_repository = subscription_repository
         self.__gym_repository = gym_repository
