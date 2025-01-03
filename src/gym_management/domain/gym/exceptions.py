@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from src.gym_management.domain.common.exceptions import DomainError
 from src.shared_kernel.application.error_or import ErrorType
+from src.shared_kernel.domain.exceptions import DomainError
 
 
 @dataclass(kw_only=True, frozen=True)

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from src.gym_management.domain.gym.aggregate_root import Gym
 
 
-@dataclass
+@dataclass(kw_only=True)
 class RoomRemovedEvent(DomainEvent):
     gym: "Gym"
     room_id: uuid.UUID

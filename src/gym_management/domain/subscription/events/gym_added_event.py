@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 
-@dataclass
+@dataclass(kw_only=True)
 class GymAddedEvent(DomainEvent):
     subscription: "Subscription"
     gym: Gym
