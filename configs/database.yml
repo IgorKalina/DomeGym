@@ -1,0 +1,8 @@
+database:
+  user:
+    name: "placeholder"
+    password: "placeholder"
+  host: "localhost"
+  port: 15432
+  name: "domegym"
+  driver: "postgresql+asyncpg"

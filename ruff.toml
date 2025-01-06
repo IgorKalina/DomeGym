@@ -63,6 +63,7 @@ ignore = [
     "S104",  # hardcoded-bind-all-interfaces
     "PT004",  # pytest-missing-fixture-name-underscore
     "ANN401", # any-type
+    "PLR0913", # Too many arguments in function definition (>5)
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

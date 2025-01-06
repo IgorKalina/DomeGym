@@ -63,3 +63,12 @@ test-subcutaneous:
 .PHONY: test-integration
 test-integration:
 	poetry run pytest -v ./tests/integration
+
+.PHONY: create-migrations
+create-migrations:
+	alembic revision --autogenerate
+
+
+.PHONY: migrate
+migrate:
+	alembic upgrade head
