@@ -1,5 +1,5 @@
-@subscriptionId=c56be447-1b47-4fc7-ad22-0bc76e9b56ba
-@gymId=742861c8-db12-45bb-826c-6753e772cf52
+@subscriptionId=0ab13b6f-fc1c-49f7-8577-6b31333f7acb
+@gymId=c9f00ffa-33dc-4d63-8197-8dbf5117319b
 
 
 GET http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/{{gymId}}

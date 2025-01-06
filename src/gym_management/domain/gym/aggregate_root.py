@@ -16,10 +16,14 @@ class Gym(AggregateRoot):
         name: str,
         subscription_id: uuid.UUID,
         max_rooms: int,
+        id: uuid.UUID | None = None,
         room_ids: List[uuid.UUID] | None = None,
         trainer_ids: List[uuid.UUID] | None = None,
     ) -> None:
-        super().__init__()
+        if id is not None:
+            super().__init__(id=id)
+        else:
+            super().__init__()
 
         self.name = name
         self.subscription_id = subscription_id

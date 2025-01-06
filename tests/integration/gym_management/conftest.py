@@ -11,22 +11,25 @@ from src.gym_management.presentation.api.api import init_api
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.gym.service.api_v1 import GymV1ApiService
+from tests.common.gym_management.injection.containers.repository_memory_container import RepositoryMemoryContainer
 from tests.common.gym_management.subscription.service.api_v1 import SubscriptionV1ApiService
 
 
 @pytest.fixture
 def di_container() -> DiContainer:
-    return DiContainer()
+    di_container = DiContainer()
+    di_container.repositories.override(RepositoryMemoryContainer())
+    return di_container
 
 
 @pytest.fixture
-def command_invoker(di_container: DiContainer) -> CommandInvokerMemory:
-    return di_container.command_invoker()
+async def command_invoker(di_container: DiContainer) -> CommandInvokerMemory:
+    return await di_container.command_invoker()
 
 
 @pytest.fixture
-def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
-    return di_container.query_invoker()
+async def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
+    return await di_container.query_invoker()
 
 
 @pytest.fixture

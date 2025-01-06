@@ -11,25 +11,31 @@ from src.shared_kernel.infrastructure.event.domain.eventbus_memory import Domain
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 
 
-def register_commands(
+async def register_commands(
     command_invoker: CommandInvokerMemory, containers: List[containers.DeclarativeContainer]
 ) -> CommandInvokerMemory:
     for container in containers:
         if not hasattr(container, "commands"):
             continue
-        for command, handler in container.commands().items():
+        await container.init_resources()
+        container.commands.enable_async_mode()
+        commands = await container.commands()
+        for command, handler in commands.items():
             command_invoker.register_command_handler(command, handler)
     return command_invoker
 
 
-def register_queries(
+async def register_queries(
     query_invoker: QueryInvokerMemory, containers: List[containers.DeclarativeContainer]
 ) -> QueryInvokerMemory:
     for container in containers:
         if not hasattr(container, "queries"):
             continue
-        for command, handler in container.queries().items():
-            query_invoker.register_query_handler(command, handler)
+        await container.init_resources()
+        container.queries.enable_async_mode()
+        queries = await container.queries()
+        for query, handler in queries.items():
+            query_invoker.register_query_handler(query, handler)
     return query_invoker
 
 
@@ -39,7 +45,10 @@ async def register_domain_events(
     for container in containers:
         if not hasattr(container, "domain_events"):
             continue
-        for event, handler in container.domain_events().items():
+        await container.init_resources()
+        container.domain_events.enable_async_mode()
+        domain_events = await container.domain_events()
+        for event, handler in domain_events.items():
             await domain_eventbus.subscribe(event, handler)
     return domain_eventbus
 

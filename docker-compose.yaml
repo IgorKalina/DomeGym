@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  postgres_migration:
+    container_name: domegym.postgres_migration
+    build:
+      context: .
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - domegym.postgres.network
+    volumes:
+      - ./config:/app/config:ro
+      - ./alembic.ini:/app/alembic.ini:ro
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-./config/prod_config.toml}
+    command: ["python", "-m", "alembic", "upgrade", "head"]
+
+  postgres:
+    container_name: domegym.postgres
+    image: "postgres:15-alpine"
+    hostname: domegym.postgres
+    restart: unless-stopped
+    expose:
+      - "5432"
+    ports:
+      - "127.0.0.1:15432:5432"
+    networks:
+      - domegym.postgres.network
+    environment:
+      POSTGRES_PASSWORD: $GYM_MANAGEMENT_DATABASE__USER__PASSWORD
+      POSTGRES_USER: ${GYM_MANAGEMENT_DATABASE__USER__NAME:-$USER}
+      POSTGRES_DB: ${GYM_MANAGEMENT_DATABASE__NAME:-$USER}
+    volumes:
+      - domegym.postgres.data:/var/lib/postgresql/users:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${GYM_MANAGEMENT_DATABASE__NAME} -U $${GYM_MANAGEMENT_DATABASE__USER__NAME}"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  domegym.postgres.data: {}
+
+networks:
+  domegym.postgres.network: {}
