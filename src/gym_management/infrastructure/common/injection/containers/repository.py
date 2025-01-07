@@ -41,7 +41,7 @@ async def init_postgres_session() -> AsyncSession:
     await engine.dispose()
 
 
-class RepositoryContainer(containers.DeclarativeContainer):
+class RepositoryPostgresContainer(containers.DeclarativeContainer):
     __postgres_session = providers.Resource(init_postgres_session)
 
     admin_repository = providers.Singleton(AdminPostgresRepository, session=__postgres_session)

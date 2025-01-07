@@ -2,7 +2,7 @@ from typing import List
 
 from dependency_injector import containers, providers
 
-from src.gym_management.infrastructure.common.injection.containers.repository import RepositoryContainer
+from src.gym_management.infrastructure.common.injection.containers.repository import RepositoryPostgresContainer
 from src.gym_management.infrastructure.gym.injection.container import GymContainer
 from src.gym_management.infrastructure.room.injection.container import RoomContainer
 from src.gym_management.infrastructure.subscription.injection.container import SubscriptionsContainer
@@ -54,7 +54,7 @@ async def register_domain_events(
 
 
 class DiContainer(containers.DeclarativeContainer):
-    repositories = providers.Container(RepositoryContainer)
+    repositories = providers.Container(RepositoryPostgresContainer)
     __domain_eventbus = providers.Singleton(
         DomainEventBusMemory,
         event_repository=repositories.failed_domain_event_repository,
