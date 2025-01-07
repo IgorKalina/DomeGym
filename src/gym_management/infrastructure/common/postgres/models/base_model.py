@@ -1,7 +1,10 @@
 import datetime
+from typing import Self
 
 from sqlalchemy import MetaData, sql
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry
+
+from src.shared_kernel.application.dto import DataTransferObject
 
 convention = {
     "ix": "ix_%(column_0_label)s",  # INDEX
@@ -32,3 +35,10 @@ class TimedBaseModel(BaseModel):
         server_default=sql.func.now(),
         onupdate=sql.func.now(),
     )
+
+    @classmethod
+    def from_dto(cls, dto: DataTransferObject) -> Self:
+        raise NotImplementedError()
+
+    def to_dto(self) -> DataTransferObject:
+        raise NotImplementedError()

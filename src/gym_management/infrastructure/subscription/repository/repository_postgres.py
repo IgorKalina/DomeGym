@@ -6,12 +6,13 @@ from sqlalchemy import select
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.gym_management.infrastructure.db import models
-from src.gym_management.infrastructure.db.mappers.subscription import (
+from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+
+from ..postgres import models
+from ..postgres.mappers.subscription import (
     map_subscription_db_model_to_domain_model,
     map_subscription_domain_model_to_db_model,
 )
-from src.gym_management.infrastructure.db.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepository):

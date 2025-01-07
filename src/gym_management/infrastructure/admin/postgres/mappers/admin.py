@@ -1,8 +1,9 @@
 from src.gym_management.domain.admin.aggregate_root import Admin
-from src.gym_management.infrastructure.db import models
+
+from .. import models
 
 
-def map_admin_domain_model_to_db_model(admin: Admin) -> models.Gym:
+def map_admin_domain_model_to_db_model(admin: Admin) -> models.Admin:
     return models.Admin(
         id=admin.id,
         user_id=admin.user_id,

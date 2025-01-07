@@ -4,12 +4,13 @@ from sqlalchemy import select
 
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.domain.admin.aggregate_root import Admin
-from src.gym_management.infrastructure.db import models
-from src.gym_management.infrastructure.db.mappers.admin import (
+from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+
+from ..postgres import models
+from ..postgres.mappers.admin import (
     map_admin_db_model_to_domain_model,
     map_admin_domain_model_to_db_model,
 )
-from src.gym_management.infrastructure.db.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class AdminPostgresRepository(SQLAlchemyRepository, AdminRepository):

@@ -1,5 +1,6 @@
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.gym_management.infrastructure.db import models
+
+from .. import models
 
 
 def map_subscription_domain_model_to_db_model(subscription: Subscription) -> models.Subscription:

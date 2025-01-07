@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.gym_management.infrastructure.db.models.base_model import TimedBaseModel
+from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
 
 
 class Admin(TimedBaseModel):

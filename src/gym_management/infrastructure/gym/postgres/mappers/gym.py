@@ -1,5 +1,6 @@
 from src.gym_management.domain.gym.aggregate_root import Gym
-from src.gym_management.infrastructure.db import models
+
+from .. import models
 
 
 def map_gym_domain_model_to_db_model(gym: Gym) -> models.Gym:

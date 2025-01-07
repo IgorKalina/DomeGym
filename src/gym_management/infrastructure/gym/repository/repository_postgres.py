@@ -4,12 +4,13 @@ from sqlalchemy import select
 
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.domain.gym.aggregate_root import Gym
-from src.gym_management.infrastructure.db import models
-from src.gym_management.infrastructure.db.mappers.gym import (
+from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+
+from ..postgres import models
+from ..postgres.mappers.gym import (
     map_gym_db_model_to_domain_model,
     map_gym_domain_model_to_db_model,
 )
-from src.gym_management.infrastructure.db.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
