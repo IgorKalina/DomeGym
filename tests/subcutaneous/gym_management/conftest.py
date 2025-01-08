@@ -1,11 +1,9 @@
 import pytest
 
-from src.gym_management.application.common.interfaces.repository.subscription_repository import (
-    SubscriptionRepository,
-)
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.infrastructure.admin.repository.repository_memory import AdminMemoryRepository
 from src.gym_management.infrastructure.common.injection.main import DiContainer
+from src.gym_management.infrastructure.subscription.repository.repository_memory import SubscriptionMemoryRepository
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.injection.containers.repository_memory_container import RepositoryMemoryContainer
@@ -13,9 +11,9 @@ from tests.common.gym_management.subscription.factory.subscription_factory impor
 
 
 @pytest.fixture
-def di_container() -> DiContainer:
+async def di_container() -> DiContainer:
     di_container = DiContainer()
-    di_container.repositories.override(RepositoryMemoryContainer())
+    di_container.repository.override(RepositoryMemoryContainer())
     return di_container
 
 
@@ -31,16 +29,16 @@ async def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
 
 @pytest.fixture
 def admin_repository(di_container: DiContainer) -> AdminMemoryRepository:
-    return di_container.repositories.admin_repository()
+    return di_container.repository.admin_repository()
 
 
 @pytest.fixture
-def subscription_repository(di_container: DiContainer) -> SubscriptionRepository:
-    return di_container.repositories.subscription_repository()
+def subscription_repository(di_container: DiContainer) -> SubscriptionMemoryRepository:
+    return di_container.repository.subscription_repository()
 
 
 @pytest.fixture
-async def subscription(subscription_repository: SubscriptionRepository) -> Subscription:
+async def subscription(subscription_repository: SubscriptionMemoryRepository) -> Subscription:
     subscription = SubscriptionFactory.create_subscription()
     await subscription_repository.create(subscription=subscription)
     return subscription

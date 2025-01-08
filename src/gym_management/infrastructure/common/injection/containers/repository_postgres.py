@@ -1,5 +1,3 @@
-from typing import AsyncGenerator
-
 import orjson
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
@@ -13,18 +11,11 @@ from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_reposito
 )
 
 
-def build_sa_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+def _build_sa_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
-async def build_sa_session(
-    session_factory: async_sessionmaker[AsyncSession],
-) -> AsyncGenerator[AsyncSession, None]:
-    async with session_factory() as session:
-        yield session
-
-
-async def init_postgres_session() -> AsyncSession:
+async def _init_postgres_session() -> AsyncSession:
     config = load_config()
     engine = create_async_engine(
         url=config.database.full_url,
@@ -34,17 +25,18 @@ async def init_postgres_session() -> AsyncSession:
         json_deserializer=orjson.loads,
         pool_size=50,
     )
-    session_factory = build_sa_session_factory(engine)
+    session_factory = _build_sa_session_factory(engine)
     async with session_factory() as session:
         yield session
 
     await engine.dispose()
 
 
-class RepositoryPostgresContainer(containers.DeclarativeContainer):
-    __postgres_session = providers.Resource(init_postgres_session)
+session_provider = providers.Resource(_init_postgres_session)
 
-    admin_repository = providers.Singleton(AdminPostgresRepository, session=__postgres_session)
-    subscription_repository = providers.Singleton(SubscriptionPostgresRepository, session=__postgres_session)
-    gym_repository = providers.Singleton(GymPostgresRepository, session=__postgres_session)
+
+class RepositoryPostgresContainer(containers.DeclarativeContainer):
+    admin_repository = providers.Singleton(AdminPostgresRepository, session=session_provider)
+    subscription_repository = providers.Singleton(SubscriptionPostgresRepository, session=session_provider)
+    gym_repository = providers.Singleton(GymPostgresRepository, session=session_provider)
     failed_domain_event_repository = providers.Singleton(FailedDomainEventTinyDBRepository)

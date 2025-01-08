@@ -7,14 +7,17 @@ from src.gym_management.domain.subscription.events.gym_added_event import GymAdd
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 
-class RoomContainer(containers.DeclarativeContainer):
-    repositories = providers.DependenciesContainer()
+class DomainEventContainer(containers.DeclarativeContainer):
+    repository = providers.DependenciesContainer()
     domain_eventbus = providers.Dependency(instance_of=DomainEventBus)
+
+    __gym_added_handler = providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus)
+    __some_event_handler = providers.Factory(SomeEventHandler)
 
     domain_events = providers.Dict(
         {
-            GymAddedEvent: providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus),
-            SubscriptionSetEvent: providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus),
-            SomeEvent: providers.Factory(SomeEventHandler),
+            GymAddedEvent: providers.List(__gym_added_handler),
+            SubscriptionSetEvent: providers.List(__gym_added_handler),
+            SomeEvent: providers.List(__some_event_handler),
         }
     )

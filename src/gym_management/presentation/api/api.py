@@ -27,7 +27,7 @@ def api_lifespan(di_container: DiContainer) -> Callable[[FastAPI], AsyncContextM
         await di_container.init_resources()
         asyncio.create_task(
             reprocess_failed_domain_events(
-                failed_events_repository=di_container.repositories.failed_domain_event_repository(),
+                failed_events_repository=di_container.repository.failed_domain_event_repository(),
                 domain_eventbus=await di_container.domain_eventbus(),
             )
         )
