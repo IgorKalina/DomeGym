@@ -8,16 +8,16 @@ from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 
 class DomainEventContainer(containers.DeclarativeContainer):
-    repository = providers.DependenciesContainer()
+    repository_container = providers.DependenciesContainer()
     domain_eventbus = providers.Dependency(instance_of=DomainEventBus)
 
-    __gym_added_handler = providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus)
-    __some_event_handler = providers.Factory(SomeEventHandler)
+    gym_added_handler = providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus)
+    some_event_handler = providers.Factory(SomeEventHandler)
 
     domain_events = providers.Dict(
         {
-            GymAddedEvent: providers.List(__gym_added_handler),
-            SubscriptionSetEvent: providers.List(__gym_added_handler),
-            SomeEvent: providers.List(__some_event_handler),
+            GymAddedEvent: providers.List(gym_added_handler),
+            SubscriptionSetEvent: providers.List(gym_added_handler),
+            SomeEvent: providers.List(some_event_handler),
         }
     )

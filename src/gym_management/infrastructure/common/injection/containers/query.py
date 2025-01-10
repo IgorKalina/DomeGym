@@ -9,18 +9,18 @@ from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 
 class QueryContainer(containers.DeclarativeContainer):
-    repository = providers.DependenciesContainer()
+    repository_container = providers.DependenciesContainer()
     domain_eventbus = providers.Dependency(instance_of=DomainEventBus)
 
-    __list_subscriptions_handler = providers.Factory(
-        ListSubscriptionsHandler, subscription_repository=repository.subscription_repository
+    list_subscriptions_handler = providers.Factory(
+        ListSubscriptionsHandler, subscription_repository=repository_container.subscription_repository
     )
-    __get_gym_handler = providers.Factory(
+    get_gym_handler = providers.Factory(
         GetGymHandler,
-        subscription_repository=repository.subscription_repository,
-        gym_repository=repository.gym_repository,
+        subscription_repository=repository_container.subscription_repository,
+        gym_repository=repository_container.gym_repository,
     )
 
     queries = providers.Dict(
-        {ListSubscriptions: __list_subscriptions_handler, GetGym: __get_gym_handler},
+        {ListSubscriptions: list_subscriptions_handler, GetGym: get_gym_handler},
     )

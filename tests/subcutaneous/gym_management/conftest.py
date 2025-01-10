@@ -12,9 +12,7 @@ from tests.common.gym_management.subscription.factory.subscription_factory impor
 
 @pytest.fixture
 async def di_container() -> DiContainer:
-    di_container = DiContainer()
-    di_container.repository.override(RepositoryMemoryContainer())
-    return di_container
+    return DiContainer(repository_container=RepositoryMemoryContainer())
 
 
 @pytest.fixture
@@ -29,12 +27,12 @@ async def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
 
 @pytest.fixture
 def admin_repository(di_container: DiContainer) -> AdminMemoryRepository:
-    return di_container.repository.admin_repository()
+    return di_container.repository_container.admin_repository()
 
 
 @pytest.fixture
 def subscription_repository(di_container: DiContainer) -> SubscriptionMemoryRepository:
-    return di_container.repository.subscription_repository()
+    return di_container.repository_container.subscription_repository()
 
 
 @pytest.fixture

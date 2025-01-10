@@ -31,32 +31,36 @@ async def register_domain_events(domain_eventbus: DomainEventBusMemory, domain_e
 
 
 class DiContainer(containers.DeclarativeContainer):
-    repository = providers.Container(RepositoryContainer)
+    # dependencies
+    repository_container: RepositoryContainer = providers.DependenciesContainer()
 
-    __domain_eventbus = providers.Singleton(
+    domain_eventbus = providers.Singleton(
         DomainEventBusMemory,
-        event_repository=repository.failed_domain_event_repository,
+        event_repository=repository_container.failed_domain_event_repository,
     )
-    __command_container = providers.Container(
-        CommandContainer, repository=repository, domain_eventbus=__domain_eventbus
+    # containers
+    command_container = providers.Container(
+        CommandContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
     )
-    __query_container = providers.Container(QueryContainer, repository=repository, domain_eventbus=__domain_eventbus)
-    __domain_event_container = providers.Container(
-        DomainEventContainer, repository=repository, domain_eventbus=__domain_eventbus
+    query_container = providers.Container(
+        QueryContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
+    )
+    domain_event_container = providers.Container(
+        DomainEventContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
     )
 
     command_invoker = providers.Resource(
         register_commands,
         command_invoker=providers.Singleton(CommandInvokerMemory),
-        commands=__command_container.commands,
+        commands=command_container.commands,
     )
 
     query_invoker = providers.Resource(
         register_queries,
         query_invoker=providers.Singleton(QueryInvokerMemory),
-        queries=__query_container.queries,
+        queries=query_container.queries,
     )
 
     domain_eventbus = providers.Resource(
-        register_domain_events, domain_eventbus=__domain_eventbus, domain_events=__domain_event_container.domain_events
+        register_domain_events, domain_eventbus=domain_eventbus, domain_events=domain_event_container.domain_events
     )

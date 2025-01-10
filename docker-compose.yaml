@@ -16,7 +16,7 @@ services:
       - ./alembic.ini:/app/alembic.ini:ro
     environment:
       - CONFIG_PATH=${CONFIG_PATH:-./config/prod_config.toml}
-    command: ["python", "-m", "alembic", "upgrade", "head"]
+    command: ["poetry", "run", "python", "-m", "alembic", "upgrade", "head"]
 
   postgres:
     container_name: domegym.postgres
@@ -34,7 +34,7 @@ services:
       POSTGRES_USER: ${GYM_MANAGEMENT_DATABASE__USER__NAME:-$USER}
       POSTGRES_DB: ${GYM_MANAGEMENT_DATABASE__NAME:-$USER}
     volumes:
-      - domegym.postgres.data:/var/lib/postgresql/users:rw
+      - domegym.postgres.data:/var/lib/postgresql/domegym.gym_mamangement:rw
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${GYM_MANAGEMENT_DATABASE__NAME} -U $${GYM_MANAGEMENT_DATABASE__USER__NAME}"]
       interval: 10s

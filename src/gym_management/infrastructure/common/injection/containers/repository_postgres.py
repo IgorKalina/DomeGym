@@ -1,9 +1,10 @@
 import orjson
-from dependency_injector import containers, providers
+from dependency_injector import providers
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from src.gym_management.infrastructure.admin.repository.repository_postgres import AdminPostgresRepository
 from src.gym_management.infrastructure.common.config import load_config
+from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
 from src.gym_management.infrastructure.gym.repository.repository_postgres import GymPostgresRepository
 from src.gym_management.infrastructure.subscription.repository.repository_postgres import SubscriptionPostgresRepository
 from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_repository import (
@@ -32,10 +33,9 @@ async def _init_postgres_session() -> AsyncSession:
     await engine.dispose()
 
 
-session_provider = providers.Resource(_init_postgres_session)
+class RepositoryPostgresContainer(RepositoryContainer):
+    session_provider = providers.Resource(_init_postgres_session)
 
-
-class RepositoryPostgresContainer(containers.DeclarativeContainer):
     admin_repository = providers.Singleton(AdminPostgresRepository, session=session_provider)
     subscription_repository = providers.Singleton(SubscriptionPostgresRepository, session=session_provider)
     gym_repository = providers.Singleton(GymPostgresRepository, session=session_provider)
