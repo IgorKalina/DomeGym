@@ -32,13 +32,11 @@ class FailedDomainEventTinyDBRepository(FailedDomainEventRepository):
     def __map_raw_event_to_domain_event(self, event: Dict) -> DomainEvent:
         event_type = event.pop("type")
         event_raw: Dict = json.loads(event["data"])
-        domain_event_class: Type[DomainEvent] | None = self.__get_event_class_by_type(event_type)
-        if domain_event_class is None:
-            raise TypeError(f"Type for '{event_type}' event type does not exist")
+        domain_event_class: Type[DomainEvent] = self.__get_event_class_by_type(event_type)
         return domain_event_class(**event_raw)
 
     @staticmethod
-    def __get_event_class_by_type(event_type: str) -> Type[DomainEvent] | None:
+    def __get_event_class_by_type(event_type: str) -> Type[DomainEvent]:
         """
         Dynamically find and return the class based on event type
         """
@@ -52,4 +50,4 @@ class FailedDomainEventTinyDBRepository(FailedDomainEventRepository):
             for sub_subclass in subclass_subclasses:
                 if sub_subclass.__name__ == event_type:
                     return sub_subclass
-        return None
+        raise TypeError(f"Type for '{event_type}' event type does not exist")
