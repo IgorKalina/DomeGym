@@ -1,10 +1,9 @@
-version: "3.9"
-
 services:
   postgres_migration:
     container_name: domegym.postgres_migration
     build:
       context: .
+      dockerfile: Dockerfile
     restart: on-failure
     depends_on:
       postgres:
@@ -12,15 +11,17 @@ services:
     networks:
       - domegym.postgres.network
     volumes:
-      - ./config:/app/config:ro
       - ./alembic.ini:/app/alembic.ini:ro
+      - ./.env:/app/.env:ro
+      - ./src/gym_management/infrastructure/common/postgres/migrations:/app/src/gym_management/infrastructure/common/postgres/migrations:ro
     environment:
-      - CONFIG_PATH=${CONFIG_PATH:-./config/prod_config.toml}
-    command: ["poetry", "run", "python", "-m", "alembic", "upgrade", "head"]
+      GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres
+      GYM_MANAGEMENT_DATABASE__PORT: 5432
+    command: ["-m", "alembic", "upgrade", "head"]
 
   postgres:
     container_name: domegym.postgres
-    image: "postgres:15-alpine"
+    image: "postgres:16-alpine"
     hostname: domegym.postgres
     restart: unless-stopped
     expose:
@@ -36,7 +37,7 @@ services:
     volumes:
       - domegym.postgres.data:/var/lib/postgresql/domegym.gym_mamangement:rw
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${GYM_MANAGEMENT_DATABASE__NAME} -U $${GYM_MANAGEMENT_DATABASE__USER__NAME}"]
+      test: ["CMD-SHELL", "pg_isready -d ${GYM_MANAGEMENT_DATABASE__NAME} -U ${GYM_MANAGEMENT_DATABASE__USER__NAME}"]
       interval: 10s
       timeout: 60s
       retries: 5
