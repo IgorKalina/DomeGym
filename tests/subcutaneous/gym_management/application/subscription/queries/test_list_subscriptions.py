@@ -5,7 +5,7 @@ import pytest
 
 from src.gym_management.infrastructure.subscription.repository.repository_memory import SubscriptionMemoryRepository
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
-from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
+from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
 from tests.common.gym_management.subscription.factory.subscription_query_factory import SubscriptionQueryFactory
 
 if typing.TYPE_CHECKING:
@@ -25,7 +25,7 @@ class TestListSubscriptions:
     @pytest.mark.asyncio
     async def test_list_subscriptions_when_exists_should_return_all_subscriptions(self) -> None:
         # Arrange
-        subscription = SubscriptionFactory.create_subscription()
+        subscription = SubscriptionDBFactory.create_subscription()
         await self._subscription_repository.create(subscription)
         query = SubscriptionQueryFactory.create_list_subscription_query()
 

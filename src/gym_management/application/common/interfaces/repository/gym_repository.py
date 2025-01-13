@@ -1,14 +1,14 @@
 import abc
 import uuid
 
-from src.gym_management.domain.gym.aggregate_root import Gym
+from src.gym_management.application.gym.dto.repository import GymDB
 
 
 class GymRepository(abc.ABC):
     @abc.abstractmethod
-    async def create(self, gym: Gym) -> None:
+    async def create(self, gym: GymDB) -> None:
         pass
 
     @abc.abstractmethod
-    async def get_by_id(self, gym_id: uuid.UUID) -> Gym | None:
+    async def get_by_id(self, gym_id: uuid.UUID) -> GymDB | None:
         pass

@@ -2,33 +2,29 @@ import uuid
 
 from sqlalchemy import select
 
+from src.gym_management.application.admin.dto.repository import AdminDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
-from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 from ..postgres import models
-from ..postgres.mappers.admin import (
-    map_admin_db_model_to_domain_model,
-    map_admin_domain_model_to_db_model,
-)
 
 
 class AdminPostgresRepository(SQLAlchemyRepository, AdminRepository):
-    async def create(self, admin: Admin) -> None:
-        db_admin = map_admin_domain_model_to_db_model(admin)
-        self._session.add(db_admin)
-        await self._session.flush((db_admin,))
+    async def create(self, admin: AdminDB) -> None:
+        admin = models.Admin.from_dto(admin)
+        self._session.add(admin)
+        await self._session.flush((admin,))
         await self._session.commit()
 
-    async def get_by_id(self, admin_id: uuid.UUID) -> Admin | None:
+    async def get_by_id(self, admin_id: uuid.UUID) -> AdminDB | None:
         query = select(models.Admin).where(models.Admin.id == admin_id)
         result = await self._session.scalars(query)
-        admin = result.one_or_none()
-        return map_admin_db_model_to_domain_model(admin) if admin else None
+        admin: models.Admin = result.one_or_none()
+        return admin.to_dto() if admin else None
 
-    async def update(self, admin: Admin) -> Admin:
-        db_admin = map_admin_domain_model_to_db_model(admin)
-        await self._session.merge(db_admin)
-        await self._session.flush((db_admin,))
+    async def update(self, admin: AdminDB) -> AdminDB:
+        admin = models.Admin.from_dto(admin)
+        await self._session.merge(admin)
+        await self._session.flush((admin,))
         await self._session.commit()
-        return map_admin_db_model_to_domain_model(db_admin)
+        return admin.to_dto()

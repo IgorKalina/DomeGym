@@ -16,7 +16,7 @@ from tests.common.gym_management import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.domain.gym.aggregate_root import Gym
+    from src.gym_management.application.gym.dto.repository import GymDB
 
 
 class TestGetGym:
@@ -32,14 +32,16 @@ class TestGetGym:
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
-    async def test_get_gym_when_gym_and_subscription_exist_should_return_gym(self, subscription: Subscription) -> None:
+    async def test_get_gym_when_gym_and_subscription_exist_should_return_gym(
+        self, subscription_db: Subscription
+    ) -> None:
         # Arrange
-        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription.id)
-        expected_gym: Gym = await self._command_invoker.invoke(create_gym_command)
+        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription_db.id)
+        expected_gym: GymDB = await self._command_invoker.invoke(create_gym_command)
         get_gym: GetGym = GetGym(subscription_id=constants.subscription.SUBSCRIPTION_ID, gym_id=expected_gym.id)
 
         # Act
-        gym: Gym = await self._query_invoker.invoke(get_gym)
+        gym: GymDB = await self._query_invoker.invoke(get_gym)
 
         # Assert
         assert gym == expected_gym
@@ -60,10 +62,10 @@ class TestGetGym:
 
     @pytest.mark.asyncio
     async def test_get_gym_when_subscription_exists_and_no_gym_should_raise_exception(
-        self, subscription: Subscription
+        self, subscription_db: Subscription
     ) -> None:
         # Arrange
-        get_gym: GetGym = GetGym(subscription_id=subscription.id, gym_id=constants.gym.GYM_ID)
+        get_gym: GetGym = GetGym(subscription_id=subscription_db.id, gym_id=constants.gym.GYM_ID)
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:

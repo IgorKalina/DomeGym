@@ -1,5 +1,6 @@
 import sys
 import uuid
+from copy import copy
 from typing import List
 
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
@@ -13,14 +14,14 @@ class Subscription(AggregateRoot):
     def __init__(
         self,
         *args,
-        subscription_type: SubscriptionType,
+        type: SubscriptionType,
         admin_id: uuid.UUID,
         gym_ids: List[uuid.UUID] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
 
-        self.type = subscription_type
+        self.type = type
         self.admin_id = admin_id
 
         self.__gym_ids = gym_ids or []
@@ -33,6 +34,10 @@ class Subscription(AggregateRoot):
 
     def has_gym(self, gym_id: uuid.UUID) -> bool:
         return gym_id in self.__gym_ids
+
+    @property
+    def gym_ids(self) -> List[uuid.UUID]:
+        return copy(self.__gym_ids)
 
     @property
     def max_gyms(self) -> int:

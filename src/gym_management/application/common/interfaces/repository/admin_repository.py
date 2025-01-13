@@ -1,18 +1,18 @@
 import abc
 import uuid
 
-from src.gym_management.domain.admin.aggregate_root import Admin
+from src.gym_management.application.admin.dto.repository import AdminDB
 
 
 class AdminRepository(abc.ABC):
     @abc.abstractmethod
-    async def create(self, admin: Admin) -> None:
+    async def create(self, admin: AdminDB) -> None:
         pass
 
     @abc.abstractmethod
-    async def get_by_id(self, admin_id: uuid.UUID) -> Admin | None:
+    async def get_by_id(self, admin_id: uuid.UUID) -> AdminDB | None:
         pass
 
     @abc.abstractmethod
-    async def update(self, admin: Admin) -> Admin:
+    async def update(self, admin: AdminDB) -> AdminDB:
         pass
