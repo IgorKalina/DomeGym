@@ -1,7 +1,7 @@
 import datetime
 from typing import Self
 
-from sqlalchemy import MetaData, sql
+from sqlalchemy import TIMESTAMP, MetaData, sql
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry
 
 from src.shared_kernel.application.dto import DataTransferObject
@@ -29,8 +29,11 @@ class TimedBaseModel(BaseModel):
 
     __abstract__ = True
 
-    created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, server_default=sql.func.now())
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=sql.func.now()
+    )
     updated_at: Mapped[datetime.datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
         nullable=False,
         server_default=sql.func.now(),
         onupdate=sql.func.now(),
@@ -40,5 +43,5 @@ class TimedBaseModel(BaseModel):
     def from_dto(cls, dto: DataTransferObject) -> Self:
         raise NotImplementedError()
 
-    def to_dto(self) -> DataTransferObject:
+    def to_dto(self, *args, **kwargs) -> DataTransferObject:
         raise NotImplementedError()

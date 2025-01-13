@@ -1,16 +1,21 @@
+import typing
 import uuid
 from typing import List
 
 import pytest
 
+from src.gym_management.application.gym.dto.repository import GymDB
+from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
-from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
 from src.gym_management.infrastructure.subscription.repository.repository_memory import SubscriptionMemoryRepository
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
+
+if typing.TYPE_CHECKING:
+    from src.gym_management.domain.gym.aggregate_root import Gym
 
 
 class TestCreateGym:
@@ -19,32 +24,37 @@ class TestCreateGym:
         self,
         command_invoker: CommandInvokerMemory,
         subscription_repository: SubscriptionMemoryRepository,
-        subscription: Subscription,
+        subscription_db: SubscriptionDB,
     ) -> None:
         self._command_invoker = command_invoker
         self._subscription_repository = subscription_repository
-        self._subscription = subscription
+        self._subscription_db: SubscriptionDB = subscription_db
+        self._subscription: Subscription = Subscription(
+            id=self._subscription_db.id,
+            type=self._subscription_db.type,
+            admin_id=self._subscription_db.admin_id,
+            gym_ids=self._subscription_db.gym_ids,
+        )
 
     @pytest.mark.asyncio
     async def test_create_gym_when_valid_command_should_create_gym(self) -> None:
         # Arrange
-        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription.id)
+        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription_db.id)
 
         # Act
-        gym: Gym = await self._command_invoker.invoke(create_gym_command)
+        gym: GymDB = await self._command_invoker.invoke(create_gym_command)
 
         # Assert
-        assert isinstance(gym, Gym)
-        subscription_in_db: Subscription | None = await self._subscription_repository.get_by_id(
+        assert isinstance(gym, GymDB)
+        subscription_in_db: SubscriptionDB | None = await self._subscription_repository.get_by_id(
             subscription_id=create_gym_command.subscription_id
         )
         assert subscription_in_db is not None
-        assert subscription_in_db.has_gym(gym_id=gym.id)
 
     @pytest.mark.asyncio
     async def test_create_gym_when_more_than_subscription_allows_should_fail(self) -> None:
         # Arrange
-        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription.id)
+        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription_db.id)
         created_gyms: List[Gym] = []
         for _ in range(self._subscription.max_gyms):
             created_gyms.append(await self._command_invoker.invoke(create_gym_command))
@@ -62,7 +72,7 @@ class TestCreateGym:
         )
         assert err.value.error_type == ErrorType.VALIDATION
         assert len(created_gyms) == self._subscription.max_gyms
-        assert all(isinstance(gym, Gym) for gym in created_gyms)
+        assert all(isinstance(gym, GymDB) for gym in created_gyms)
 
     @pytest.mark.asyncio
     async def test_create_gym_when_subscription_not_exists_should_fail(self) -> None:

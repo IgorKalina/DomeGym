@@ -10,7 +10,7 @@ from tests.common.gym_management.subscription.factory.subscription_factory impor
 class TestSubscriptionAggregate:
     def test_add_gym_when_less_or_equal_than_subscription_allows_should_succeed(self) -> None:
         # Arrange
-        subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
+        subscription = SubscriptionFactory.create_subscription(type=SubscriptionType.PRO)
         gyms_allowed = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
 
         # Act
@@ -22,7 +22,7 @@ class TestSubscriptionAggregate:
 
     def test_add_gym_when_more_than_subscription_allows_should_fail(self) -> None:
         # Arrange
-        subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
+        subscription = SubscriptionFactory.create_subscription(type=SubscriptionType.PRO)
         gyms_allowed = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
         for gym in gyms_allowed:
             subscription.add_gym(gym=gym)

@@ -10,7 +10,7 @@ from tests.common.gym_management.subscription.factory.subscription_factory impor
 class TestSubscriptionDomainEvents:
     def test_subscription_add_gym_when_added_should_create_domain_event(self) -> None:
         # Arrange
-        subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
+        subscription = SubscriptionFactory.create_subscription(type=SubscriptionType.PRO)
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
         expected_domain_events = [
             GymAddedEvent(
@@ -29,7 +29,7 @@ class TestSubscriptionDomainEvents:
 
     def test_subscription_add_gym_when_error_should_not_create_domain_event(self) -> None:
         # Arrange
-        subscription = SubscriptionFactory.create_subscription(subscription_type=SubscriptionType.PRO)
+        subscription = SubscriptionFactory.create_subscription(type=SubscriptionType.PRO)
         gyms = [GymFactory.create_gym() for _ in range(subscription.max_gyms)]
         for gym in gyms:
             subscription.add_gym(gym)

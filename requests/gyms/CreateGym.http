@@ -1,4 +1,4 @@
-@subscriptionId=0ab13b6f-fc1c-49f7-8577-6b31333f7acb
+@subscriptionId=72815daf-140f-44f3-96cd-6ed6a7c35b74
 
 
 POST http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms
