@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Tuple, TypeAlias
 
 import httpx
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.gym.v1.requests.create_gym_request import CreateGymRequest
@@ -13,19 +13,21 @@ ResponseData: TypeAlias = OkResponse[GymResponse] | ErrorResponse
 
 
 class GymV1ApiService:
-    def __init__(self, api_client: TestClient) -> None:
+    def __init__(self, api_client: AsyncClient) -> None:
         self.__api_client = api_client
 
         self.__version = "v1"
 
-    def create(self, request: CreateGymRequest, subscription_id: uuid.UUID) -> Tuple[httpx.Response, ResponseData]:
-        response = self.__api_client.post(self.__get_url(subscription_id), json=request.model_dump())
+    async def create(
+        self, request: CreateGymRequest, subscription_id: uuid.UUID
+    ) -> Tuple[httpx.Response, ResponseData]:
+        response = await self.__api_client.post(self.__get_url(subscription_id), json=request.model_dump())
         if response.status_code != HTTPStatus.CREATED:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[GymResponse](status=response.status_code, **response.json())
 
-    def get(self, gym_id: uuid.UUID, subscription_id: uuid.UUID) -> Tuple[httpx.Response, ResponseData]:
-        response = self.__api_client.get(f"{self.__get_url(subscription_id)}/{gym_id}")
+    async def get(self, gym_id: uuid.UUID, subscription_id: uuid.UUID) -> Tuple[httpx.Response, ResponseData]:
+        response = await self.__api_client.get(f"{self.__get_url(subscription_id)}/{gym_id}")
         if response.status_code != HTTPStatus.OK:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[GymResponse](status=response.status_code, **response.json())

@@ -1,9 +1,12 @@
+import logging
+
 import orjson
 from dependency_injector import providers
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from src.gym_management.infrastructure.admin.repository.repository_postgres import AdminPostgresRepository
-from src.gym_management.infrastructure.common.config import load_config
+from src.gym_management.infrastructure.common.config import Config
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
 from src.gym_management.infrastructure.gym.repository.repository_postgres import GymPostgresRepository
 from src.gym_management.infrastructure.subscription.repository.repository_postgres import SubscriptionPostgresRepository
@@ -11,13 +14,14 @@ from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_reposito
     FailedDomainEventTinyDBRepository,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def _build_sa_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
-async def _init_postgres_session() -> AsyncSession:
-    config = load_config()
+async def _init_postgres_session(config: Config) -> AsyncSession:
     engine = create_async_engine(
         url=config.database.full_url,
         echo=True,
@@ -28,13 +32,16 @@ async def _init_postgres_session() -> AsyncSession:
     )
     session_factory = _build_sa_session_factory(engine)
     async with session_factory() as session:
+        await session.execute(select(1))
+        logger.info("Postgres session has been set up successfully")
         yield session
 
     await engine.dispose()
 
 
 class RepositoryPostgresContainer(RepositoryContainer):
-    session_provider = providers.Resource(_init_postgres_session)
+    config: providers.Dependency[Config] = providers.Dependency()
+    session_provider = providers.Resource(_init_postgres_session, config=config)
 
     admin_repository = providers.Singleton(AdminPostgresRepository, session=session_provider)
     subscription_repository = providers.Singleton(SubscriptionPostgresRepository, session=session_provider)

@@ -1,25 +1,35 @@
 services:
-  postgres_migration:
-    container_name: domegym.postgres_migration
+  api:
+    profiles: [ "api" ]
+    container_name: domegym.gym_management_api
+    image: domegym.gym_management_api
     build:
       context: .
       dockerfile: Dockerfile
-    restart: on-failure
+    restart: unless-stopped
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - domegym.postgres.network
     volumes:
-      - ./alembic.ini:/app/alembic.ini:ro
       - ./.env:/app/.env:ro
-      - ./src/gym_management/infrastructure/common/postgres/migrations:/app/src/gym_management/infrastructure/common/postgres/migrations:ro
     environment:
       GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres
       GYM_MANAGEMENT_DATABASE__PORT: 5432
-    command: ["-m", "alembic", "upgrade", "head"]
+    healthcheck:
+      test: [ "CMD", "python", "/app/scripts/gym_management_healthcheck.py" ]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
 
   postgres:
+    profiles: [ "api", "dependency" ]
     container_name: domegym.postgres
     image: "postgres:16-alpine"
     hostname: domegym.postgres
@@ -42,6 +52,27 @@ services:
       timeout: 60s
       retries: 5
       start_period: 10s
+
+  postgres_migration:
+    profiles: [ "api", "dependency" ]
+    container_name: domegym.postgres_migration
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - domegym.postgres.network
+    volumes:
+      - ./alembic.ini:/app/alembic.ini:ro
+      - ./.env:/app/.env:ro
+      - ./src/gym_management/infrastructure/common/postgres/migrations:/app/src/gym_management/infrastructure/common/postgres/migrations:ro
+    environment:
+      GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres
+      GYM_MANAGEMENT_DATABASE__PORT: 5432
+    command: ["-m", "alembic", "upgrade", "head"]
 
 volumes:
   domegym.postgres.data: {}

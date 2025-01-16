@@ -14,8 +14,8 @@ async def process_domain_events_middleware(
     call_next: Callable[[Request], Awaitable[Response]],
     domain_eventbus: DomainEventBus = Depends(Provide[DiContainer.domain_eventbus]),
 ) -> Response:
+    response = await call_next(request)
     background_tasks = BackgroundTasks()
     background_tasks.add_task(domain_eventbus.process_events)
-    response = await call_next(request)
     response.background = background_tasks
     return response

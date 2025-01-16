@@ -9,32 +9,30 @@ from tests.common.gym_management import constants
 from tests.common.gym_management.subscription.service.api_v1 import SubscriptionV1ApiService
 
 
+@pytest.mark.asyncio
 class TestListSubscriptions:
     @pytest.fixture(autouse=True)
     def setup_method(self, subscription_v1_api: SubscriptionV1ApiService) -> None:
         self._subscriptions_api = subscription_v1_api
 
-    @pytest.mark.asyncio
     async def test_when_no_subscriptions_exist_should_return_empty_list(self) -> None:
         # Act
-        response, ok_response = self._subscriptions_api.list()
+        response, ok_response = await self._subscriptions_api.list()
 
         # Assert
         assert response.status_code == HTTPStatus.OK
-        _, ok_response = self._subscriptions_api.list()
         assert len(ok_response.data) == 0
 
-    @pytest.mark.asyncio
     async def test_when_subscriptions_exist_should_return_subscription(self) -> None:
         # Arrange
         request = CreateSubscriptionRequest(
             admin_id=constants.admin.ADMIN_ID,
             subscription_type=constants.subscription.DEFAULT_SUBSCRIPTION_TYPE,
         )
-        self._subscriptions_api.create(request)
+        await self._subscriptions_api.create(request)
 
         # Act
-        response, ok_response = self._subscriptions_api.list()
+        response, ok_response = await self._subscriptions_api.list()
 
         # Assert
         assert response.status_code == HTTPStatus.OK

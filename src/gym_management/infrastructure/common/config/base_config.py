@@ -13,7 +13,7 @@ ENV_PREFIX = "GYM_MANAGEMENT_"
 ENV_NESTED_DELIMITED = "__"
 
 
-def _find_yaml_configs(folder: str) -> List[str]:
+def find_yaml_configs(folder: str) -> List[str]:
     return [
         os.path.join(folder, config) for config in os.listdir(folder) if os.path.isfile(os.path.join(folder, config))
     ]
@@ -24,7 +24,7 @@ class BaseConfig(BaseSettings):
         env_file=(find_dotenv(".env"),),
         env_prefix=ENV_PREFIX,
         env_nested_delimiter=ENV_NESTED_DELIMITED,
-        yaml_file=_find_yaml_configs("configs"),
+        yaml_file=find_yaml_configs("configs"),
     )
 
     @classmethod

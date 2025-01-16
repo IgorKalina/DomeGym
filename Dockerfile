@@ -19,6 +19,7 @@ COPY --from=app_build /usr/local/lib/python${PYTHON_VERSION}/site-packages /usr/
 # Copy only files required for runnning the application
 WORKDIR /app
 COPY src src/
+COPY scripts scripts/
 COPY configs configs/
 
 ENV PYTHONPATH=/usr/local/lib/python${PYTHON_VERSION}/site-packages:/app

@@ -32,9 +32,7 @@ build-test:
 
 .PHONY: run-docker
 run-docker: build-app
-	@echo "Stopping and removing existing container if it exists"
-	@docker ps -q -f name=${APP_CONTAINER_NAME} && docker rm -f ${APP_CONTAINER_NAME} || true
-	docker run -v ./.env:/app/.env:ro -p 8000:8000 -d --name ${APP_CONTAINER_NAME} ${APP_CONTAINER_NAME}
+	docker-compose up --build
 
 .PHONY: stop-docker
 stop-docker:
@@ -42,7 +40,7 @@ stop-docker:
 
 .PHONY: test-docker
 test-docker: build-test
-	docker run ${TEST_CONTAINER_NAME} make test
+	docker run --rm -it --privileged ${TEST_CONTAINER_NAME} make test
 
 .PHONY: lint-docker
 lint-docker: build-test

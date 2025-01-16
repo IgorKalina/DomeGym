@@ -23,7 +23,7 @@ class TestCreateSubscription:
         )
 
         # Act
-        response, response_data = self._subscriptions_api.create(request)
+        response, response_data = await self._subscriptions_api.create(request)
 
         # Assert
         assert response.status_code == HTTPStatus.CREATED
@@ -42,10 +42,10 @@ class TestCreateSubscription:
             admin_id=constants.admin.ADMIN_ID,
             subscription_type=constants.subscription.DEFAULT_SUBSCRIPTION_TYPE,
         )
-        self._subscriptions_api.create(request)
+        await self._subscriptions_api.create(request)
 
         # Act
-        response, response_data = self._subscriptions_api.create(request)
+        response, response_data = await self._subscriptions_api.create(request)
 
         # Assert
         assert response.status_code == HTTPStatus.CONFLICT
@@ -57,5 +57,5 @@ class TestCreateSubscription:
         assert error.title == "Admin.Conflict"
         assert error.detail == "Admin with the provided id not found"
 
-        _, ok_response = self._subscriptions_api.list()
+        _, ok_response = await self._subscriptions_api.list()
         assert len(ok_response.data) == 1
