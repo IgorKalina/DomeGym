@@ -19,4 +19,4 @@ class AdminAlreadyExistsError(AdminAppError):
 
     @property
     def detail(self) -> str:
-        return "Admin with the provided id not found"
+        return "Admin with the provided id already exists"

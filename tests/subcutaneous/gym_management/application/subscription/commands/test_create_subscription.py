@@ -45,7 +45,7 @@ class TestCreateSubscription:
 
         # Assert
         assert err.value.title == "Admin.Conflict"
-        assert err.value.detail == "Admin with the provided id not found"
+        assert err.value.detail == "Admin with the provided id already exists"
         assert err.value.error_type == ErrorType.CONFLICT
 
     async def _assert_subscription_in_db(self, create_subscription: CreateSubscription) -> None:

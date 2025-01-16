@@ -32,7 +32,7 @@ build-test:
 
 .PHONY: run-docker
 run-docker: build-app
-	docker-compose up --build
+	docker-compose --profile api up --build
 
 .PHONY: stop-docker
 stop-docker:

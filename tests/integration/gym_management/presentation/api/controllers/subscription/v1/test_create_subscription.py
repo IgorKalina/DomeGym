@@ -55,7 +55,7 @@ class TestCreateSubscription:
         assert len(response_data.errors) == 1
         error = response_data.errors[0]
         assert error.title == "Admin.Conflict"
-        assert error.detail == "Admin with the provided id not found"
+        assert error.detail == "Admin with the provided id already exists"
 
         _, ok_response = await self._subscriptions_api.list()
         assert len(ok_response.data) == 1
