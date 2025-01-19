@@ -33,7 +33,7 @@ jobs:
 
       - name: Tests
         run: |
-          docker run -e ENV=test -v $(pwd)/coverage:/app/coverage ${{ env.TEST_IMAGE_NAME }} make test
+          docker run --rm  -e ENV=test -v $(pwd)/coverage:/app/coverage -v /var/run/docker.sock:/var/run/docker.sock --network host ${TEST_CONTAINER_NAME} make test
 
       - name: Add coverage comment
         uses: MishaKav/pytest-coverage-comment@main
