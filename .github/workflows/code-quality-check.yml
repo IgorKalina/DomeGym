@@ -18,6 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: KengoTODA/actions-setup-docker-compose@v1
+
       - name: Lint
         run: |
           make lint-docker
@@ -29,11 +31,11 @@ jobs:
 
       - name: Build test image
         run: |
-          docker build -f ${{ env.TEST_DOCKERFILE_NAME }} . -t ${{ env.TEST_IMAGE_NAME }}
+          docker-compose -f docker-compose.test.yaml build
 
       - name: Tests
         run: |
-          docker run -e ENV=test -v $(pwd)/coverage:/app/coverage ${{ env.TEST_IMAGE_NAME }} make test
+          docker-compose -f docker-compose.test.yaml run -e ENV=test -v $(pwd)/coverage:/app/coverage --rm gym_management_test make test
 
       - name: Add coverage comment
         uses: MishaKav/pytest-coverage-comment@main
