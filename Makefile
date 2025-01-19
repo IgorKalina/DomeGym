@@ -1,5 +1,4 @@
-APP_CONTAINER_NAME := gym-management
-TEST_CONTAINER_NAME := gym-management-test
+DOCKER_COMPOSE_TEST := docker-compose -f docker-compose.test.yaml
 
 .PHONY: install
 install:
@@ -24,27 +23,27 @@ lint:
 # Docker-specific commands
 .PHONY: build
 build-app:
-	docker build . -t ${APP_CONTAINER_NAME}
+	docker-compose --profile api build
 
 .PHONY: build-test
 build-test:
-	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}
+	${DOCKER_COMPOSE_TEST} build
 
 .PHONY: run-docker
 run-docker: build-app
-	docker-compose --profile api up --build
+	docker-compose --profile api up
 
 .PHONY: stop-docker
 stop-docker:
-	docker stop ${APP_CONTAINER_NAME}
+	docker-compose --profile api down
 
 .PHONY: test-docker
 test-docker: build-test
-	docker run --rm -it --privileged ${TEST_CONTAINER_NAME} make test
+	${DOCKER_COMPOSE_TEST} run --rm gym_management_test make test
 
 .PHONY: lint-docker
 lint-docker: build-test
-	docker run ${TEST_CONTAINER_NAME} make lint
+	${DOCKER_COMPOSE_TEST} run --rm gym_management_test make lint
 
 .PHONY: test
 test:

@@ -7,6 +7,7 @@ from src.gym_management.infrastructure.common.injection.main import DiContainer
 
 
 def create_dependency_injection_container() -> DiContainer:
-    di_container = DiContainer(repository_container=RepositoryPostgresContainer(config=load_config()))
+    repository_container = RepositoryPostgresContainer(config=load_config().database)
+    di_container = DiContainer(repository_container=repository_container)
     di_container.wire(packages=[presentation])
     return di_container

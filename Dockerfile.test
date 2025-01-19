@@ -7,9 +7,9 @@ RUN pip install --no-cache-dir "poetry==${POETRY_VERSION}"
 
 COPY . /app
 WORKDIR /app
-COPY .env.test /.env
+COPY .env.test /.env.test
 
-# Installing git to be able to run pre-commit for checking
+# Installing git to be able to run pre-commit linters
 RUN apt-get update && apt-get install -y make git
 RUN make install
 RUN git init . && make pre-commit-install

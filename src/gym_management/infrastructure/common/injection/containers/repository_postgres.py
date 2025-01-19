@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from src.gym_management.infrastructure.admin.repository.repository_postgres import AdminPostgresRepository
-from src.gym_management.infrastructure.common.config import Config
+from src.gym_management.infrastructure.common.config.database import DatabaseConfig
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
 from src.gym_management.infrastructure.gym.repository.repository_postgres import GymPostgresRepository
 from src.gym_management.infrastructure.subscription.repository.repository_postgres import SubscriptionPostgresRepository
@@ -21,9 +21,9 @@ def _build_sa_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSe
     return async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
-async def _init_postgres_session(config: Config) -> AsyncSession:
+async def _init_postgres_session(config: DatabaseConfig) -> AsyncSession:
     engine = create_async_engine(
-        url=config.database.full_url,
+        url=config.full_url,
         echo=True,
         echo_pool=True,
         json_serializer=lambda data: orjson.dumps(data).decode(),
@@ -40,7 +40,7 @@ async def _init_postgres_session(config: Config) -> AsyncSession:
 
 
 class RepositoryPostgresContainer(RepositoryContainer):
-    config: providers.Dependency[Config] = providers.Dependency()
+    config: providers.Dependency[DatabaseConfig] = providers.Dependency()
     session_provider = providers.Resource(_init_postgres_session, config=config)
 
     admin_repository = providers.Singleton(AdminPostgresRepository, session=session_provider)
