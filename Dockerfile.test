@@ -12,4 +12,4 @@ COPY .env.test /.env.test
 # Installing git to be able to run pre-commit linters
 RUN apt-get update && apt-get install -y make git
 RUN make install
-RUN git init . && make pre-commit-install
+RUN git init . && git add . && make pre-commit-install
