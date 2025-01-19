@@ -18,10 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: KengoTODA/actions-setup-docker-compose@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Lint
         run: |
           make lint-docker
@@ -31,17 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: KengoTODA/actions-setup-docker-compose@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build test image
         run: |
-          docker-compose -f docker-compose.test.yaml build
+          docker build -f ${{ env.TEST_DOCKERFILE_NAME }} . -t ${{ env.TEST_IMAGE_NAME }}
 
       - name: Tests
         run: |
-          docker-compose -f docker-compose.test.yaml run -e ENV=test -v $(pwd)/coverage:/app/coverage --rm gym_management_test make test
+          docker run -e ENV=test -v $(pwd)/coverage:/app/coverage ${{ env.TEST_IMAGE_NAME }} make test
 
       - name: Add coverage comment
         uses: MishaKav/pytest-coverage-comment@main
