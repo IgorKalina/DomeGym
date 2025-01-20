@@ -3,7 +3,7 @@ import pytest
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
-from tests.common.gym_management.room.room_factory import RoomFactory
+from tests.common.gym_management.room.factory.room_factory import RoomFactory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 

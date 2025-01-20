@@ -25,7 +25,7 @@ class TestListSubscriptions:
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
-    async def test_list_subscriptions_when_exists_should_return_all_subscriptions(self) -> None:
+    async def test_list_subscriptions_when_exist_should_return_all_subscriptions(self) -> None:
         # Arrange
         subscription = SubscriptionDBFactory.create_subscription()
         await self._subscription_repository.create(subscription)
@@ -39,7 +39,7 @@ class TestListSubscriptions:
         assert result[0] == subscription
 
     @pytest.mark.asyncio
-    async def test_list_subscriptions_when_not_exists_should_return_empty_result(self) -> None:
+    async def test_list_subscriptions_when_not_exist_should_return_empty_result(self) -> None:
         # Arrange
         query = SubscriptionQueryFactory.create_list_subscription_query()
 

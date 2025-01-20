@@ -1,6 +1,5 @@
 import logging
 import uuid
-from dataclasses import dataclass
 from typing import List
 
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
@@ -18,7 +17,6 @@ from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 logger = logging.getLogger(__name__)
 
 
-@dataclass(kw_only=True, frozen=True)
 class CreateGym(Command):
     name: str
     subscription_id: uuid.UUID
@@ -47,7 +45,13 @@ class CreateGymHandler(CommandHandler):
             admin_id=subscription_db.admin_id,
             gym_ids=[gym.id for gym in gyms],
         )
-        gym = Gym(name=command.name, max_rooms=subscription.max_rooms, subscription_id=command.subscription_id)
+        gym = Gym(
+            name=command.name,
+            max_rooms=subscription.max_rooms,
+            subscription_id=command.subscription_id,
+            room_ids=[],
+            trainer_ids=[],
+        )
         subscription.add_gym(gym)
 
         subscription_db = SubscriptionDB(

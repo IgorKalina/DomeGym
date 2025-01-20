@@ -11,6 +11,7 @@ from src.gym_management.infrastructure.common.postgres.repository.admin.reposito
     AdminPostgresRepository,
 )
 from src.gym_management.infrastructure.common.postgres.repository.gym.repository_postgres import GymPostgresRepository
+from src.gym_management.infrastructure.common.postgres.repository.room.repository_postgres import RoomPostgresRepository
 from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_postgres import (
     SubscriptionPostgresRepository,
 )
@@ -50,4 +51,5 @@ class RepositoryPostgresContainer(RepositoryContainer):
     admin_repository = providers.Singleton(AdminPostgresRepository, session=session_provider)
     subscription_repository = providers.Singleton(SubscriptionPostgresRepository, session=session_provider)
     gym_repository = providers.Singleton(GymPostgresRepository, session=session_provider)
+    room_repository = providers.Singleton(RoomPostgresRepository, session=session_provider)
     failed_domain_event_repository = providers.Singleton(FailedDomainEventTinyDBRepository)

@@ -1,6 +1,5 @@
 import logging
 import uuid
-from dataclasses import dataclass
 
 from src.gym_management.application.admin.dto.repository import AdminDB
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
@@ -18,7 +17,6 @@ from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 logger = logging.getLogger(__name__)
 
 
-@dataclass(kw_only=True, frozen=True)
 class CreateSubscription(Command):
     admin_id: uuid.UUID
     subscription_type: SubscriptionType
@@ -42,7 +40,7 @@ class CreateSubscriptionHandler(CommandHandler):
         admin_db = AdminDB(id=command.admin_id, user_id=uuid.uuid4())
         await self.__admin_repository.create(admin_db)
 
-        subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type)
+        subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type, gym_ids=[])
         admin = Admin(id=admin_db.id, user_id=admin_db.user_id, subscription_id=admin_db.subscription_id)
         admin.set_subscription(subscription)
 

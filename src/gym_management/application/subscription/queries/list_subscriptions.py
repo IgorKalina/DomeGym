@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import List
 
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
@@ -8,7 +7,6 @@ from src.gym_management.application.subscription.dto.repository import Subscript
 from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler
 
 
-@dataclass(frozen=True)
 class ListSubscriptions(Query):
     pass
 

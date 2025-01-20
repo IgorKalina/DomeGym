@@ -13,7 +13,7 @@ class Gym(TimedBaseModel):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(64))
-    subscription_id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    subscription_id: Mapped[uuid.UUID] = mapped_column()
 
     def __repr__(self) -> str:
         return f"Gym(id={self.id!r}, name={self.name!r}"

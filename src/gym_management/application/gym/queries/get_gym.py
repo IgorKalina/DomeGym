@@ -1,6 +1,5 @@
 import typing
 import uuid
-from dataclasses import dataclass
 
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
@@ -13,7 +12,6 @@ if typing.TYPE_CHECKING:
     from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 
 
-@dataclass(kw_only=True, frozen=True)
 class GetGym(Query):
     gym_id: uuid.UUID
     subscription_id: uuid.UUID

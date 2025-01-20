@@ -13,18 +13,18 @@ from src.gym_management.domain.subscription.subscription_type import Subscriptio
 class Subscription(AggregateRoot):
     def __init__(
         self,
-        *args,
+        *,
         type: SubscriptionType,
         admin_id: uuid.UUID,
-        gym_ids: List[uuid.UUID] | None = None,
+        gym_ids: List[uuid.UUID],
         **kwargs,
     ) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.type = type
         self.admin_id = admin_id
 
-        self.__gym_ids = gym_ids or []
+        self.__gym_ids = gym_ids
 
     def add_gym(self, gym: Gym) -> None:
         if len(self.__gym_ids) >= self.max_gyms:

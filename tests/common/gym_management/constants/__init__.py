@@ -1,7 +1,9 @@
-from . import admin, gym, subscription
+from . import admin, common, gym, room, subscription
 
 __all__ = [
+    "common",
     "admin",
     "subscription",
     "gym",
+    "room",
 ]

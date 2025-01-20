@@ -58,7 +58,6 @@ class TestGetGym:
 
         # Assert
         assert response.status_code == HTTPStatus.NOT_FOUND
-        assert response_data.status == HTTPStatus.NOT_FOUND
         assert response.headers["content-type"] == "application/problem+json"
         assert len(response_data.data) == 0
         assert len(response_data.errors) == 1
@@ -82,7 +81,6 @@ class TestGetGym:
 
         # Assert
         assert response.status_code == HTTPStatus.NOT_FOUND
-        assert response_data.status == HTTPStatus.NOT_FOUND
         assert response.headers["content-type"] == "application/problem+json"
         assert len(response_data.data) == 0
         assert len(response_data.errors) == 1

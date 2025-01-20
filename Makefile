@@ -24,19 +24,18 @@ lint:
 # Docker-specific commands
 .PHONY: build
 build-app:
-	docker build . -t ${APP_CONTAINER_NAME}
-
+	docker-compose --profile api build
 .PHONY: build-test
 build-test:
 	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}
 
 .PHONY: run-docker
 run-docker: build-app
-	docker-compose --profile api up --build
+	docker-compose --profile api up
 
 .PHONY: stop-docker
 stop-docker:
-	docker stop ${APP_CONTAINER_NAME}
+	docker-compose --profile api down
 
 .PHONY: test-docker
 test-docker: build-test

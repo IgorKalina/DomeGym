@@ -1,10 +1,12 @@
 import abc
 from typing import Any, Generic, TypeVar
 
+from pydantic import BaseModel
+
 __all__ = ["Command", "CommandHandler", "CommandType", "CommandResult"]
 
 
-class Command(abc.ABC):
+class Command(BaseModel):
     pass
 
 

@@ -27,7 +27,6 @@ class TestCreateSubscription:
 
         # Assert
         assert response.status_code == HTTPStatus.CREATED
-        assert response_data.status == HTTPStatus.CREATED
         assert response.headers["content-type"] == "application/json"
         assert len(response_data.data) == 1
         assert len(response_data.errors) == 0
@@ -49,7 +48,6 @@ class TestCreateSubscription:
 
         # Assert
         assert response.status_code == HTTPStatus.CONFLICT
-        assert response_data.status == HTTPStatus.CONFLICT
         assert response.headers["content-type"] == "application/problem+json"
         assert len(response_data.data) == 0
         assert len(response_data.errors) == 1

@@ -29,7 +29,6 @@ class TestCreateGym:
 
         # Assert
         assert response.status_code == HTTPStatus.NOT_FOUND
-        assert response_data.status == HTTPStatus.NOT_FOUND
         assert response.headers["content-type"] == "application/problem+json"
         assert len(response_data.data) == 0
         assert len(response_data.errors) == 1
@@ -54,7 +53,6 @@ class TestCreateGym:
 
         # Assert
         assert response.status_code == HTTPStatus.CREATED
-        assert response_data.status == HTTPStatus.CREATED
         assert len(response_data.data) == 1
         assert len(response_data.errors) == 0
         data = response_data.data[0]

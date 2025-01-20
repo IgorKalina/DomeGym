@@ -6,7 +6,7 @@ from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanS
 from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
 from src.shared_kernel.application.error_or import ErrorType
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
-from tests.common.gym_management.room.room_factory import RoomFactory
+from tests.common.gym_management.room.factory.room_factory import RoomFactory
 
 
 class TestGymAggregate:

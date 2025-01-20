@@ -35,6 +35,7 @@ class TestCreateGym:
             id=self._subscription_db.id,
             type=self._subscription_db.type,
             admin_id=self._subscription_db.admin_id,
+            gym_ids=[],
         )
 
     @pytest.mark.asyncio

@@ -1,6 +1,8 @@
 import abc
 from typing import Any, Generic, TypeVar
 
+from pydantic import BaseModel
+
 __all__ = [
     "Query",
     "QueryHandler",
@@ -9,7 +11,7 @@ __all__ = [
 ]
 
 
-class Query(abc.ABC):
+class Query(BaseModel):
     pass
 
 
