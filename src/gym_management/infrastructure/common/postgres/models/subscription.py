@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Self
+from typing import Self
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
@@ -29,12 +29,11 @@ class Subscription(TimedBaseModel):
             updated_at=dto.updated_at,
         )
 
-    def to_dto(self, gym_ids: List[uuid.UUID] | None = None) -> SubscriptionDB:
+    def to_dto(self) -> SubscriptionDB:
         return SubscriptionDB(
             id=self.id,
             type=self.type,
             admin_id=self.admin_id,
             created_at=self.created_at,
             updated_at=self.updated_at,
-            gym_ids=gym_ids or [],
         )

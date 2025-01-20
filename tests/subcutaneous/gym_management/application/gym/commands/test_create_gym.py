@@ -9,7 +9,9 @@ from src.gym_management.application.subscription.dto.repository import Subscript
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
-from src.gym_management.infrastructure.subscription.repository.repository_memory import SubscriptionMemoryRepository
+from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
+    SubscriptionMemoryRepository,
+)
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
@@ -33,7 +35,6 @@ class TestCreateGym:
             id=self._subscription_db.id,
             type=self._subscription_db.type,
             admin_id=self._subscription_db.admin_id,
-            gym_ids=self._subscription_db.gym_ids,
         )
 
     @pytest.mark.asyncio

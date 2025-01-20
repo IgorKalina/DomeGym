@@ -14,3 +14,6 @@ class GymMemoryRepository(GymRepository):
 
     async def create(self, gym: GymDB) -> None:
         self.__gyms.append(gym)
+
+    async def get_by_subscription_id(self, subscription_id: uuid.UUID) -> List[GymDB]:
+        return [gym for gym in self.__gyms if gym.subscription_id == subscription_id]

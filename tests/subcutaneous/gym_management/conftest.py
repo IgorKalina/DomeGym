@@ -1,9 +1,11 @@
 import pytest
 
 from src.gym_management.application.subscription.dto.repository import SubscriptionDB
-from src.gym_management.infrastructure.admin.repository.repository_memory import AdminMemoryRepository
 from src.gym_management.infrastructure.common.injection.main import DiContainer
-from src.gym_management.infrastructure.subscription.repository.repository_memory import SubscriptionMemoryRepository
+from src.gym_management.infrastructure.common.postgres.repository.admin.repository_memory import AdminMemoryRepository
+from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
+    SubscriptionMemoryRepository,
+)
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.injection.containers.repository_memory_container import RepositoryMemoryContainer

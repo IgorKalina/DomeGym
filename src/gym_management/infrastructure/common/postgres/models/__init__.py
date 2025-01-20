@@ -1,3 +1,3 @@
-from src.gym_management.infrastructure.admin.postgres.models import *  # noqa: F403
-from src.gym_management.infrastructure.gym.postgres.models import *  # noqa: F403*
-from src.gym_management.infrastructure.subscription.postgres.models import *  # noqa: F403
+from src.gym_management.infrastructure.common.postgres.models.admin import *  # noqa: F403
+from src.gym_management.infrastructure.common.postgres.models.gym import *  # noqa: F403
+from src.gym_management.infrastructure.common.postgres.models.subscription import *  # noqa: F403

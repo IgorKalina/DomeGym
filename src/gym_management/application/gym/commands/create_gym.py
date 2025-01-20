@@ -1,6 +1,7 @@
 import logging
 import uuid
 from dataclasses import dataclass
+from typing import List
 
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
@@ -38,12 +39,13 @@ class CreateGymHandler(CommandHandler):
         subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
         if subscription_db is None:
             raise SubscriptionDoesNotExistError()
+        gyms: List[GymDB] = await self.__gym_repository.get_by_subscription_id(subscription_db.id)
 
         subscription = Subscription(
             id=subscription_db.id,
             type=subscription_db.type,
             admin_id=subscription_db.admin_id,
-            gym_ids=subscription_db.gym_ids,
+            gym_ids=[gym.id for gym in gyms],
         )
         gym = Gym(name=command.name, max_rooms=subscription.max_rooms, subscription_id=command.subscription_id)
         subscription.add_gym(gym)

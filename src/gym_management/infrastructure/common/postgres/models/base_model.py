@@ -43,5 +43,5 @@ class TimedBaseModel(BaseModel):
     def from_dto(cls, dto: DataTransferObject) -> Self:
         raise NotImplementedError()
 
-    def to_dto(self, *args, **kwargs) -> DataTransferObject:
+    def to_dto(self) -> DataTransferObject:
         raise NotImplementedError()

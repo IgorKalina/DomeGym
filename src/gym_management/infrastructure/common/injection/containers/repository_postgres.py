@@ -5,11 +5,15 @@ from dependency_injector import providers
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
-from src.gym_management.infrastructure.admin.repository.repository_postgres import AdminPostgresRepository
 from src.gym_management.infrastructure.common.config.database import DatabaseConfig
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
-from src.gym_management.infrastructure.gym.repository.repository_postgres import GymPostgresRepository
-from src.gym_management.infrastructure.subscription.repository.repository_postgres import SubscriptionPostgresRepository
+from src.gym_management.infrastructure.common.postgres.repository.admin.repository_postgres import (
+    AdminPostgresRepository,
+)
+from src.gym_management.infrastructure.common.postgres.repository.gym.repository_postgres import GymPostgresRepository
+from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_postgres import (
+    SubscriptionPostgresRepository,
+)
 from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_repository import (
     FailedDomainEventTinyDBRepository,
 )
