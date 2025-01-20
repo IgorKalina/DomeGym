@@ -18,7 +18,9 @@ class Room(TimedBaseModel):
     subscription_id: Mapped[uuid.UUID] = mapped_column()
 
     def __repr__(self) -> str:
-        return f"Gym(id={self.id!r}, name={self.name!r}"
+        return (
+            f"Room(id={self.id!r}, name={self.name!r}, gym_id={self.gym_id!r}, subscription_id={self.subscription_id!r}"
+        )
 
     @classmethod
     def from_dto(cls, dto: RoomDB) -> Self:
