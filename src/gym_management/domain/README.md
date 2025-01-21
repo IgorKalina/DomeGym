@@ -23,26 +23,19 @@ The **Domain** Layer represents the heart of the system, containing all the esse
 ## What Belongs in the Domain Layer
 1. **Business Entities**
    Represents key business concepts with attributes and behavior.
-
 2. **Value Objects**
    Represents immutable concepts, often used within entities.
-
 3. **Aggregates**
    Groups related entities that must stay consistent as a whole
-
 4. **Domain Services**
-   Contains complex business logic that doesn't belong to a single entity.
+   Contains complex business logic that doesn't belong to a single entity.  
    *Example*: `PaymentProcessingService` that calculates and processes payments.
-
 5. **Domain Events**
    Represents significant domain occurrences that trigger actions.
-
 6. **Business Rules & Validation**
    Ensures the integrity of domain logic and state.
-
 7. **Specifications**
    Defines reusable business rules or queries.
-
 8. **Custom Exceptions**
-    Represents domain-specific errors or invalid states.
+    Represents domain-specific errors or invalid states.  
     *Example*: `GymCannotHaveMoreRoomsThanSubscriptionAllowsError`.

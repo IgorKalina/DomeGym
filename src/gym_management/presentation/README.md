@@ -4,9 +4,9 @@ The **Presentation Layer** is the entry point for user or system interactions. I
 ![Presentation Layer](../../../assets/diagrams/clean-architecture-presentation.png)
 
 ## **Responsibilities**
-- Handle user or system requests and map them to use cases.
+- Handle user or system requests and map them to use cases.  
   *Example*: Processing a login request through an API.
-- Render responses in a user-friendly or system-expected format.
+- Render responses in a user-friendly or system-expected format.  
   *Example*: JSON responses for API consumers.
 - Validate and sanitize input data before passing it to the Application Layer.
 - Manage UI-related state and logic for user interactions.
@@ -18,13 +18,13 @@ The **Presentation Layer** is the entry point for user or system interactions. I
 - **Data Persistence**: Managed by the Infrastructure Layer.
 
 ## **What Belongs in the Presentation Layer**
-- **Controllers**: Handle incoming requests and invoke corresponding use cases.
+- **Controllers**: Handle incoming requests and invoke corresponding use cases.  
   *Example*: `UserController` for login and registration endpoints.
-- **Request/response mapping**: Mapping request and response schemas into internal service language
+- **Request/response mapping**: Mapping request and response schemas into internal service language  
   *Example*: mapping `CreateOrderRequest` to `CreateOrder` command
-- **Validators**: Ensure the correctness of user inputs.
+- **Validators**: Ensure the correctness of user inputs.  
   *Example*: Pydantic models in FastAPI for input validation.
-- **API Endpoints**: API request/response schemas
+- **API Endpoints**: API request/response schemas  
   *Example*: FastAPI route definitions
-- **Session Management**: Handle short-term session data.
+- **Session Management**: Handle short-term session data.  
   *Example*: JWT token parsing and validation.
