@@ -23,7 +23,7 @@ The **Infrastructure Layer** provides technical capabilities, such as database a
 - **Third party clients**: Communication with external APIs or services.
   *Examples*:
     - `AWS SDK`
-    - `Google OAuth2
+    - `Google OAuth2`
     - `Azure`
 - **Configuration and Setup**: Connection settings for external services.  
   *Example*: `config.yml` for database credentials.
