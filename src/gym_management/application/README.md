@@ -21,7 +21,7 @@ The **Application Layer** orchestrates the flow of data and use cases, bridging 
 ## **What Belongs in the Application Layer**
 
 - **Use Case Handlers**: Encapsulate single use case flows.  
-  *Example*: A service method that coordinates a "PlaceOrder" use case, invoking domain entities and handling preconditions.
+  *Example*: A service method that coordinates a `PlaceOrder` use case, invoking domain entities and handling preconditions.
 - **Event Handlers**: Handle domain events (internal events) and integration events (that come from different services).  
   *Example*: A listener for a `PaymentReceived` domain event that triggers a shipping request.
 - **Application Services**: Combine and manage multiple use cases.  
