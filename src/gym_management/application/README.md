@@ -23,10 +23,10 @@ The **Application Layer** orchestrates the flow of data and use cases, bridging 
 - **Use Case Handlers**: Encapsulate single use case flows.  
   *Example*: A service method that coordinates a "PlaceOrder" use case, invoking domain entities and handling preconditions.
 - **Event Handlers**: Handle domain events (internal events) and integration events (that come from different services).  
-  *Example*: A listener for a "PaymentReceived" domain event that triggers a shipping request.
+  *Example*: A listener for a `PaymentReceived` domain event that triggers a shipping request.
 - **Application Services**: Combine and manage multiple use cases.  
-  *Example*: A service combining "RegisterUser" and "SendWelcomeEmail" use cases into a single workflow.
+  *Example*: A service combining `RegisterUser` and `SendWelcomeEmail` use cases into a single workflow.
 - **Validation Logic**: Input validation prior to domain processing.  
-  *Example*: Checking if an "OrderQuantity" is within permissible limits before passing it to the domain layer.
+  *Example*: Checking if an `OrderQuantity` is within permissible limits before passing it to the domain layer.
 - **Authorization Logic**: Deciding access to a use case.  
-  *Example*: Verifying if a user has the "Admin" role before allowing access to a "DeleteUser" use case.
+  *Example*: Verifying if a user has the `Admin` role before allowing access to a `DeleteUser` use case.
