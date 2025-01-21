@@ -1,0 +1,6 @@
+@subscriptionId=c5d67d39-be2c-49f8-a021-7e20d32af42d
+@gymId=02024a71-9474-4dae-b745-51827694bd35
+
+
+GET http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/{{gymId}}/rooms
+Content-Type: application/json

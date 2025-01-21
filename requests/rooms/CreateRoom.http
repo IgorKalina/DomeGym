@@ -1,0 +1,10 @@
+@subscriptionId=335e1d67-4445-4350-8224-b763a7bff68e
+@gymId=0ceba201-8c17-47ee-bde1-e8839eab9218
+
+
+POST http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/{{gymId}}/rooms
+Content-Type: application/json
+
+{
+  "name": "TestRoom"
+}
