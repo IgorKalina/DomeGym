@@ -38,10 +38,12 @@ pytest-order = "^1.1.0"
 pytest-timeout = "^2.3.1"
 pytest-cov = "^6.0.0"
 tinydb = "^4.8.2"
+freezegun = "^1.5.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 
 [tool.poetry.group.lint]
 optional = true

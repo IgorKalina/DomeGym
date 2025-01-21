@@ -1,16 +1,16 @@
 import typing
 import uuid
+from typing import List
 
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
-from src.gym_management.application.gym.queries.get_gym import GetGym
 from src.gym_management.application.room.commands.create_room import CreateRoom
+from src.gym_management.application.room.queries.list_rooms import ListRooms
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
-from src.gym_management.presentation.api.controllers.gym.v1.responses.gym_response import GymResponse
 from src.gym_management.presentation.api.controllers.room.v1.requests.create_gym_request import CreateRoomRequest
 from src.gym_management.presentation.api.controllers.room.v1.responses.room_response import RoomResponse
 from src.shared_kernel.application.command import CommandInvoker
@@ -18,7 +18,6 @@ from src.shared_kernel.application.query.interfaces.query_invoker import QueryIn
 
 if typing.TYPE_CHECKING:
     from src.gym_management.application.room.dto.repository import RoomDB
-    from src.gym_management.domain.gym.aggregate_root import Gym
 
 
 router = APIRouter(
@@ -48,7 +47,7 @@ async def create_room(
 
 @router.get(
     "",
-    response_model=OkResponse[GymResponse],
+    response_model=OkResponse[RoomResponse],
 )
 @inject
 async def list_rooms(
@@ -56,9 +55,16 @@ async def list_rooms(
     subscription_id: uuid.UUID,
     query_invoker: QueryInvoker = Depends(Provide[DiContainer.query_invoker]),
 ) -> ORJSONResponse:
-    query = GetGym(gym_id=gym_id, subscription_id=subscription_id)
-    gym: Gym = await query_invoker.invoke(query)
-    gym_response: GymResponse = GymResponse(
-        id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
-    )
-    return OkResponse(status=status.HTTP_200_OK, data=[gym_response]).to_orjson()
+    query = ListRooms(gym_id=gym_id, subscription_id=subscription_id)
+    rooms: List[RoomDB] = await query_invoker.invoke(query)
+    response: List[RoomResponse] = [
+        RoomResponse(
+            id=room.id,
+            name=room.name,
+            gym_id=room.gym_id,
+            subscription_id=room.subscription_id,
+            created_at=room.created_at,
+        )
+        for room in rooms
+    ]
+    return OkResponse(status=status.HTTP_200_OK, data=response).to_orjson()

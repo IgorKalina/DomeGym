@@ -16,8 +16,8 @@ class Gym(AggregateRoot):
         name: str,
         subscription_id: uuid.UUID,
         max_rooms: int,
-        room_ids: List[uuid.UUID],
-        trainer_ids: List[uuid.UUID],
+        room_ids: List[uuid.UUID] | None = None,
+        trainer_ids: List[uuid.UUID] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -26,8 +26,8 @@ class Gym(AggregateRoot):
         self.subscription_id = subscription_id
 
         self.__max_rooms = max_rooms
-        self.__room_ids = room_ids
-        self.__trainer_ids = trainer_ids
+        self.__room_ids = room_ids or []
+        self.__trainer_ids = trainer_ids or []
 
     def add_room(self, room: Room) -> None:
         if len(self.__room_ids) >= self.__max_rooms:

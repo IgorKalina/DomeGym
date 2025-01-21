@@ -1,14 +1,14 @@
 from dependency_injector import providers
 
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
-from src.gym_management.infrastructure.common.postgres.repository.admin.repository_memory import AdminMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.gym.repository_memory import GymMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.room.repository_memory import RoomMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
-    SubscriptionMemoryRepository,
-)
 from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_repository import (
     FailedDomainEventTinyDBRepository,
+)
+from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
+from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
+from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
+from tests.common.gym_management.subscription.repository.memory import (
+    SubscriptionMemoryRepository,
 )
 
 

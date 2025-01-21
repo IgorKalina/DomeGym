@@ -37,10 +37,11 @@ class CreateSubscriptionHandler(CommandHandler):
         admin_db: AdminDB | None = await self.__admin_repository.get_by_id(command.admin_id)
         if admin_db is not None:
             raise AdminAlreadyExistsError()
+
         admin_db = AdminDB(id=command.admin_id, user_id=uuid.uuid4())
         await self.__admin_repository.create(admin_db)
 
-        subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type, gym_ids=[])
+        subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type)
         admin = Admin(id=admin_db.id, user_id=admin_db.user_id, subscription_id=admin_db.subscription_id)
         admin.set_subscription(subscription)
 

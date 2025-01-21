@@ -3,12 +3,12 @@ from typing import List
 
 import pytest
 
-from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
-    SubscriptionMemoryRepository,
-)
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
 from tests.common.gym_management.subscription.factory.subscription_query_factory import SubscriptionQueryFactory
+from tests.common.gym_management.subscription.repository.memory import (
+    SubscriptionMemoryRepository,
+)
 
 if typing.TYPE_CHECKING:
     from src.gym_management.domain.subscription.aggregate_root import Subscription

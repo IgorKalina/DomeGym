@@ -8,15 +8,15 @@ from src.gym_management.application.room.dto.repository import RoomDB
 from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
-from src.gym_management.infrastructure.common.postgres.repository.gym.repository_memory import GymMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.room.repository_memory import RoomMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
-    SubscriptionMemoryRepository,
-)
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from tests.common.gym_management import constants
+from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_command_factory import RoomCommandFactory
+from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
+from tests.common.gym_management.subscription.repository.memory import (
+    SubscriptionMemoryRepository,
+)
 
 
 class TestCreateRoom:
@@ -53,9 +53,10 @@ class TestCreateRoom:
         rooms: List[RoomDB] = await self._room_repository.get_by_gym_id(self._gym_db.id)
         assert len(rooms) == 1
         room_db = rooms[0]
-        assert room_db.name == constants.room.NAME
-        assert room_db.gym_id == constants.gym.GYM_ID
-        assert room_db.subscription_id == constants.subscription.SUBSCRIPTION_ID
+        assert room_db.id is not None
+        assert room_db.name == create_room.name
+        assert room_db.gym_id == create_room.gym_id
+        assert room_db.subscription_id == create_room.subscription_id
 
     @pytest.mark.asyncio
     async def test_create_room_when_subscription_not_exists_should_fail(self) -> None:

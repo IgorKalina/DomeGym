@@ -3,17 +3,17 @@ import pytest
 from src.gym_management.application.gym.dto.repository import GymDB
 from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.infrastructure.common.injection.main import DiContainer
-from src.gym_management.infrastructure.common.postgres.repository.admin.repository_memory import AdminMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.gym.repository_memory import GymMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.room.repository_memory import RoomMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
-    SubscriptionMemoryRepository,
-)
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
+from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
 from tests.common.gym_management.gym.factory.gym_db_factory import GymDBFactory
+from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.injection.containers.repository_memory_container import RepositoryMemoryContainer
+from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
 from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
+from tests.common.gym_management.subscription.repository.memory import (
+    SubscriptionMemoryRepository,
+)
 
 
 @pytest.fixture

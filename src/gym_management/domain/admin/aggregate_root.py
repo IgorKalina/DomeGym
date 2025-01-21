@@ -9,14 +9,12 @@ from src.gym_management.domain.subscription.aggregate_root import Subscription
 class Admin(AggregateRoot):
     def __init__(
         self,
+        *,
         user_id: uuid.UUID,
-        id: uuid.UUID | None = None,
         subscription_id: uuid.UUID | None = None,
+        **kwargs,
     ) -> None:
-        if id is not None:
-            super().__init__(id=id)
-        else:
-            super().__init__()
+        super().__init__(**kwargs)
 
         self.user_id = user_id
         self.__subscription_id = subscription_id

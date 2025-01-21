@@ -7,12 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from src.gym_management.infrastructure.common.config.database import DatabaseConfig
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
-from src.gym_management.infrastructure.common.postgres.repository.admin.repository_postgres import (
+from src.gym_management.infrastructure.common.postgres.repository.admin import (
     AdminPostgresRepository,
 )
-from src.gym_management.infrastructure.common.postgres.repository.gym.repository_postgres import GymPostgresRepository
-from src.gym_management.infrastructure.common.postgres.repository.room.repository_postgres import RoomPostgresRepository
-from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_postgres import (
+from src.gym_management.infrastructure.common.postgres.repository.gym import GymPostgresRepository
+from src.gym_management.infrastructure.common.postgres.repository.room import RoomPostgresRepository
+from src.gym_management.infrastructure.common.postgres.repository.subscription import (
     SubscriptionPostgresRepository,
 )
 from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_repository import (

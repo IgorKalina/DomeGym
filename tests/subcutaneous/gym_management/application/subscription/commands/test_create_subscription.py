@@ -2,13 +2,13 @@ import pytest
 
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
-from src.gym_management.infrastructure.common.postgres.repository.admin.repository_memory import AdminMemoryRepository
-from src.gym_management.infrastructure.common.postgres.repository.subscription.repository_memory import (
-    SubscriptionMemoryRepository,
-)
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
 from tests.common.gym_management.subscription.factory.subscription_command_factory import SubscriptionCommandFactory
+from tests.common.gym_management.subscription.repository.memory import (
+    SubscriptionMemoryRepository,
+)
 
 
 class TestCreateSubscription:

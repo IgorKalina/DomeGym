@@ -16,7 +16,7 @@ class Subscription(AggregateRoot):
         *,
         type: SubscriptionType,
         admin_id: uuid.UUID,
-        gym_ids: List[uuid.UUID],
+        gym_ids: List[uuid.UUID] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -24,7 +24,7 @@ class Subscription(AggregateRoot):
         self.type = type
         self.admin_id = admin_id
 
-        self.__gym_ids = gym_ids
+        self.__gym_ids = gym_ids or []
 
     def add_gym(self, gym: Gym) -> None:
         if len(self.__gym_ids) >= self.max_gyms:

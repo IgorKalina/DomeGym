@@ -44,13 +44,12 @@ class CreateGymHandler(CommandHandler):
             type=subscription_db.type,
             admin_id=subscription_db.admin_id,
             gym_ids=[gym.id for gym in gyms],
+            created_at=subscription_db.created_at,
         )
         gym = Gym(
             name=command.name,
             max_rooms=subscription.max_rooms,
             subscription_id=command.subscription_id,
-            room_ids=[],
-            trainer_ids=[],
         )
         subscription.add_gym(gym)
 
@@ -59,6 +58,7 @@ class CreateGymHandler(CommandHandler):
             type=subscription.type,
             admin_id=subscription.admin_id,
             gym_ids=subscription.gym_ids,
+            created_at=subscription.created_at,
         )
         gym_db = GymDB(id=gym.id, name=gym.name, subscription_id=gym.subscription_id)
         await self.__subscription_repository.update(subscription_db)
