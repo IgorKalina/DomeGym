@@ -19,7 +19,6 @@ The **Application Layer** orchestrates the flow of data and use cases, bridging 
 - **Storing or Fetching Data**: Handled by repositories in the Infrastructure Layer.
 
 ## **What Belongs in the Application Layer**
-## **What Belongs in the Application Layer**
 
 - **Use Case Handlers**: Encapsulate single use case flows.
   *Example*: A service method that coordinates a "PlaceOrder" use case, invoking domain entities and handling preconditions.
