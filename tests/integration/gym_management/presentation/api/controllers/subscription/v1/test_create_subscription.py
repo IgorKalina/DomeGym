@@ -6,7 +6,8 @@ from src.gym_management.presentation.api.controllers.subscription.v1.requests.cr
     CreateSubscriptionRequest,
 )
 from tests.common.gym_management import constants
-from tests.common.gym_management.subscription.service.api_v1 import SubscriptionV1ApiService
+from tests.common.gym_management.subscription.factory.subscription_request_factory import SubscriptionRequestFactory
+from tests.common.gym_management.subscription.service.api.v1 import SubscriptionV1ApiService
 
 
 class TestCreateSubscription:
@@ -17,10 +18,7 @@ class TestCreateSubscription:
     @pytest.mark.asyncio
     async def test_when_request_valid_should_create_subscription(self) -> None:
         # Arrange
-        request = CreateSubscriptionRequest(
-            admin_id=constants.admin.ADMIN_ID,
-            subscription_type=constants.subscription.DEFAULT_SUBSCRIPTION_TYPE,
-        )
+        request = SubscriptionRequestFactory.create_create_subscription_request()
 
         # Act
         response, response_data = await self._subscriptions_api.create(request)

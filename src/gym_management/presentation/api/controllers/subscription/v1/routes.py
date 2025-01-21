@@ -20,8 +20,7 @@ from src.shared_kernel.application.command import CommandInvoker
 from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.domain.subscription.aggregate_root import Subscription
-
+    from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 
 router = APIRouter(
     prefix="/v1/subscriptions",
@@ -41,13 +40,14 @@ async def list_subscriptions(
     query_invoker: QueryInvoker = Depends(Provide[DiContainer.query_invoker]),
 ) -> OkResponse[SubscriptionResponse]:
     query = ListSubscriptions()
-    result: List[Subscription] = await query_invoker.invoke(query)
+    result: List[SubscriptionDB] = await query_invoker.invoke(query)
     subscriptions_response = [
         SubscriptionResponse(
             id=subscription.id,
             type=subscription.type,
-            created_at=subscription.created_at,
             admin_id=subscription.admin_id,
+            created_at=subscription.created_at,
+            updated_at=subscription.updated_at,
         )
         for subscription in result
     ]
@@ -68,11 +68,12 @@ async def create_subscription(
     command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
 ) -> OkResponse[SubscriptionResponse]:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
-    result: Subscription = await command_invoker.invoke(command)
+    subscription: SubscriptionDB = await command_invoker.invoke(command)
     subscription_response = SubscriptionResponse(
-        id=result.id,
-        type=result.type,
-        created_at=result.created_at,
-        admin_id=result.admin_id,
+        id=subscription.id,
+        type=subscription.type,
+        admin_id=subscription.admin_id,
+        created_at=subscription.created_at,
+        updated_at=subscription.updated_at,
     )
     return OkResponse(status=status.HTTP_201_CREATED, data=[subscription_response]).to_orjson()

@@ -24,6 +24,6 @@ class RoomPostgresRepository(SQLAlchemyRepository, RoomRepository):
         await self._session.commit()
 
     async def get_by_gym_id(self, gym_id: uuid.UUID) -> List[GymDB]:
-        query = select(models.Room.id).where(models.Room.gym_id == gym_id)
+        query = select(models.Room).where(models.Room.gym_id == gym_id)
         result: List[models.Room] = await self._session.scalars(query)
         return [room.to_dto() for room in result]

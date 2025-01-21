@@ -8,5 +8,6 @@ from src.gym_management.presentation.api.controllers.common.responses.dto import
 class SubscriptionResponse(ResponseData):
     id: uuid.UUID
     type: SubscriptionType
-    created_at: datetime.datetime
     admin_id: uuid.UUID
+    created_at: datetime.datetime
+    updated_at: datetime.datetime

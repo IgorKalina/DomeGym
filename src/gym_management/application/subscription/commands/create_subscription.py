@@ -33,7 +33,7 @@ class CreateSubscriptionHandler(CommandHandler):
         self.__subscription_repository = subscription_repository
         self.__event_bus = eventbus
 
-    async def handle(self, command: CreateSubscription) -> Subscription:
+    async def handle(self, command: CreateSubscription) -> SubscriptionDB:
         admin_db: AdminDB | None = await self.__admin_repository.get_by_id(command.admin_id)
         if admin_db is not None:
             raise AdminAlreadyExistsError()
@@ -50,4 +50,4 @@ class CreateSubscriptionHandler(CommandHandler):
         await self.__subscription_repository.create(subscription_db)
         await self.__admin_repository.update(admin_db)
         await self.__event_bus.publish(admin.pop_domain_events())
-        return subscription
+        return subscription_db

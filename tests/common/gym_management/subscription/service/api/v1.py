@@ -1,9 +1,7 @@
-import uuid
 from http import HTTPStatus
 from typing import Tuple, TypeAlias
 
 import httpx
-from fastapi import HTTPException
 from httpx import AsyncClient
 
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
@@ -35,11 +33,3 @@ class SubscriptionV1ApiService:
         if response.status_code != HTTPStatus.OK:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
-
-    async def get_subscription_by_admin_id(self, admin_id: uuid.UUID) -> SubscriptionResponse:
-        response, subscriptions = await self.list()
-        response.raise_for_status()
-        for subscription in subscriptions.data:
-            if subscription.admin_id == admin_id:
-                return subscription
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Subscription for the given admin id not found")

@@ -23,6 +23,6 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
         await self._session.commit()
 
     async def get_by_subscription_id(self, subscription_id: uuid.UUID) -> List[GymDB]:
-        query = select(models.Gym.id).where(models.Gym.subscription_id == subscription_id)
+        query = select(models.Gym).where(models.Gym.subscription_id == subscription_id)
         result: List[models.Gym] = await self._session.scalars(query)
         return [gym.to_dto() for gym in result]

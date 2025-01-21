@@ -35,7 +35,7 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
 
     async def get_multi(self) -> List[SubscriptionDB]:
         query = select(models.Subscription)
-        result: List[models.Subscription] = list(await self._session.scalars(query))
+        result: List[models.Subscription] = await self._session.scalars(query)
         return [subscription.to_dto() for subscription in result]
 
     async def update(self, subscription: SubscriptionDB) -> SubscriptionDB:

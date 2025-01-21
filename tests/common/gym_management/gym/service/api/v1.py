@@ -33,4 +33,4 @@ class GymV1ApiService:
         return response, OkResponse[GymResponse](status=response.status_code, **response.json())
 
     def __get_url(self, subscription_id: uuid.UUID) -> str:
-        return f"{self.__version}/subscriptions/{str(subscription_id)}/gyms"
+        return f"{self.__version}/subscriptions/{subscription_id}/gyms"
