@@ -1,13 +1,11 @@
 import abc
 from abc import ABC
-from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 __all__ = ["DomainEvent", "DomainEventHandler", "EventType"]
 
 
-@dataclass(kw_only=True)
-class DomainEvent(ABC):
+class DomainEvent(abc.ABC):
     pass
 
 

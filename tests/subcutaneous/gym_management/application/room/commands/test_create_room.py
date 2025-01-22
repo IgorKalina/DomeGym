@@ -2,10 +2,10 @@ from typing import List
 
 import pytest
 
-from src.gym_management.application.gym.dto.repository import GymDB
+from src.gym_management.application.common.dto.repository.gym import GymDB
+from src.gym_management.application.common.dto.repository.room import RoomDB
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
-from src.gym_management.application.room.dto.repository import RoomDB
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from src.shared_kernel.application.error_or import ErrorType

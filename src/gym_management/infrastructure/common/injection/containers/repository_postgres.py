@@ -15,7 +15,7 @@ from src.gym_management.infrastructure.common.postgres.repository.room import Ro
 from src.gym_management.infrastructure.common.postgres.repository.subscription import (
     SubscriptionPostgresRepository,
 )
-from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_repository import (
+from src.shared_kernel.infrastructure.event.failed_events_tinydb_repository import (
     FailedDomainEventTinyDBRepository,
 )
 
@@ -29,7 +29,6 @@ def _build_sa_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSe
 async def _init_postgres_session(config: DatabaseConfig) -> AsyncSession:
     engine = create_async_engine(
         url=config.full_url,
-        echo=True,
         echo_pool=True,
         json_serializer=lambda data: orjson.dumps(data).decode(),
         json_deserializer=orjson.loads,

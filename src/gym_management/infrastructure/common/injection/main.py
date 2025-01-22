@@ -7,7 +7,7 @@ from src.gym_management.infrastructure.common.injection.containers.domain_event 
 from src.gym_management.infrastructure.common.injection.containers.query import QueryContainer
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
-from src.shared_kernel.infrastructure.event.domain.eventbus_memory import DomainEventBusMemory
+from src.shared_kernel.infrastructure.event.eventbus_memory import DomainEventBusMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 
 

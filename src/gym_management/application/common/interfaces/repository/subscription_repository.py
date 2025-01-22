@@ -2,7 +2,7 @@ import abc
 import uuid
 from typing import List
 
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 
 
 class SubscriptionRepository(abc.ABC):
@@ -24,4 +24,8 @@ class SubscriptionRepository(abc.ABC):
 
     @abc.abstractmethod
     async def update(self, subscription: SubscriptionDB) -> SubscriptionDB:
+        pass
+
+    @abc.abstractmethod
+    async def delete(self, subscription: SubscriptionDB) -> None:
         pass

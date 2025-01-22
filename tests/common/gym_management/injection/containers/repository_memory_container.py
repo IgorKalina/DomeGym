@@ -1,7 +1,7 @@
 from dependency_injector import providers
 
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
-from src.shared_kernel.infrastructure.event.domain.failed_events_tinydb_repository import (
+from src.shared_kernel.infrastructure.event.failed_events_tinydb_repository import (
     FailedDomainEventTinyDBRepository,
 )
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository

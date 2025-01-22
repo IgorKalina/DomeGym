@@ -1,0 +1,4 @@
+@subscriptionId=9795cb62-2747-414f-a64b-22f49088538f
+
+DELETE http://localhost:8000/v1/subscriptions/{{subscriptionId}}
+Content-Type: application/json

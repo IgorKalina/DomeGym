@@ -3,9 +3,10 @@ from typing import List
 
 from sqlalchemy import select
 
+from src.gym_management.application.common.dto.repository.gym import GymDB
+from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
-from src.gym_management.application.gym.dto.repository import GymDB
-from src.gym_management.application.room.dto.repository import RoomDB
+from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
 from src.gym_management.infrastructure.common.postgres import models
 from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
@@ -27,3 +28,10 @@ class RoomPostgresRepository(SQLAlchemyRepository, RoomRepository):
         query = select(models.Room).where(models.Room.gym_id == gym_id)
         result: List[models.Room] = await self._session.scalars(query)
         return [room.to_dto() for room in result]
+
+    async def delete(self, room: RoomDB) -> None:
+        room_db: models.Room = await self._session.get(models.Room, room.id)
+        if not room_db:
+            raise RoomDoesNotExistError()
+        await self._session.delete(room_db)
+        await self._session.commit()

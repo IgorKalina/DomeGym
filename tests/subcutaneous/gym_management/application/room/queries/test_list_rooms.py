@@ -3,7 +3,7 @@ from typing import List
 
 import pytest
 
-from src.gym_management.application.gym.dto.repository import GymDB
+from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.shared_kernel.application.error_or import ErrorType
@@ -14,7 +14,7 @@ from tests.common.gym_management.room.factory.room_query_factory import RoomQuer
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.application.room.dto.repository import RoomDB
+    from src.gym_management.application.common.dto.repository.room import RoomDB
 
 
 class TestListRooms:

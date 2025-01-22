@@ -1,6 +1,6 @@
 import uuid
 
-from src.gym_management.application.gym.dto.repository import GymDB
+from src.gym_management.application.common.dto.repository.gym import GymDB
 from tests.common.gym_management import constants
 
 

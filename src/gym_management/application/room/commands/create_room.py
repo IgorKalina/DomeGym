@@ -1,21 +1,21 @@
 import typing
 import uuid
 
+from src.gym_management.application.common import dto
+from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
-from src.gym_management.application.room.dto.repository import RoomDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
-from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.room.aggregate_root import Room
-from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.application.gym.dto.repository import GymDB
-    from src.gym_management.application.subscription.dto.repository import SubscriptionDB
+    from src.gym_management.application.common.dto.repository.gym import GymDB
+    from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
+    from src.gym_management.domain.gym.aggregate_root import Gym
 
 
 class CreateRoom(Command):
@@ -48,23 +48,12 @@ class CreateRoomHandler(CommandHandler):
         gyms = await self.__gym_repository.get_by_subscription_id(command.subscription_id)
         rooms = await self.__room_repository.get_by_gym_id(command.gym_id)
 
-        subscription = Subscription(
-            id=subscription_db.id,
-            type=subscription_db.type,
-            admin_id=subscription_db.admin_id,
-            gym_ids=[gym.id for gym in gyms],
-        )
+        subscription = dto.mappers.map_subscription_dto_to_domain(subscription=subscription_db, gyms=gyms)
         room = Room(gym_id=gym_db.id, name=command.name, max_daily_sessions=subscription.max_daily_sessions)
-        gym = Gym(
-            id=gym_db.id,
-            name=command.name,
-            subscription_id=subscription.id,
-            max_rooms=subscription.max_rooms,
-            room_ids=[room.id for room in rooms],
-        )
+        gym: Gym = dto.mappers.map_gym_dto_to_domain(gym=gym_db, subscription=subscription, rooms=rooms)
         gym.add_room(room)
 
-        room_db: RoomDB = RoomDB(id=room.id, name=room.name, gym_id=gym_db.id, subscription_id=subscription.id)
+        room_db: RoomDB = dto.mappers.map_room_domain_to_db_dto(room=room, gym=gym)
         await self.__room_repository.create(room_db)
         await self.__eventbus.publish(
             subscription.pop_domain_events() + gym.pop_domain_events() + room.pop_domain_events()

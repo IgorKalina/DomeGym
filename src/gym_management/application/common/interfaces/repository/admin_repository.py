@@ -1,7 +1,7 @@
 import abc
 import uuid
 
-from src.gym_management.application.admin.dto.repository import AdminDB
+from src.gym_management.application.common.dto.repository.admin import AdminDB
 
 
 class AdminRepository(abc.ABC):

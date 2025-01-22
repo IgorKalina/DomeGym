@@ -16,7 +16,7 @@ from tests.common.gym_management import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.application.gym.dto.repository import GymDB
+    from src.gym_management.application.common.dto.repository.gym import GymDB
 
 
 class TestGetGym:

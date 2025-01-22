@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy import select
 
-from src.gym_management.application.admin.dto.repository import AdminDB
+from src.gym_management.application.common.dto.repository.admin import AdminDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.infrastructure.common.postgres import models
 from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository

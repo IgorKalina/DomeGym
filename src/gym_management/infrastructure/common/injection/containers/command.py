@@ -6,6 +6,10 @@ from src.gym_management.application.subscription.commands.create_subscription im
     CreateSubscription,
     CreateSubscriptionHandler,
 )
+from src.gym_management.application.subscription.commands.remove_subscription import (
+    RemoveSubscription,
+    RemoveSubscriptionHandler,
+)
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
@@ -34,11 +38,19 @@ class CommandContainer(containers.DeclarativeContainer):
         room_repository=repository_container.room_repository,
         eventbus=domain_eventbus,
     )
+    remove_subscription_handler = providers.Factory(
+        RemoveSubscriptionHandler,
+        admin_repository=repository_container.admin_repository,
+        subscription_repository=repository_container.subscription_repository,
+        gym_repository=repository_container.gym_repository,
+        eventbus=domain_eventbus,
+    )
 
     commands = providers.Dict(
         {
             # Subscription
             CreateSubscription: create_subscription_handler,
+            RemoveSubscription: remove_subscription_handler,
             # Gym
             CreateGym: create_gym_handler,
             # Room

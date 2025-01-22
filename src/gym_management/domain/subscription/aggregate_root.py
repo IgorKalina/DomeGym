@@ -1,15 +1,21 @@
 import sys
 import uuid
 from copy import copy
+from dataclasses import dataclass
 from typing import List
 
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
-from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
+from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
+from src.gym_management.domain.subscription.exceptions import (
+    SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError,
+    SubscriptionDoesNotHaveGymError,
+)
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 
 
+@dataclass(kw_only=True)
 class Subscription(AggregateRoot):
     def __init__(
         self,
@@ -31,6 +37,12 @@ class Subscription(AggregateRoot):
             raise SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError(max_gyms=self.max_gyms)
         self.__gym_ids.append(gym.id)
         self._create_domain_event(GymAddedEvent(subscription=self, gym=gym))
+
+    def remove_gym(self, gym: Gym) -> None:
+        if not self.has_gym(gym.id):
+            raise SubscriptionDoesNotHaveGymError(gym_id=gym.id)
+        self.__gym_ids.remove(gym.id)
+        self._create_domain_event(GymRemovedEvent(subscription=self, gym=gym))
 
     def has_gym(self, gym_id: uuid.UUID) -> bool:
         return gym_id in self.__gym_ids

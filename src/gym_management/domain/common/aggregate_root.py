@@ -6,11 +6,9 @@ from src.gym_management.domain.common.entity import Entity
 from src.shared_kernel.domain.event import DomainEvent
 
 
-@dataclass
+@dataclass(kw_only=True)
 class AggregateRoot(Entity):
-    _domain_events: list[DomainEvent] = field(
-        default_factory=list,
-    )
+    _domain_events: List[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     def pop_domain_events(self) -> List[DomainEvent]:
         registered_events = copy(self._domain_events)

@@ -20,3 +20,12 @@ class SubscriptionDoesNotExistError(SubscriptionAppError):
     @property
     def detail(self) -> str:
         return "Subscription with the provided id not found"
+
+
+@dataclass(kw_only=True, frozen=True)
+class SubscriptionDoesNotHaveAdminError(SubscriptionAppError):
+    error_type: ErrorType = ErrorType.UNEXPECTED
+
+    @property
+    def detail(self) -> str:
+        return "Subscription with the provided id does not have an admin assigned"

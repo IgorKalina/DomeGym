@@ -15,7 +15,8 @@ from src.gym_management.infrastructure.common.config.api import ApiConfig, Uvico
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.main import setup_controllers
 from src.gym_management.presentation.api.injection import create_dependency_injection_container
-from src.shared_kernel.infrastructure.event.domain.functions import reprocess_failed_domain_events
+from src.gym_management.presentation.api.middlewares import setup_middlewares
+from src.shared_kernel.infrastructure.event.functions import reprocess_failed_domain_events
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def init_api(
         lifespan=api_lifespan(di_container),
     )
     setup_controllers(app)
-    # setup_middlewares(app)
+    setup_middlewares(app)
     app.container = di_container
     return app
 

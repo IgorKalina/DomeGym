@@ -4,8 +4,8 @@ from typing import Self
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.gym_management.application.gym.dto.repository import GymDB
-from src.gym_management.application.room.dto.repository import RoomDB
+from src.gym_management.application.common.dto.repository.gym import GymDB
+from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
 
 

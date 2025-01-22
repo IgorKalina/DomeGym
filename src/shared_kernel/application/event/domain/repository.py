@@ -13,3 +13,7 @@ class FailedDomainEventRepository(abc.ABC):
     @abstractmethod
     async def get_multi(self) -> List[DomainEvent]:
         pass
+
+    @abstractmethod
+    async def truncate(self) -> None:
+        pass

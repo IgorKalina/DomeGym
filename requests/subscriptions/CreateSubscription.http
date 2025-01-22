@@ -1,4 +1,4 @@
-@admin_id=c5c46450-27af-4c30-85d4-d35bd4ddf7f6
+@admin_id=c5d67d39-be2c-49f8-a021-7e20d32af439
 
 
 POST http://localhost:8000/v1/subscriptions
@@ -6,5 +6,5 @@ Content-Type: application/json
 
 {
   "admin_id": "{{admin_id}}",
-  "subscription_type": "Starter"
+  "subscription_type": "Pro"
 }

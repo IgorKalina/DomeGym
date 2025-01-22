@@ -43,6 +43,6 @@ class DomainEventBusMemory(DomainEventBus):
             try:
                 await subscriber.handle(event)
             except Exception as e:
-                await self.__domain_event_repository.create(event)
                 logger.exception(f"An error occurred while processing '{event}' domain event: {str(e)}")
+                await self.__domain_event_repository.create(event)
                 raise EventualConsistencyError() from e

@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from src.gym_management.application.admin.dto.repository import AdminDB
+from src.gym_management.application.common.dto.repository.admin import AdminDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 
 

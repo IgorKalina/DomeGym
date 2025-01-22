@@ -1,10 +1,10 @@
 import uuid
 from typing import List
 
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
     SubscriptionRepository,
 )
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 
 
 class SubscriptionMemoryRepository(SubscriptionRepository):
@@ -28,3 +28,6 @@ class SubscriptionMemoryRepository(SubscriptionRepository):
         updated_subscriptions.append(subscription)
         self.__subscriptions = updated_subscriptions
         return subscription
+
+    async def delete(self, subscription: SubscriptionDB) -> None:
+        self.__subscriptions.remove(subscription)

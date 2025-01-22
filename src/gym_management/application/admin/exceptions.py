@@ -20,3 +20,12 @@ class AdminAlreadyExistsError(AdminAppError):
     @property
     def detail(self) -> str:
         return "Admin with the provided id already exists"
+
+
+@dataclass(kw_only=True, frozen=True)
+class AdminDoesNotExistError(AdminAppError):
+    error_type: ErrorType = ErrorType.NOT_FOUND
+
+    @property
+    def detail(self) -> str:
+        return "Admin with the provided id does not exist"

@@ -4,9 +4,9 @@ from typing import List
 import pytest
 from freezegun import freeze_time
 
+from src.gym_management.application.common.dto.repository.gym import GymDB
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.gym.commands.create_gym import CreateGym
-from src.gym_management.application.gym.dto.repository import GymDB
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError

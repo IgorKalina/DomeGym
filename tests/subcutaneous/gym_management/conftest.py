@@ -1,7 +1,7 @@
 import pytest
 
-from src.gym_management.application.gym.dto.repository import GymDB
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
+from src.gym_management.application.common.dto.repository.gym import GymDB
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory

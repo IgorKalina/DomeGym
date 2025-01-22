@@ -19,5 +19,6 @@ async def reprocess_failed_domain_events(
         logger.info(f"Re-processing '{len(failed_domain_events)}' domain events")
         await domain_eventbus.publish(failed_domain_events)
         await domain_eventbus.process_events()
+        await failed_events_repository.truncate()
     else:
         logger.info("No failed domain events to re-process")

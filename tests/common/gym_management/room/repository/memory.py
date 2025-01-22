@@ -1,9 +1,9 @@
 import uuid
 from typing import List
 
+from src.gym_management.application.common.dto.repository.gym import GymDB
+from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
-from src.gym_management.application.gym.dto.repository import GymDB
-from src.gym_management.application.room.dto.repository import RoomDB
 
 
 class RoomMemoryRepository(RoomRepository):
@@ -18,3 +18,6 @@ class RoomMemoryRepository(RoomRepository):
 
     async def get_by_gym_id(self, gym_id: uuid.UUID) -> List[GymDB]:
         return [room for room in self.__rooms if room.gym_id == gym_id]
+
+    async def delete(self, room: RoomDB) -> None:
+        self.__rooms.remove(room)

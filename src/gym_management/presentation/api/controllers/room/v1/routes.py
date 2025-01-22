@@ -17,7 +17,7 @@ from src.shared_kernel.application.command import CommandInvoker
 from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.application.room.dto.repository import RoomDB
+    from src.gym_management.application.common.dto.repository.room import RoomDB
 
 
 router = APIRouter(

@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from tests.common.gym_management import constants
 

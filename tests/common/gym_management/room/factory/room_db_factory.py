@@ -1,6 +1,6 @@
 import uuid
 
-from src.gym_management.application.room.dto.repository import RoomDB
+from src.gym_management.application.common.dto.repository.room import RoomDB
 from tests.common.gym_management import constants
 
 

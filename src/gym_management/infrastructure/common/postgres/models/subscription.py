@@ -4,7 +4,7 @@ from typing import Self
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
 

@@ -3,7 +3,7 @@ from typing import Self
 
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.gym_management.application.admin.dto.repository import AdminDB
+from src.gym_management.application.common.dto.repository.admin import AdminDB
 from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
 
 

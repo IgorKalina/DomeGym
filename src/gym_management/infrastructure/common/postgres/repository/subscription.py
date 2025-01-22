@@ -3,8 +3,8 @@ from typing import List
 
 from sqlalchemy import select
 
+from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.infrastructure.common.postgres import models
 from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
@@ -49,3 +49,10 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
 
         await self._session.commit()
         return subscription_db_updated.to_dto()
+
+    async def delete(self, subscription: SubscriptionDB) -> None:
+        subscription_db = await self._session.get(models.Subscription, subscription.id)
+        if not subscription_db:
+            raise SubscriptionDoesNotExistError()
+        await self._session.delete(subscription_db)
+        await self._session.commit()

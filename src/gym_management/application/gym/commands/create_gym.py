@@ -1,18 +1,20 @@
 import logging
 import uuid
-from typing import List
+from typing import TYPE_CHECKING, List
 
+from src.gym_management.application.common import dto
+from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
     SubscriptionRepository,
 )
-from src.gym_management.application.gym.dto.repository import GymDB
-from src.gym_management.application.subscription.dto.repository import SubscriptionDB
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
-from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+
+if TYPE_CHECKING:
+    from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 
 logger = logging.getLogger(__name__)
 
@@ -39,13 +41,7 @@ class CreateGymHandler(CommandHandler):
             raise SubscriptionDoesNotExistError()
         gyms: List[GymDB] = await self.__gym_repository.get_by_subscription_id(subscription_db.id)
 
-        subscription = Subscription(
-            id=subscription_db.id,
-            type=subscription_db.type,
-            admin_id=subscription_db.admin_id,
-            gym_ids=[gym.id for gym in gyms],
-            created_at=subscription_db.created_at,
-        )
+        subscription = dto.mappers.map_subscription_dto_to_domain(subscription=subscription_db, gyms=gyms)
         gym = Gym(
             name=command.name,
             max_rooms=subscription.max_rooms,
@@ -53,14 +49,8 @@ class CreateGymHandler(CommandHandler):
         )
         subscription.add_gym(gym)
 
-        subscription_db = SubscriptionDB(
-            id=subscription.id,
-            type=subscription.type,
-            admin_id=subscription.admin_id,
-            gym_ids=subscription.gym_ids,
-            created_at=subscription.created_at,
-        )
-        gym_db = GymDB(id=gym.id, name=gym.name, subscription_id=gym.subscription_id)
+        subscription_db = dto.mappers.map_subscription_domain_to_db_dto(subscription)
+        gym_db: GymDB = dto.mappers.map_gym_domain_to_db_dto(gym=gym)
         await self.__subscription_repository.update(subscription_db)
         await self.__gym_repository.create(gym_db)
         await self.__eventbus.publish(subscription.pop_domain_events())

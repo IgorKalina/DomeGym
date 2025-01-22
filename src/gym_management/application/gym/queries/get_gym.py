@@ -1,15 +1,15 @@
 import typing
 import uuid
 
+from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
-from src.gym_management.application.gym.dto.repository import GymDB
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.application.subscription.dto.repository import SubscriptionDB
+    from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 
 
 class GetGym(Query):

@@ -1,8 +1,8 @@
 import uuid
 from typing import List
 
+from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
-from src.gym_management.application.gym.dto.repository import GymDB
 
 
 class GymMemoryRepository(GymRepository):
@@ -17,3 +17,6 @@ class GymMemoryRepository(GymRepository):
 
     async def get_by_subscription_id(self, subscription_id: uuid.UUID) -> List[GymDB]:
         return [gym for gym in self.__gyms if gym.subscription_id == subscription_id]
+
+    async def delete(self, gym: GymDB) -> None:
+        self.__gyms.remove(gym)
