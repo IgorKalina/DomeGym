@@ -41,7 +41,7 @@ class CreateGymHandler(CommandHandler):
             raise SubscriptionDoesNotExistError()
         gyms: List[GymDB] = await self.__gym_repository.get_by_subscription_id(subscription_db.id)
 
-        subscription = dto.mappers.map_subscription_dto_to_domain(subscription=subscription_db, gyms=gyms)
+        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db, gyms=gyms)
         gym = Gym(
             name=command.name,
             max_rooms=subscription.max_rooms,
@@ -49,8 +49,8 @@ class CreateGymHandler(CommandHandler):
         )
         subscription.add_gym(gym)
 
-        subscription_db = dto.mappers.map_subscription_domain_to_db_dto(subscription)
-        gym_db: GymDB = dto.mappers.map_gym_domain_to_db_dto(gym=gym)
+        subscription_db = dto.mappers.subscription.domain_to_db(subscription)
+        gym_db: GymDB = dto.mappers.gym.domain_to_db(gym=gym)
         await self.__subscription_repository.update(subscription_db)
         await self.__gym_repository.create(gym_db)
         await self.__eventbus.publish(subscription.pop_domain_events())

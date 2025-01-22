@@ -5,7 +5,7 @@ from src.gym_management.application.common.dto.repository.subscription import Su
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 
-def map_subscription_dto_to_domain(subscription: SubscriptionDB, gyms: List[GymDB]) -> Subscription:
+def db_to_domain(subscription: SubscriptionDB, gyms: List[GymDB]) -> Subscription:
     return Subscription(
         id=subscription.id,
         type=subscription.type,
@@ -15,7 +15,7 @@ def map_subscription_dto_to_domain(subscription: SubscriptionDB, gyms: List[GymD
     )
 
 
-def map_subscription_domain_to_db_dto(subscription: Subscription) -> SubscriptionDB:
+def domain_to_db(subscription: Subscription) -> SubscriptionDB:
     return SubscriptionDB(
         id=subscription.id,
         type=subscription.type,

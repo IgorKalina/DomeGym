@@ -42,11 +42,11 @@ class CreateSubscriptionHandler(CommandHandler):
         await self.__admin_repository.create(admin_db)
 
         subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type)
-        admin = dto.mappers.map_admin_dto_to_domain(admin_db)
+        admin = dto.mappers.admin.db_to_domain(admin_db)
         admin.set_subscription(subscription)
 
-        subscription_db: SubscriptionDB = dto.mappers.map_subscription_domain_to_db_dto(subscription)
-        admin_db = dto.mappers.map_admin_domain_to_db_dto(admin)
+        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
+        admin_db = dto.mappers.admin.domain_to_db(admin)
         await self.__subscription_repository.create(subscription_db)
         await self.__admin_repository.update(admin_db)
         await self.__event_bus.publish(admin.pop_domain_events())

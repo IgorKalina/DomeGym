@@ -1,4 +1,8 @@
-from .admin import *  # noqa: F403
-from .gym import *  # noqa: F403
-from .room import *  # noqa: F403
-from .subscription import *  # noqa: F403
+from . import admin, gym, room, subscription
+
+__all__ = [
+    "admin",
+    "gym",
+    "room",
+    "subscription",
+]

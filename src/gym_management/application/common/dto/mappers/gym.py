@@ -6,7 +6,7 @@ from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 
-def map_gym_dto_to_domain(gym: GymDB, subscription: Subscription, rooms: List[RoomDB]) -> Gym:
+def db_to_domain(gym: GymDB, subscription: Subscription, rooms: List[RoomDB]) -> Gym:
     return Gym(
         id=gym.id,
         name=gym.name,
@@ -17,5 +17,5 @@ def map_gym_dto_to_domain(gym: GymDB, subscription: Subscription, rooms: List[Ro
     )
 
 
-def map_gym_domain_to_db_dto(gym: Gym) -> GymDB:
+def domain_to_db(gym: Gym) -> GymDB:
     return GymDB(id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at)

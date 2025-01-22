@@ -48,12 +48,12 @@ class CreateRoomHandler(CommandHandler):
         gyms = await self.__gym_repository.get_by_subscription_id(command.subscription_id)
         rooms = await self.__room_repository.get_by_gym_id(command.gym_id)
 
-        subscription = dto.mappers.map_subscription_dto_to_domain(subscription=subscription_db, gyms=gyms)
+        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db, gyms=gyms)
         room = Room(gym_id=gym_db.id, name=command.name, max_daily_sessions=subscription.max_daily_sessions)
-        gym: Gym = dto.mappers.map_gym_dto_to_domain(gym=gym_db, subscription=subscription, rooms=rooms)
+        gym: Gym = dto.mappers.gym.db_to_domain(gym=gym_db, subscription=subscription, rooms=rooms)
         gym.add_room(room)
 
-        room_db: RoomDB = dto.mappers.map_room_domain_to_db_dto(room=room, gym=gym)
+        room_db: RoomDB = dto.mappers.room.domain_to_db(room=room, gym=gym)
         await self.__room_repository.create(room_db)
         await self.__eventbus.publish(
             subscription.pop_domain_events() + gym.pop_domain_events() + room.pop_domain_events()

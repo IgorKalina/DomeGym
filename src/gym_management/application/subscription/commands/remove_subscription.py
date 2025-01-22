@@ -45,11 +45,11 @@ class RemoveSubscriptionHandler(CommandHandler):
         if admin_db is None:
             raise SubscriptionDoesNotHaveAdminError()
 
-        admin = dto.mappers.map_admin_dto_to_domain(admin_db)
-        subscription = dto.mappers.map_subscription_dto_to_domain(subscription=subscription_db, gyms=gyms)
+        admin = dto.mappers.admin.db_to_domain(admin_db)
+        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db, gyms=gyms)
         admin.remove_subscription(subscription)
 
-        admin_db = dto.mappers.map_admin_domain_to_db_dto(admin)
+        admin_db = dto.mappers.admin.domain_to_db(admin)
         await self.__subscription_repository.delete(subscription_db)
         await self.__admin_repository.update(admin_db)
         await self.__eventbus.publish(admin.pop_domain_events())
