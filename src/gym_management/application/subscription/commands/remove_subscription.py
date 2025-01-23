@@ -42,7 +42,7 @@ class RemoveSubscriptionHandler(CommandHandler):
 
         admin = dto.mappers.admin.db_to_domain(admin_db)
         subscription = dto.mappers.subscription.db_to_domain(subscription_db)
-        admin.remove_subscription(subscription)
+        admin.unset_subscription(subscription)
 
         admin_db = dto.mappers.admin.domain_to_db(admin)
         await self.__subscription_repository.delete(subscription_db)

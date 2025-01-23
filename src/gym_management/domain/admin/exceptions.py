@@ -6,7 +6,7 @@ from src.shared_kernel.domain.exceptions import DomainError
 
 @dataclass(kw_only=True, frozen=True)
 class AdminDomainError(DomainError):
-    entity_name = "Admin"
+    entity_name: str = "Admin"
 
     @property
     def detail(self) -> str:

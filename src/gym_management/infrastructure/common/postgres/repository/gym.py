@@ -12,8 +12,12 @@ from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_rep
 
 
 class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
-    async def get_by_id(self, gym_id: uuid.UUID) -> GymDB | None:
-        query = select(models.Gym).where(models.Gym.id == gym_id).options(selectinload(models.Gym.rooms))
+    async def get_by_id(self, gym_id: uuid.UUID, subscription_id: uuid.UUID) -> GymDB | None:
+        query = (
+            select(models.Gym)
+            .where(models.Gym.id == gym_id and models.Gym.subscription_id == subscription_id)
+            .options(selectinload(models.Gym.rooms))
+        )
 
         result = await self._session.scalars(query)
         gym: models.Gym = result.one_or_none()

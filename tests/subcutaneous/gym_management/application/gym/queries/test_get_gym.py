@@ -1,7 +1,8 @@
-import typing
+import uuid
 
 import pytest
 
+from src.gym_management.application.common.dto.repository import GymDB
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
     SubscriptionRepository,
 )
@@ -14,9 +15,7 @@ from src.shared_kernel.infrastructure.command.command_invoker_memory import Comm
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
-
-if typing.TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository.gym import GymDB
+from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
 
 
 class TestGetGym:
@@ -66,6 +65,23 @@ class TestGetGym:
     ) -> None:
         # Arrange
         get_gym: GetGym = GetGym(subscription_id=subscription_db.id, gym_id=constants.gym.GYM_ID)
+
+        # Act
+        with pytest.raises(GymDoesNotExistError) as err:
+            await self._query_invoker.invoke(get_gym)
+
+        # Assert
+        assert err.value.title == "Gym.Not_found"
+        assert err.value.detail == "Gym with the provided id not found"
+        assert err.value.error_type == ErrorType.NOT_FOUND
+
+    @pytest.mark.asyncio
+    async def test_get_gym_when_gym_not_belongs_to_subscription_should_raise_exception(self, gym_db: GymDB) -> None:
+        # Arrange
+        subscription_other = SubscriptionDBFactory.create_subscription(id=uuid.uuid4())
+        await self._subscription_repository.create(subscription_other)
+
+        get_gym: GetGym = GetGym(subscription_id=subscription_other.id, gym_id=gym_db.id)
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:

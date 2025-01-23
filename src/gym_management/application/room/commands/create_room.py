@@ -42,7 +42,9 @@ class CreateRoomHandler(CommandHandler):
         if subscription_db is None:
             raise SubscriptionDoesNotExistError()
 
-        gym_db: GymDB | None = await self.__gym_repository.get_by_id(command.gym_id)
+        gym_db: GymDB | None = await self.__gym_repository.get_by_id(
+            gym_id=command.gym_id, subscription_id=command.subscription_id
+        )
         if gym_db is None:
             raise GymDoesNotExistError()
 

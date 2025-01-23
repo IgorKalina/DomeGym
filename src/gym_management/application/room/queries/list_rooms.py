@@ -36,7 +36,9 @@ class ListRoomsHandler(QueryHandler):
         if subscription is None:
             raise SubscriptionDoesNotExistError()
 
-        gym: GymDB | None = await self.__gym_repository.get_by_id(query.gym_id)
+        gym: GymDB | None = await self.__gym_repository.get_by_id(
+            gym_id=query.gym_id, subscription_id=query.subscription_id
+        )
         if gym is None:
             raise GymDoesNotExistError()
 

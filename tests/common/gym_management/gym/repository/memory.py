@@ -11,8 +11,11 @@ class GymMemoryRepository(GymRepository):
         self.__shared_state = shared_state
         self.__gyms: List[GymDB] = self.__shared_state.gyms
 
-    async def get_by_id(self, gym_id: uuid.UUID) -> GymDB | None:
-        return next((self.__create_gym_dto(gym) for gym in self.__gyms if gym.id == gym_id), None)
+    async def get_by_id(self, gym_id: uuid.UUID, subscription_id: uuid.UUID) -> GymDB | None:
+        for gym in self.__gyms:
+            if gym.id == gym_id and gym.subscription_id == subscription_id:
+                return self.__create_gym_dto(gym)
+        return None
 
     async def create(self, gym: GymDB) -> None:
         self.__gyms.append(gym)

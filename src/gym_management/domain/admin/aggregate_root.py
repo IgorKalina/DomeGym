@@ -1,6 +1,6 @@
 import uuid
 
-from src.gym_management.domain.admin.events.subscription_removed_event import SubscriptionRemovedEvent
+from src.gym_management.domain.admin.events.subscription_removed_event import SubscriptionUnsetEvent
 from src.gym_management.domain.admin.events.subscription_set_event import SubscriptionSetEvent
 from src.gym_management.domain.admin.exceptions import AdminDoesNotHaveSubscriptionSetError
 from src.gym_management.domain.common.aggregate_root import AggregateRoot
@@ -28,8 +28,8 @@ class Admin(AggregateRoot):
         self.__subscription_id = subscription.id
         self._create_domain_event(SubscriptionSetEvent(subscription=subscription))
 
-    def remove_subscription(self, subscription: Subscription) -> None:
+    def unset_subscription(self, subscription: Subscription) -> None:
         if self.__subscription_id is None:
             raise AdminDoesNotHaveSubscriptionSetError()
         self.__subscription_id = None
-        self._create_domain_event(SubscriptionRemovedEvent(subscription=subscription))
+        self._create_domain_event(SubscriptionUnsetEvent(subscription=subscription))

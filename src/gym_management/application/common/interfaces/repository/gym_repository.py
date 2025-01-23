@@ -11,7 +11,7 @@ class GymRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_by_id(self, gym_id: uuid.UUID) -> GymDB | None:
+    async def get_by_id(self, gym_id: uuid.UUID, subscription_id: uuid.UUID) -> GymDB | None:
         pass
 
     @abc.abstractmethod

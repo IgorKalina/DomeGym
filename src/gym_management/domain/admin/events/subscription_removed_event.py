@@ -8,5 +8,5 @@ if typing.TYPE_CHECKING:
 
 
 @dataclass(kw_only=True)
-class SubscriptionRemovedEvent(DomainEvent):
+class SubscriptionUnsetEvent(DomainEvent):
     subscription: "Subscription"
