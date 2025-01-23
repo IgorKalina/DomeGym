@@ -1,7 +1,7 @@
 import uuid
 
 from src.gym_management.application.room.commands.create_room import CreateRoom
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 
 
 class RoomCommandFactory:

@@ -10,7 +10,7 @@ from src.gym_management.application.subscription.exceptions import SubscriptionD
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_command_factory import RoomCommandFactory
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository

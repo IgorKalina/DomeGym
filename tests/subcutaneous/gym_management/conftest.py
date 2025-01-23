@@ -6,9 +6,11 @@ from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
+from tests.common.gym_management.common.injection.containers.repository_memory_container import (
+    RepositoryMemoryContainer,
+)
 from tests.common.gym_management.gym.factory.gym_db_factory import GymDBFactory
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
-from tests.common.gym_management.injection.containers.repository_memory_container import RepositoryMemoryContainer
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
 from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
 from tests.common.gym_management.subscription.repository.memory import (

@@ -3,11 +3,13 @@ from typing import List
 
 from src.gym_management.application.common.dto.repository.admin import AdminDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
+from tests.common.gym_management.common.repository_state import RepositorySharedState
 
 
 class AdminMemoryRepository(AdminRepository):
-    def __init__(self) -> None:
-        self.__admins: List[AdminDB] = []
+    def __init__(self, shared_state: RepositorySharedState) -> None:
+        self.__shared_state = shared_state
+        self.__admins: List[AdminDB] = self.__shared_state.admins
 
     async def create(self, admin: AdminDB) -> None:
         self.__admins.append(admin)

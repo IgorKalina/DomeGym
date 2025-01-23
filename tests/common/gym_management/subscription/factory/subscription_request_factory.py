@@ -4,7 +4,7 @@ from src.gym_management.domain.subscription.subscription_type import Subscriptio
 from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 
 
 class SubscriptionRequestFactory:

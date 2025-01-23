@@ -45,12 +45,10 @@ class CreateRoomHandler(CommandHandler):
         gym_db: GymDB | None = await self.__gym_repository.get_by_id(command.gym_id)
         if gym_db is None:
             raise GymDoesNotExistError()
-        gyms = await self.__gym_repository.get_by_subscription_id(command.subscription_id)
-        rooms = await self.__room_repository.get_by_gym_id(command.gym_id)
 
-        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db, gyms=gyms)
+        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db)
         room = Room(gym_id=gym_db.id, name=command.name, max_daily_sessions=subscription.max_daily_sessions)
-        gym: Gym = dto.mappers.gym.db_to_domain(gym=gym_db, subscription=subscription, rooms=rooms)
+        gym: Gym = dto.mappers.gym.db_to_domain(gym=gym_db, subscription=subscription)
         gym.add_room(room)
 
         room_db: RoomDB = dto.mappers.room.domain_to_db(room=room, gym=gym)

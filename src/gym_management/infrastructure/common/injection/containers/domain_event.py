@@ -21,7 +21,6 @@ class DomainEventContainer(containers.DeclarativeContainer):
     subscription_removed_handler = providers.Factory(
         SubscriptionRemovedHandler,
         gym_repository=repository_container.gym_repository,
-        room_repository=repository_container.room_repository,
         eventbus=domain_eventbus,
     )
     gym_removed_handler = providers.Factory(

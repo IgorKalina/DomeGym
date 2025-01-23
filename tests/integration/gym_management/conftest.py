@@ -24,8 +24,8 @@ from src.gym_management.presentation.api.controllers.room.v1.responses.room_resp
 from src.gym_management.presentation.api.controllers.subscription.v1.responses.subscription_response import (
     SubscriptionResponse,
 )
-from tests.common.gym_management.config.config import ConfigTest
-from tests.common.gym_management.config.mappers import map_database_full_url_to_config
+from tests.common.gym_management.common.config.config import ConfigTest
+from tests.common.gym_management.common.config.mappers import map_database_full_url_to_config
 from tests.common.gym_management.gym.factory.gym_request_factory import GymRequestFactory
 from tests.common.gym_management.gym.service.api.v1 import GymV1ApiService
 from tests.common.gym_management.room.factory.room_request_factory import RoomRequestFactory

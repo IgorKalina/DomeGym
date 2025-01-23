@@ -1,5 +1,5 @@
 from src.gym_management.presentation.api.controllers.gym.v1.requests.create_gym_request import CreateGymRequest
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 
 
 class GymRequestFactory:

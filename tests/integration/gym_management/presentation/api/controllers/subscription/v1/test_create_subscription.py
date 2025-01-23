@@ -5,7 +5,7 @@ import pytest
 from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
 )
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.subscription.factory.subscription_request_factory import SubscriptionRequestFactory
 from tests.common.gym_management.subscription.service.api.v1 import SubscriptionV1ApiService
 

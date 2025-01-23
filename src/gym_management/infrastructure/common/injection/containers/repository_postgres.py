@@ -37,7 +37,7 @@ async def _init_postgres_session(config: DatabaseConfig) -> AsyncSession:
     session_factory = _build_sa_session_factory(engine)
     async with session_factory() as session:
         await session.execute(select(1))
-        logger.info("Postgres session has been set up successfully")
+        logger.info("Postgres session has been successfully established")
         yield session
 
     await engine.dispose()

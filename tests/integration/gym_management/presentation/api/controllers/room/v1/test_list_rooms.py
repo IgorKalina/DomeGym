@@ -7,7 +7,7 @@ from src.gym_management.presentation.api.controllers.room.v1.responses.room_resp
 from src.gym_management.presentation.api.controllers.subscription.v1.responses.subscription_response import (
     SubscriptionResponse,
 )
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.room.service.api.v1 import RoomV1ApiService
 
 

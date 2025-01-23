@@ -1,18 +1,15 @@
-from typing import List
-
-from src.gym_management.application.common.dto.repository import RoomDB
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 
-def db_to_domain(gym: GymDB, subscription: Subscription, rooms: List[RoomDB]) -> Gym:
+def db_to_domain(gym: GymDB, subscription: Subscription) -> Gym:
     return Gym(
         id=gym.id,
         name=gym.name,
         subscription_id=subscription.id,
         max_rooms=subscription.max_rooms,
-        room_ids=[room.id for room in rooms],
+        room_ids=gym.room_ids,
         created_at=gym.created_at,
     )
 

@@ -2,7 +2,7 @@ import uuid
 from typing import Self
 
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
@@ -14,6 +14,8 @@ class Gym(TimedBaseModel):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(64))
     subscription_id: Mapped[uuid.UUID] = mapped_column()
+
+    rooms = relationship("Room", primaryjoin="Gym.id == foreign(Room.gym_id)", viewonly=True)
 
     def __repr__(self) -> str:
         return f"Gym(id={self.id!r}, name={self.name!r}"
@@ -35,4 +37,5 @@ class Gym(TimedBaseModel):
             subscription_id=self.subscription_id,
             created_at=self.created_at,
             updated_at=self.updated_at,
+            room_ids=[room.id for room in self.rooms],
         )

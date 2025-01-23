@@ -2,7 +2,7 @@ import uuid
 from typing import List
 
 from src.gym_management.domain.gym.aggregate_root import Gym
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 
 
 class GymFactory:

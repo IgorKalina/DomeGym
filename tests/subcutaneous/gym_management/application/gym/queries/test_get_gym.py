@@ -12,7 +12,7 @@ from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
 
 if typing.TYPE_CHECKING:

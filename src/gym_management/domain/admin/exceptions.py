@@ -15,8 +15,8 @@ class AdminDomainError(DomainError):
 
 @dataclass(kw_only=True, frozen=True)
 class AdminDoesNotHaveSubscriptionSetError(AdminDomainError):
-    error_type: ErrorType = ErrorType.VALIDATION
+    error_type: ErrorType = ErrorType.UNEXPECTED
 
     @property
     def detail(self) -> str:
-        return "Admin with the provided id does not have a subscription assigned"
+        return "Admin with the provided id does not have a subscription set"

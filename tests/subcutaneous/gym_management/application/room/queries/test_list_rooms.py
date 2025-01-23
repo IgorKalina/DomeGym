@@ -8,7 +8,7 @@ from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
-from tests.common.gym_management import constants
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.room.factory.room_db_factory import RoomDBFactory
 from tests.common.gym_management.room.factory.room_query_factory import RoomQueryFactory
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository

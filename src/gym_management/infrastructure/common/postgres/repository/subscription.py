@@ -2,6 +2,7 @@ import uuid
 from typing import List
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
@@ -18,7 +19,11 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
         await self._session.commit()
 
     async def get_by_id(self, subscription_id: uuid.UUID) -> SubscriptionDB | None:
-        query = select(models.Subscription).where(models.Subscription.id == subscription_id)
+        query = (
+            select(models.Subscription)
+            .where(models.Subscription.id == subscription_id)
+            .options(selectinload(models.Subscription.gyms))
+        )
         result = await self._session.scalars(query)
         subscription: models.Subscription = result.one_or_none()
         if subscription:
@@ -26,7 +31,11 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
         return None
 
     async def get_by_admin_id(self, admin_id: uuid.UUID) -> SubscriptionDB | None:
-        query = select(models.Subscription).where(models.Subscription.admin_id == admin_id)
+        query = (
+            select(models.Subscription)
+            .where(models.Subscription.admin_id == admin_id)
+            .options(selectinload(models.Subscription.gyms))
+        )
         result = await self._session.scalars(query)
         subscription: models.Subscription = result.one_or_none()
         if subscription:
@@ -34,7 +43,7 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
         return None
 
     async def get_multi(self) -> List[SubscriptionDB]:
-        query = select(models.Subscription)
+        query = select(models.Subscription).options(selectinload(models.Subscription.gyms))
         result: List[models.Subscription] = await self._session.scalars(query)
         return [subscription.to_dto() for subscription in result]
 

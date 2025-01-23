@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository.gym import GymDB
@@ -39,9 +39,8 @@ class CreateGymHandler(CommandHandler):
         subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
         if subscription_db is None:
             raise SubscriptionDoesNotExistError()
-        gyms: List[GymDB] = await self.__gym_repository.get_by_subscription_id(subscription_db.id)
 
-        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db, gyms=gyms)
+        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db)
         gym = Gym(
             name=command.name,
             max_rooms=subscription.max_rooms,

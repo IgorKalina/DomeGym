@@ -2,6 +2,7 @@ import uuid
 from typing import List
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
@@ -12,7 +13,8 @@ from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_rep
 
 class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
     async def get_by_id(self, gym_id: uuid.UUID) -> GymDB | None:
-        query = select(models.Gym).where(models.Gym.id == gym_id)
+        query = select(models.Gym).where(models.Gym.id == gym_id).options(selectinload(models.Gym.rooms))
+
         result = await self._session.scalars(query)
         gym: models.Gym = result.one_or_none()
         return gym.to_dto() if gym else None
@@ -24,7 +26,11 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
         await self._session.commit()
 
     async def get_by_subscription_id(self, subscription_id: uuid.UUID) -> List[GymDB]:
-        query = select(models.Gym).where(models.Gym.subscription_id == subscription_id)
+        query = (
+            select(models.Gym)
+            .where(models.Gym.subscription_id == subscription_id)
+            .options(selectinload(models.Gym.rooms))
+        )
         result: List[models.Gym] = await self._session.scalars(query)
         return [gym.to_dto() for gym in result]
 

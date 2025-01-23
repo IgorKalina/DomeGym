@@ -42,7 +42,6 @@ class CommandContainer(containers.DeclarativeContainer):
         RemoveSubscriptionHandler,
         admin_repository=repository_container.admin_repository,
         subscription_repository=repository_container.subscription_repository,
-        gym_repository=repository_container.gym_repository,
         eventbus=domain_eventbus,
     )
 
