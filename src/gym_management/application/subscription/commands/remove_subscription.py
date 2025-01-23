@@ -41,7 +41,7 @@ class RemoveSubscriptionHandler(CommandHandler):
             raise SubscriptionDoesNotHaveAdminError()
 
         admin = dto.mappers.admin.db_to_domain(admin_db)
-        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db)
+        subscription = dto.mappers.subscription.db_to_domain(subscription_db)
         admin.remove_subscription(subscription)
 
         admin_db = dto.mappers.admin.domain_to_db(admin)
