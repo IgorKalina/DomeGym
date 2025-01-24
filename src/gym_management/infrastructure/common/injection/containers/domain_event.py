@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from src.gym_management.application.gym.domain_events.subscription_removed_handler import SubscriptionRemovedHandler
+from src.gym_management.application.gym.domain_events.subscription_removed_handler import SubscriptionUnsetHandler
 from src.gym_management.application.room.domain_events.gym_added_handler import GymAddedEventHandler
 from src.gym_management.application.room.domain_events.gym_removed_handler import GymRemovedHandler
 from src.gym_management.application.room.domain_events.some_event_handler import SomeEventHandler
@@ -18,8 +18,8 @@ class DomainEventContainer(containers.DeclarativeContainer):
 
     gym_added_handler = providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus)
     some_event_handler = providers.Factory(SomeEventHandler)
-    subscription_removed_handler = providers.Factory(
-        SubscriptionRemovedHandler,
+    subscription_unset_handler = providers.Factory(
+        SubscriptionUnsetHandler,
         gym_repository=repository_container.gym_repository,
         eventbus=domain_eventbus,
     )
@@ -31,10 +31,13 @@ class DomainEventContainer(containers.DeclarativeContainer):
 
     domain_events = providers.Dict(
         {
-            GymAddedEvent: providers.List(gym_added_handler),
+            # Subscription
             SubscriptionSetEvent: providers.List(gym_added_handler),
-            SomeEvent: providers.List(some_event_handler),
-            SubscriptionUnsetEvent: providers.List(subscription_removed_handler),
+            # Gym
+            GymAddedEvent: providers.List(gym_added_handler),
             GymRemovedEvent: providers.List(gym_removed_handler),
+            # Other
+            SubscriptionUnsetEvent: providers.List(subscription_unset_handler),
+            SomeEvent: providers.List(some_event_handler),
         }
     )

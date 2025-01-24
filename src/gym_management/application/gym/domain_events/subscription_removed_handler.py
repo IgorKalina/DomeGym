@@ -11,7 +11,7 @@ from src.shared_kernel.domain.event import DomainEventHandler
 logger = logging.getLogger(__name__)
 
 
-class SubscriptionRemovedHandler(DomainEventHandler):
+class SubscriptionUnsetHandler(DomainEventHandler):
     """
     Remove all gyms per subscription
     """
