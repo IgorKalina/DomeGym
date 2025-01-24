@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from src.gym_management.application.gym.domain_events.subscription_removed_handler import SubscriptionUnsetHandler
+from src.gym_management.application.gym.domain_events.subscription_unset_handler import SubscriptionUnsetHandler
 from src.gym_management.application.room.domain_events.gym_added_handler import GymAddedEventHandler
 from src.gym_management.application.room.domain_events.gym_removed_handler import GymRemovedHandler
 from src.gym_management.application.room.domain_events.some_event_handler import SomeEventHandler

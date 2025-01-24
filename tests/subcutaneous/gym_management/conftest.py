@@ -37,6 +37,11 @@ async def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
 
 
 @pytest.fixture
+async def domain_eventbus(di_container: DiContainer) -> QueryInvokerMemory:
+    return await di_container.domain_eventbus()
+
+
+@pytest.fixture
 def admin_repository(di_container: DiContainer) -> AdminMemoryRepository:
     return di_container.repository_container.admin_repository()
 
