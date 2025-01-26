@@ -2,7 +2,7 @@ import abc
 from abc import abstractmethod
 from typing import List
 
-from src.shared_kernel.domain.event import DomainEvent
+from src.shared_kernel.domain.common.event import DomainEvent
 
 
 class FailedDomainEventRepository(abc.ABC):

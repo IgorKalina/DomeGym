@@ -50,7 +50,7 @@ class TestCreateGym:
         create_gym = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription_db.id)
 
         # Act
-        with freeze_time(constants.common.NEW_UPDATED_AT_STR):
+        with freeze_time(constants.common.NEW_UPDATED_AT):
             gym: GymDB = await self._command_invoker.invoke(create_gym)
 
         # Assert

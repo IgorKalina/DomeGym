@@ -4,7 +4,6 @@ from copy import copy
 from dataclasses import dataclass
 from typing import List
 
-from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
 from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
@@ -13,6 +12,7 @@ from src.gym_management.domain.subscription.exceptions import (
     SubscriptionDoesNotHaveGymError,
 )
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
+from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
 @dataclass(kw_only=True)

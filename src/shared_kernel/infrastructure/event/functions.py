@@ -6,7 +6,7 @@ from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 from src.shared_kernel.application.event.domain.repository import FailedDomainEventRepository
 
 if typing.TYPE_CHECKING:
-    from src.shared_kernel.domain.event import DomainEvent
+    from src.shared_kernel.domain.common.event import DomainEvent
 
 logger: logging.Logger = logging.getLogger(__name__)
 

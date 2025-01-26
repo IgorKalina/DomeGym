@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.shared_kernel.domain.exceptions import DomainError
+from src.shared_kernel.domain.common.exceptions import DomainError
 
 
 @dataclass(kw_only=True, frozen=True)

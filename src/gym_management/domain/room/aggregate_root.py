@@ -1,7 +1,7 @@
 import uuid
 from dataclasses import dataclass
 
-from src.gym_management.domain.common.aggregate_root import AggregateRoot
+from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
 @dataclass(kw_only=True)

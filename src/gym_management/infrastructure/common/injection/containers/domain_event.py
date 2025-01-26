@@ -4,8 +4,8 @@ from src.gym_management.application.gym.domain_events.subscription_unset_handler
 from src.gym_management.application.room.domain_events.gym_added_handler import GymAddedEventHandler
 from src.gym_management.application.room.domain_events.gym_removed_handler import GymRemovedHandler
 from src.gym_management.application.room.domain_events.some_event_handler import SomeEventHandler
-from src.gym_management.domain.admin.events.subscription_removed_event import SubscriptionUnsetEvent
 from src.gym_management.domain.admin.events.subscription_set_event import SubscriptionSetEvent
+from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent, SomeEvent
 from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
 from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer

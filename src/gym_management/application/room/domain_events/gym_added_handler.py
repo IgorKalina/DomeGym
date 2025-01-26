@@ -2,7 +2,7 @@ import logging
 
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent, SomeEvent
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
-from src.shared_kernel.domain.event import DomainEventHandler
+from src.shared_kernel.domain.common.event import DomainEventHandler
 
 logger = logging.getLogger(__name__)
 

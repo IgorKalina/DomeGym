@@ -3,7 +3,7 @@ from typing import Type
 
 from src.shared_kernel.application.command import Command
 from src.shared_kernel.application.query.interfaces.query import Query
-from src.shared_kernel.domain.event import DomainEvent, DomainEventHandler
+from src.shared_kernel.domain.common.event import DomainEvent, DomainEventHandler
 
 
 @dataclass(kw_only=True, frozen=True)

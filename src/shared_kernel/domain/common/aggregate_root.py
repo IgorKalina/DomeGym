@@ -2,8 +2,8 @@ from copy import copy
 from dataclasses import dataclass, field
 from typing import List
 
-from src.gym_management.domain.common.entity import Entity
-from src.shared_kernel.domain.event import DomainEvent
+from src.shared_kernel.domain.common.entity import Entity
+from src.shared_kernel.domain.common.event import DomainEvent
 
 
 @dataclass(kw_only=True)

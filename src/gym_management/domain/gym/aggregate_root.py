@@ -1,12 +1,12 @@
 import uuid
 from typing import List
 
-from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from src.gym_management.domain.room.aggregate_root import Room
 from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
+from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
 class Gym(AggregateRoot):

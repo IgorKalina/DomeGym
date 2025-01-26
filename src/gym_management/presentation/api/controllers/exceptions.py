@@ -6,7 +6,7 @@ from fastapi import FastAPI, status
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorData, ErrorResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.domain.exceptions import DomainError
+from src.shared_kernel.domain.common.exceptions import DomainError
 
 logger = logging.getLogger(__name__)
 

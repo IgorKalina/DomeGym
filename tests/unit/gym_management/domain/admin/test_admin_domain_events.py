@@ -1,9 +1,13 @@
-from src.gym_management.domain.admin.events.subscription_removed_event import SubscriptionUnsetEvent
+from freezegun import freeze_time
+
 from src.gym_management.domain.admin.events.subscription_set_event import SubscriptionSetEvent
+from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
 from tests.common.gym_management.admin.factory.admin_factory import AdminFactory
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 
+@freeze_time(constants.common.DEFAULT_DATETIME)
 class TestAdminDomainEvents:
     def test_set_subscription_should_create_subscription_set_domain_event(self) -> None:
         # Arrange

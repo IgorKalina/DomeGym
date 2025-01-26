@@ -1,12 +1,15 @@
 import pytest
+from freezegun import freeze_time
 
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 
+@freeze_time(constants.common.DEFAULT_DATETIME)
 class TestSubscriptionDomainEvents:
     def test_subscription_add_gym_when_added_should_create_domain_event(self) -> None:
         # Arrange

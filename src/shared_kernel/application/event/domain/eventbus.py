@@ -1,7 +1,7 @@
 import abc
 from typing import List, Type
 
-from src.shared_kernel.domain.event import DomainEvent, DomainEventHandler
+from src.shared_kernel.domain.common.event import DomainEvent, DomainEventHandler
 
 
 class DomainEventBus(abc.ABC):

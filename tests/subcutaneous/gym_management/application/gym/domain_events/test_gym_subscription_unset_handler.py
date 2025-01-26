@@ -14,7 +14,7 @@ from tests.common.gym_management.subscription.factory.subscription_domain_event_
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 if TYPE_CHECKING:
-    from src.gym_management.domain.admin.events.subscription_removed_event import SubscriptionUnsetEvent
+    from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
     from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 

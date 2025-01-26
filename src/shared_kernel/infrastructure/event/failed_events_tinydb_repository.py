@@ -5,7 +5,7 @@ import jsonpickle
 from tinydb import TinyDB
 
 from src.shared_kernel.application.event.domain.repository import FailedDomainEventRepository
-from src.shared_kernel.domain.event import DomainEvent
+from src.shared_kernel.domain.common.event import DomainEvent
 
 logger = logging.getLogger(__name__)
 

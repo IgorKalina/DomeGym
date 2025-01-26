@@ -1,12 +1,15 @@
 import pytest
+from freezegun import freeze_time
 
 from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
+from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.room.factory.room_factory import RoomFactory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 
+@freeze_time(constants.common.DEFAULT_DATETIME)
 class TestGymDomainEvents:
     def test_add_room_when_added_should_create_domain_event(self) -> None:
         # Arrange

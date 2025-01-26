@@ -1,3 +1,4 @@
+import copy
 import logging
 import queue
 from collections import defaultdict
@@ -6,7 +7,7 @@ from typing import Dict, List, Type
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 from src.shared_kernel.application.event.domain.repository import FailedDomainEventRepository
 from src.shared_kernel.application.exceptions import EventHandlerAlreadyExistsError, EventualConsistencyError
-from src.shared_kernel.domain.event import DomainEvent, DomainEventHandler
+from src.shared_kernel.domain.common.event import DomainEvent, DomainEventHandler
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ class DomainEventBusMemory(DomainEventBus):
                 f"Event '{event.__class__.__name__} is being handled by '{subscriber.__class__.__name__}' handler"
             )
             try:
-                await subscriber.handle(event)
+                await subscriber.handle(copy.deepcopy(event))
             except Exception as e:
                 logger.exception(f"An error occurred while processing '{event}' domain event: {str(e)}")
                 await self.__domain_event_repository.create(event)

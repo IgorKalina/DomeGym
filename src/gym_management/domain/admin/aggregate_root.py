@@ -1,10 +1,10 @@
 import uuid
 
-from src.gym_management.domain.admin.events.subscription_removed_event import SubscriptionUnsetEvent
 from src.gym_management.domain.admin.events.subscription_set_event import SubscriptionSetEvent
+from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
 from src.gym_management.domain.admin.exceptions import AdminDoesNotHaveSubscriptionSetError
-from src.gym_management.domain.common.aggregate_root import AggregateRoot
 from src.gym_management.domain.subscription.aggregate_root import Subscription
+from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
 class Admin(AggregateRoot):
