@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from src.shared_kernel.domain.common.event import DomainEvent
@@ -13,6 +12,5 @@ class GymAddedEvent(DomainEvent):
     gym: "Gym"
 
 
-@dataclass(kw_only=True, frozen=True)
 class SomeEvent(DomainEvent):
     pass

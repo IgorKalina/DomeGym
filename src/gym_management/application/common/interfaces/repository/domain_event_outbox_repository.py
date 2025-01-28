@@ -2,10 +2,10 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import List
 
-from src.gym_management.application.common.dto.repository.domain_event.domain_event_processing_status import (
+from src.gym_management.application.common.dto.repository.domain_event_outbox.domain_event_processing_status import (
     DomainEventProcessingStatus,
 )
-from src.gym_management.application.common.dto.repository.domain_event.dto import DomainEventDB
+from src.gym_management.application.common.dto.repository.domain_event_outbox.dto import DomainEventDB
 
 
 class DomainEventOutboxRepository(ABC):
