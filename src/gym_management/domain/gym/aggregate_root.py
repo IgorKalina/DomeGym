@@ -10,43 +10,34 @@ from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
 class Gym(AggregateRoot):
-    def __init__(
-        self,
-        *,
-        name: str,
-        subscription_id: uuid.UUID,
-        max_rooms: int,
-        room_ids: List[uuid.UUID] | None = None,
-        trainer_ids: List[uuid.UUID] | None = None,
-        **kwargs,
-    ) -> None:
-        super().__init__(**kwargs)
-
-        self.name = name
-        self.subscription_id = subscription_id
-
-        self.__max_rooms = max_rooms
-        self.__room_ids = room_ids or []
-        self.__trainer_ids = trainer_ids or []
+    name: str
+    subscription_id: uuid.UUID
+    max_rooms: int
+    room_ids: List[uuid.UUID] = []
+    trainer_ids: List[uuid.UUID] = []
 
     def add_room(self, room: Room) -> None:
-        if len(self.__room_ids) >= self.__max_rooms:
-            raise GymCannotHaveMoreRoomsThanSubscriptionAllowsError(max_rooms=self.__max_rooms)
+        if len(self.room_ids) >= self.max_rooms:
+            raise GymCannotHaveMoreRoomsThanSubscriptionAllowsError(max_rooms=self.max_rooms)
 
-        self.__room_ids.append(room.id)
-        self._create_domain_event(RoomAddedEvent(gym=self, room=room))
+        self.room_ids.append(room.id)
+        self._create_domain_event(RoomAddedEvent(gym=self.model_copy(), room=room.model_copy()))
 
     def remove_room(self, room: Room) -> None:
-        if room.id not in self.__room_ids:
+        if room.id not in self.room_ids:
             raise RoomDoesNotExistError()
-        self.__room_ids.remove(room.id)
-        self._create_domain_event(RoomRemovedEvent(gym=self, room_id=room.id))
+        self.room_ids.remove(room.id)
+        self._create_domain_event(RoomRemovedEvent(gym=self.model_copy(), room_id=room.id))
 
     def has_room(self, room_id: uuid.UUID) -> bool:
-        return room_id in self.__room_ids
+        return room_id in self.room_ids
 
     def add_trainer(self, trainer_id: uuid.UUID) -> None:
-        self.__trainer_ids.append(trainer_id)
+        self.trainer_ids.append(trainer_id)
 
     def has_trainer(self, trainer_id: uuid.UUID) -> bool:
-        return trainer_id in self.__trainer_ids
+        return trainer_id in self.trainer_ids
+
+
+RoomAddedEvent.model_rebuild()
+RoomRemovedEvent.model_rebuild()

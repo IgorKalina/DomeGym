@@ -1,20 +1,17 @@
-from abc import ABC
-from dataclasses import dataclass, field
+import uuid
 from datetime import datetime, timezone
 from typing import Any
-from uuid import UUID, uuid4
+
+from pydantic import BaseModel, Field
 
 __all__ = [
     "Entity",
 ]
 
 
-@dataclass(kw_only=True)
-class Entity(ABC):
-    id: UUID = field(
-        default_factory=uuid4,
-    )
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+class Entity(BaseModel):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     def __hash__(self) -> int:
         return hash(self.id)

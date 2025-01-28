@@ -1,15 +1,17 @@
 import abc
 from abc import ABC
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Generic, TypeVar
+
+from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = ["DomainEvent", "DomainEventHandler", "EventType"]
 
 
-@dataclass(kw_only=True, frozen=True)
-class DomainEvent(abc.ABC):
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+class DomainEvent(BaseModel):
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 EventType = TypeVar("EventType", bound=DomainEvent)

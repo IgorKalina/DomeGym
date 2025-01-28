@@ -1,14 +1,14 @@
 from copy import copy
-from dataclasses import dataclass, field
 from typing import List
+
+from pydantic import PrivateAttr
 
 from src.shared_kernel.domain.common.entity import Entity
 from src.shared_kernel.domain.common.event import DomainEvent
 
 
-@dataclass(kw_only=True)
 class AggregateRoot(Entity):
-    _domain_events: List[DomainEvent] = field(default_factory=list, init=False, repr=False)
+    _domain_events: List[DomainEvent] = PrivateAttr(default_factory=list)
 
     def pop_domain_events(self) -> List[DomainEvent]:
         registered_events = copy(self._domain_events)

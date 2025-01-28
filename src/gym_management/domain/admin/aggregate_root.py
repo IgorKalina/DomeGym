@@ -8,28 +8,19 @@ from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
 class Admin(AggregateRoot):
-    def __init__(
-        self,
-        *,
-        user_id: uuid.UUID,
-        subscription_id: uuid.UUID | None = None,
-        **kwargs,
-    ) -> None:
-        super().__init__(**kwargs)
-
-        self.user_id = user_id
-        self.__subscription_id = subscription_id
-
-    @property
-    def subscription_id(self) -> uuid.UUID | None:
-        return self.__subscription_id
+    user_id: uuid.UUID
+    subscription_id: uuid.UUID | None = None
 
     def set_subscription(self, subscription: Subscription) -> None:
-        self.__subscription_id = subscription.id
-        self._create_domain_event(SubscriptionSetEvent(subscription=subscription))
+        self.subscription_id = subscription.id
+        self._create_domain_event(SubscriptionSetEvent(subscription=subscription.model_copy()))
 
     def unset_subscription(self, subscription: Subscription) -> None:
-        if self.__subscription_id is None:
+        if self.subscription_id is None:
             raise AdminDoesNotHaveSubscriptionSetError()
-        self.__subscription_id = None
-        self._create_domain_event(SubscriptionUnsetEvent(subscription=subscription))
+        self.subscription_id = None
+        self._create_domain_event(SubscriptionUnsetEvent(subscription=subscription.model_copy()))
+
+
+SubscriptionSetEvent.model_rebuild()
+SubscriptionUnsetEvent.model_rebuild()
