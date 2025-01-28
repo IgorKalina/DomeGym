@@ -6,13 +6,15 @@ from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository.admin import AdminDB
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
+from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
+    DomainEventOutboxRepository,
+)
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
     SubscriptionRepository,
 )
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +29,11 @@ class CreateSubscriptionHandler(CommandHandler):
         self,
         admin_repository: AdminRepository,
         subscription_repository: SubscriptionRepository,
-        eventbus: DomainEventBus,
+        domain_event_outbox_repository: DomainEventOutboxRepository,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
-        self.__event_bus = eventbus
+        self.__domain_event_outbox_repository = domain_event_outbox_repository
 
     async def handle(self, command: CreateSubscription) -> SubscriptionDB:
         admin_db: AdminDB | None = await self.__admin_repository.get_by_id(command.admin_id)
@@ -49,5 +51,8 @@ class CreateSubscriptionHandler(CommandHandler):
         admin_db = dto.mappers.admin.domain_to_db(admin)
         await self.__subscription_repository.create(subscription_db)
         await self.__admin_repository.update(admin_db)
-        await self.__event_bus.publish(admin.pop_domain_events())
+        domain_events = admin.pop_domain_events()
+        await self.__domain_event_outbox_repository.create_multi(
+            [dto.repository.DomainEventDB(event=event) for event in domain_events]
+        )
         return subscription_db

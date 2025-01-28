@@ -10,17 +10,17 @@ from src.gym_management.application.common.dto.repository.domain_event_outbox.dt
 
 class DomainEventOutboxRepository(ABC):
     @abstractmethod
-    def create(self, event: DomainEventDB) -> None:
+    async def create_multi(self, events: List[DomainEventDB]) -> None:
         pass
 
     @abstractmethod
-    def get_multi(self, status: DomainEventProcessingStatus) -> List[DomainEventDB]:
+    async def get_multi(self, status: DomainEventProcessingStatus) -> List[DomainEventDB]:
         pass
 
     @abstractmethod
-    def update(self, event: DomainEventDB) -> DomainEventDB:
+    async def update(self, event: DomainEventDB) -> DomainEventDB:
         pass
 
     @abstractmethod
-    def delete_multi(self, event_ids: List[uuid.UUID]) -> DomainEventDB:
+    async def delete_multi(self, event_ids: List[uuid.UUID]) -> DomainEventDB:
         pass

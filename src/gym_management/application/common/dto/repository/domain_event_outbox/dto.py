@@ -7,5 +7,5 @@ from src.shared_kernel.domain.common.event import DomainEvent
 
 class DomainEventDB(RepositoryDto):
     event: DomainEvent
-    status: DomainEventProcessingStatus = DomainEventProcessingStatus.PENDING
+    processing_status: DomainEventProcessingStatus = DomainEventProcessingStatus.PENDING
     failure_reason: str | None = None
