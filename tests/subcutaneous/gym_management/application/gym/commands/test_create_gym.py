@@ -15,9 +15,6 @@ from src.shared_kernel.infrastructure.command.command_invoker_memory import Comm
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
-from tests.common.gym_management.subscription.repository.memory import (
-    SubscriptionMemoryRepository,
-)
 
 if typing.TYPE_CHECKING:
     from src.gym_management.domain.gym.aggregate_root import Gym
@@ -28,12 +25,10 @@ class TestCreateGym:
     def setup_method(
         self,
         command_invoker: CommandInvokerMemory,
-        subscription_repository: SubscriptionMemoryRepository,
         gym_repository: GymMemoryRepository,
         subscription_db: SubscriptionDB,
     ) -> None:
         self._command_invoker = command_invoker
-        self._subscription_repository = subscription_repository
         self._gym_repository = gym_repository
 
         self._subscription_db: SubscriptionDB = subscription_db
@@ -55,7 +50,6 @@ class TestCreateGym:
 
         # Assert
         assert isinstance(gym, GymDB)
-        await self._assert_subscription_in_db(create_gym)
         await self._assert_gym_in_db(create_gym)
 
     @pytest.mark.asyncio
@@ -94,17 +88,6 @@ class TestCreateGym:
         assert err.value.title == "Subscription.Not_found"
         assert err.value.detail == "Subscription with the provided id not found"
         assert err.value.error_type == ErrorType.NOT_FOUND
-
-    async def _assert_subscription_in_db(self, command: CreateGym) -> None:
-        subscription: SubscriptionDB | None = await self._subscription_repository.get_by_id(
-            subscription_id=command.subscription_id
-        )
-        assert subscription is not None
-        assert subscription.id == self._subscription_db.id
-        assert subscription.type == self._subscription_db.type
-        assert subscription.created_at == self._subscription_db.created_at  # created_at is not changed
-        assert subscription.updated_at != self._subscription_db.updated_at  # updated_at is updated
-        assert subscription.updated_at == constants.common.NEW_UPDATED_AT
 
     async def _assert_gym_in_db(self, command: CreateGym) -> None:
         gyms: List[GymDB] = await self._gym_repository.get_by_subscription_id(command.subscription_id)

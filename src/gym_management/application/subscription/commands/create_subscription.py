@@ -9,6 +9,7 @@ from src.gym_management.application.common.interfaces.repository.admin_repositor
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
     SubscriptionRepository,
 )
+from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.shared_kernel.application.command import Command, CommandHandler
@@ -34,20 +35,32 @@ class CreateSubscriptionHandler(CommandHandler):
         self.__event_bus = eventbus
 
     async def handle(self, command: CreateSubscription) -> SubscriptionDB:
+        admin: Admin = await self.__get_admin_domain(command)
+        subscription: Subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type)
+        admin.set_subscription(subscription)
+
+        subscription_db: SubscriptionDB = await self.__create_subscription_in_db(subscription)
+        await self.__update_admin_in_db(admin)
+        await self.__create_domain_events_in_db(admin)
+        return subscription_db
+
+    async def __get_admin_domain(self, command: CreateSubscription) -> Admin:
         admin_db: AdminDB | None = await self.__admin_repository.get_by_id(command.admin_id)
         if admin_db is not None:
             raise AdminAlreadyExistsError()
 
         admin_db = AdminDB(id=command.admin_id, user_id=uuid.uuid4())
         await self.__admin_repository.create(admin_db)
+        return dto.mappers.admin.db_to_domain(admin_db)
 
-        subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type)
-        admin = dto.mappers.admin.db_to_domain(admin_db)
-        admin.set_subscription(subscription)
-
-        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
-        admin_db = dto.mappers.admin.domain_to_db(admin)
-        await self.__subscription_repository.create(subscription_db)
+    async def __update_admin_in_db(self, admin: Admin) -> None:
+        admin_db: AdminDB = dto.mappers.admin.domain_to_db(admin)
         await self.__admin_repository.update(admin_db)
-        await self.__event_bus.publish(admin.pop_domain_events())
+
+    async def __create_subscription_in_db(self, subscription: Subscription) -> SubscriptionDB:
+        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
+        await self.__subscription_repository.create(subscription_db)
         return subscription_db
+
+    async def __create_domain_events_in_db(self, admin: Admin) -> None:
+        await self.__event_bus.publish(admin.pop_domain_events())

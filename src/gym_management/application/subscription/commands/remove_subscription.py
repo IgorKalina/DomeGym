@@ -9,6 +9,8 @@ from src.gym_management.application.subscription.exceptions import (
     SubscriptionDoesNotExistError,
     SubscriptionDoesNotHaveAdminError,
 )
+from src.gym_management.domain.admin.aggregate_root import Admin
+from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
@@ -32,20 +34,35 @@ class RemoveSubscriptionHandler(CommandHandler):
         self.__eventbus = eventbus
 
     async def handle(self, command: RemoveSubscription) -> SubscriptionDB:
+        subscription: Subscription = await self.__get_subscription_domain(command)
+        admin: Admin = await self.__get_admin_domain(subscription)
+        admin.unset_subscription(subscription)
+
+        await self.__update_admin_in_db(admin)
+        subscription_db: SubscriptionDB = await self.__delete_subscription_from_db(subscription)
+        await self.__create_domain_events_in_db(admin)
+        return subscription_db
+
+    async def __get_subscription_domain(self, command: RemoveSubscription) -> Subscription:
         subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
         if subscription_db is None:
             raise SubscriptionDoesNotExistError()
+        return dto.mappers.subscription.db_to_domain(subscription_db)
 
-        admin_db: AdminDB | None = await self.__admin_repository.get_by_id(subscription_db.admin_id)
+    async def __get_admin_domain(self, subscription: Subscription) -> Admin:
+        admin_db: AdminDB | None = await self.__admin_repository.get_by_id(subscription.admin_id)
         if admin_db is None:
             raise SubscriptionDoesNotHaveAdminError()
+        return dto.mappers.admin.db_to_domain(admin_db)
 
-        admin = dto.mappers.admin.db_to_domain(admin_db)
-        subscription = dto.mappers.subscription.db_to_domain(subscription_db)
-        admin.unset_subscription(subscription)
-
-        admin_db = dto.mappers.admin.domain_to_db(admin)
-        await self.__subscription_repository.delete(subscription_db)
+    async def __update_admin_in_db(self, admin: Admin) -> None:
+        admin_db: AdminDB = dto.mappers.admin.domain_to_db(admin)
         await self.__admin_repository.update(admin_db)
-        await self.__eventbus.publish(admin.pop_domain_events())
+
+    async def __delete_subscription_from_db(self, subscription: Subscription) -> SubscriptionDB:
+        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
+        await self.__subscription_repository.delete(subscription)
         return subscription_db
+
+    async def __create_domain_events_in_db(self, admin: Admin) -> None:
+        await self.__eventbus.publish(admin.pop_domain_events())

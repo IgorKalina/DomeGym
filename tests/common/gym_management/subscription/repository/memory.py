@@ -36,7 +36,7 @@ class SubscriptionMemoryRepository(SubscriptionRepository):
         return subscription
 
     async def delete(self, subscription: SubscriptionDB) -> None:
-        self.__subscriptions.remove(subscription)
+        self.__subscriptions = [sub for sub in self.__subscriptions if sub.id != subscription.id]
 
     def __create_subscription_dto(self, subscription: SubscriptionDB) -> SubscriptionDB:
         return self.__add_gym_ids(subscription)

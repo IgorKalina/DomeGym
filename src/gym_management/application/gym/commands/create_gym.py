@@ -10,6 +10,7 @@ from src.gym_management.application.common.interfaces.repository.subscription_re
 )
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
+from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
@@ -36,11 +37,7 @@ class CreateGymHandler(CommandHandler):
         self.__eventbus = eventbus
 
     async def handle(self, command: CreateGym) -> GymDB:
-        subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
-        if subscription_db is None:
-            raise SubscriptionDoesNotExistError()
-
-        subscription = dto.mappers.subscription.db_to_domain(subscription=subscription_db)
+        subscription: Subscription = await self.__get_subscription_domain(command)
         gym = Gym(
             name=command.name,
             max_rooms=subscription.max_rooms,
@@ -48,9 +45,20 @@ class CreateGymHandler(CommandHandler):
         )
         subscription.add_gym(gym)
 
-        subscription_db = dto.mappers.subscription.domain_to_db(subscription)
-        gym_db: GymDB = dto.mappers.gym.domain_to_db(gym=gym)
-        await self.__subscription_repository.update(subscription_db)
-        await self.__gym_repository.create(gym_db)
-        await self.__eventbus.publish(subscription.pop_domain_events())
+        gym_db: GymDB = await self.__create_gym_in_db(gym)
+        await self.__create_domain_events_in_db(subscription)
         return gym_db
+
+    async def __get_subscription_domain(self, command: CreateGym) -> Subscription:
+        subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
+        if subscription_db is None:
+            raise SubscriptionDoesNotExistError()
+        return dto.mappers.subscription.db_to_domain(subscription_db)
+
+    async def __create_gym_in_db(self, gym: Gym) -> GymDB:
+        gym_db: GymDB = dto.mappers.gym.domain_to_db(gym)
+        await self.__gym_repository.create(gym_db)
+        return gym_db
+
+    async def __create_domain_events_in_db(self, subscription: Subscription) -> None:
+        await self.__eventbus.publish(subscription.pop_domain_events())
