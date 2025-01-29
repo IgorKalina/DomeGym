@@ -1,10 +1,10 @@
 import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DataTransferObject(BaseModel):
-    pass
+    model_config = ConfigDict(extra="forbid")
 
 
 class RepositoryDto(DataTransferObject):

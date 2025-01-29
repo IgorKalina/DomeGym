@@ -10,6 +10,9 @@ from src.gym_management.infrastructure.common.injection.containers.repository_ba
 from src.gym_management.infrastructure.common.postgres.repository.admin import (
     AdminPostgresRepository,
 )
+from src.gym_management.infrastructure.common.postgres.repository.domain_event_outbox import (
+    DomainEventOutboxPostgresRepository,
+)
 from src.gym_management.infrastructure.common.postgres.repository.gym import GymPostgresRepository
 from src.gym_management.infrastructure.common.postgres.repository.room import RoomPostgresRepository
 from src.gym_management.infrastructure.common.postgres.repository.subscription import (
@@ -75,4 +78,5 @@ class RepositoryPostgresContainer(RepositoryContainer):
     subscription_repository = providers.Factory(SubscriptionPostgresRepository, session=session_provider)
     gym_repository = providers.Factory(GymPostgresRepository, session=session_provider)
     room_repository = providers.Factory(RoomPostgresRepository, session=session_provider)
+    domain_event_outbox_repository = providers.Factory(DomainEventOutboxPostgresRepository, session=session_provider)
     failed_domain_event_repository = providers.Factory(FailedDomainEventTinyDBRepository)

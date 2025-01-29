@@ -2,6 +2,7 @@ import uuid
 
 from sqlalchemy import select
 
+from src.gym_management.application.admin.exceptions import AdminDoesNotExistError
 from src.gym_management.application.common.dto.repository.admin import AdminDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.infrastructure.common.postgres import models
@@ -22,8 +23,11 @@ class AdminPostgresRepository(SQLAlchemyRepository, AdminRepository):
         return admin.to_dto() if admin else None
 
     async def update(self, admin: AdminDB) -> AdminDB:
+        admin_db = await self._session.get(models.Admin, admin.id)
+        if not admin_db:
+            raise AdminDoesNotExistError()
+
         admin = models.Admin.from_dto(admin)
         await self._session.merge(admin)
-        await self._session.flush((admin,))
         await self._session.commit()
         return admin.to_dto()

@@ -1,8 +1,8 @@
-from enum import StrEnum, auto
+from enum import StrEnum
 
 
 class DomainEventProcessingStatus(StrEnum):
-    PENDING = auto()
-    PUBLISHED = auto()
-    PROCESSED = auto()
-    FAILED = auto()
+    PENDING = "PENDING"
+    PUBLISHED = "PUBLISHED"
+    PROCESSED = "PROCESSED"
+    FAILED = "FAILED"

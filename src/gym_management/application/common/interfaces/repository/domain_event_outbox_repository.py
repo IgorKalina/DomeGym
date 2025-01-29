@@ -22,5 +22,5 @@ class DomainEventOutboxRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete_multi(self, event_ids: List[uuid.UUID]) -> DomainEventDB:
+    async def delete_multi(self, event_ids: List[uuid.UUID]) -> None:
         pass

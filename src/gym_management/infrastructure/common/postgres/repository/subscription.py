@@ -53,9 +53,7 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
             raise SubscriptionDoesNotExistError()
 
         subscription_db_updated = models.Subscription.from_dto(subscription)
-        for key, value in vars(subscription_db_updated).items():
-            setattr(subscription_db, key, value)
-
+        await self._session.merge(subscription_db_updated)
         await self._session.commit()
         return subscription_db_updated.to_dto()
 
