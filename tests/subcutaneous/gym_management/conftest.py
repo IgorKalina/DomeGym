@@ -3,7 +3,7 @@ import pytest
 from src.gym_management.application.common.dto.repository import RoomDB
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
-from src.gym_management.infrastructure.common.injection.main import DiContainer
+from src.gym_management.infrastructure.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 from tests.common.gym_management.admin.factory.admin_db_factory import AdminDBFactory

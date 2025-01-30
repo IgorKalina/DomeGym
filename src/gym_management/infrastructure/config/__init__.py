@@ -1,6 +1,6 @@
 import logging
 
-from src.gym_management.infrastructure.common.config.config import Config
+from src.gym_management.infrastructure.config.config import Config
 
 logger = logging.getLogger(__name__)
 

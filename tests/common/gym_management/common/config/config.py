@@ -1,8 +1,8 @@
 from dotenv import find_dotenv
 from pydantic_settings import SettingsConfigDict
 
-from src.gym_management.infrastructure.common.config import Config
-from src.gym_management.infrastructure.common.config.base_config import (
+from src.gym_management.infrastructure.config import Config
+from src.gym_management.infrastructure.config.base_config import (
     ENV_NESTED_DELIMITED,
     ENV_PREFIX,
     find_yaml_configs,

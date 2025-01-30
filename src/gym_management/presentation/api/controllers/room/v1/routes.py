@@ -8,7 +8,7 @@ from fastapi.routing import APIRouter
 
 from src.gym_management.application.room.commands.create_room import CreateRoom
 from src.gym_management.application.room.queries.list_rooms import ListRooms
-from src.gym_management.infrastructure.common.injection.main import DiContainer
+from src.gym_management.infrastructure.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.room.v1.requests.create_gym_request import CreateRoomRequest

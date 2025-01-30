@@ -7,8 +7,8 @@ from sqlalchemy.orm import selectinload
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
-from src.gym_management.infrastructure.common.postgres import models
-from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+from src.gym_management.infrastructure.postgres import models
+from src.gym_management.infrastructure.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepository):

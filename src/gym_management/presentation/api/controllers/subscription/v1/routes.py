@@ -10,7 +10,7 @@ from src.gym_management.application.admin.exceptions import AdminAlreadyExistsEr
 from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscription.commands.remove_subscription import RemoveSubscription
 from src.gym_management.application.subscription.queries.list_subscriptions import ListSubscriptions
-from src.gym_management.infrastructure.common.injection.main import DiContainer
+from src.gym_management.infrastructure.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,

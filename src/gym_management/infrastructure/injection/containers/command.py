@@ -10,7 +10,7 @@ from src.gym_management.application.subscription.commands.remove_subscription im
     RemoveSubscription,
     RemoveSubscriptionHandler,
 )
-from src.gym_management.infrastructure.common.injection.containers.repository_base import RepositoryContainer
+from src.gym_management.infrastructure.injection.containers.repository_base import RepositoryContainer
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 

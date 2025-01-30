@@ -12,12 +12,12 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from testcontainers.postgres import PostgresContainer
 
-from src.gym_management.infrastructure.common.config import load_config
-from src.gym_management.infrastructure.common.injection.containers.repository_postgres import (
+from src.gym_management.infrastructure.config import load_config
+from src.gym_management.infrastructure.injection.containers.repository_postgres import (
     RepositoryPostgresContainer,
 )
-from src.gym_management.infrastructure.common.injection.main import DiContainer
-from src.gym_management.infrastructure.common.postgres.models.base_model import BaseModel
+from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.postgres.models.base_model import BaseModel
 from src.gym_management.presentation.api.api import init_api
 from src.gym_management.presentation.api.controllers.gym.v1.responses.gym_response import GymResponse
 from src.gym_management.presentation.api.controllers.room.v1.responses.room_response import RoomResponse
@@ -108,6 +108,7 @@ async def di_container(postgres_url: str) -> AsyncGenerator[DiContainer, None]: 
     database_config = map_database_full_url_to_config(postgres_url)
     repository_container = RepositoryPostgresContainer(config=database_config)
     di_container = DiContainer(repository_container=repository_container)
+    di_container.background_task_scheduler.override(lambda: None)
     await di_container.init_resources()
 
     yield di_container

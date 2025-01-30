@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
-from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
+from src.gym_management.infrastructure.postgres.models.base_model import TimedBaseModel
 
 
 class Subscription(TimedBaseModel):

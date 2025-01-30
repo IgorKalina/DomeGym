@@ -9,7 +9,7 @@ from src.gym_management.application.common.dto.repository import DomainEventDB
 from src.gym_management.application.common.dto.repository.domain_event_outbox.domain_event_processing_status import (
     DomainEventProcessingStatus,
 )
-from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
+from src.gym_management.infrastructure.postgres.models.base_model import TimedBaseModel
 from src.shared_kernel.domain.common.event import DomainEvent
 
 

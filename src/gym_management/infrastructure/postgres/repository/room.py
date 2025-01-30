@@ -7,8 +7,8 @@ from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
-from src.gym_management.infrastructure.common.postgres import models
-from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+from src.gym_management.infrastructure.postgres import models
+from src.gym_management.infrastructure.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class RoomPostgresRepository(SQLAlchemyRepository, RoomRepository):

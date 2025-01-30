@@ -7,8 +7,8 @@ from sqlalchemy.orm import selectinload
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
-from src.gym_management.infrastructure.common.postgres import models
-from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+from src.gym_management.infrastructure.postgres import models
+from src.gym_management.infrastructure.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class GymPostgresRepository(SQLAlchemyRepository, GymRepository):

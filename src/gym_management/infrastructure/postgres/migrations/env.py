@@ -5,8 +5,8 @@ from alembic import context
 from sqlalchemy import Connection, engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from src.gym_management.infrastructure.common.config import load_config
-from src.gym_management.infrastructure.common.postgres.models.base_model import BaseModel
+from src.gym_management.infrastructure.config import load_config
+from src.gym_management.infrastructure.postgres.models.base_model import BaseModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

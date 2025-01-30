@@ -13,9 +13,9 @@ from src.gym_management.application.common.exceptions import DomainEventDoesNotE
 from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
     DomainEventOutboxRepository,
 )
-from src.gym_management.infrastructure.common.postgres import models
-from src.gym_management.infrastructure.common.postgres.models.domain_event_outbox import DomainEventOutbox
-from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+from src.gym_management.infrastructure.postgres import models
+from src.gym_management.infrastructure.postgres.models.domain_event_outbox import DomainEventOutbox
+from src.gym_management.infrastructure.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
 class DomainEventOutboxPostgresRepository(SQLAlchemyRepository, DomainEventOutboxRepository):
