@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from src.gym_management.infrastructure.background_service.cronjob.publish_domain_events import publish_domain_events
+from src.gym_management.infrastructure.background_services.cronjob.publish_domain_events import publish_domain_events
 from src.gym_management.infrastructure.injection.containers.repository_base import RepositoryContainer
 
 
