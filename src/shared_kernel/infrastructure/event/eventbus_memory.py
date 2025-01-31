@@ -32,9 +32,9 @@ class DomainEventBusMemory(DomainEventBus):
 
     async def process_events(self) -> None:
         while not self.__events_queue.empty():
-            await self.__process_event_from_queue()
+            await self.__process_next_event_from_queue()
 
-    async def __process_event_from_queue(self) -> None:
+    async def __process_next_event_from_queue(self) -> None:
         event: DomainEvent = self.__events_queue.get()
         subscribers: List[DomainEventHandler] = self.__subscribers[type(event)]
         for subscriber in subscribers:
