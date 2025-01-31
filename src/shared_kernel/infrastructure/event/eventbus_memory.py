@@ -1,4 +1,3 @@
-import copy
 import logging
 import queue
 from collections import defaultdict
@@ -42,7 +41,7 @@ class DomainEventBusMemory(DomainEventBus):
                 f"Event '{event.__class__.__name__} is being handled by '{subscriber.__class__.__name__}' handler"
             )
             try:
-                await subscriber.handle(copy.deepcopy(event))
+                await subscriber.handle(event.model_copy(deep=True))
             except Exception as e:
                 logger.exception(f"An error occurred while processing '{event}' domain event: {str(e)}")
                 await self.__domain_event_repository.create(event)
