@@ -74,8 +74,35 @@ services:
       GYM_MANAGEMENT_DATABASE__PORT: 5432
     command: ["-m", "alembic", "upgrade", "head"]
 
+  rabbitmq:
+    profiles: [ "api", "dependency" ]
+    container_name: domegym.rabbitmq
+    image: "rabbitmq:4.0.5-management-alpine"
+    hostname: domegym.rabbitmq
+    restart: unless-stopped
+    expose:
+      - "5672"
+      - "15672"
+    ports:
+      - "127.0.0.1:5672:5672"  # AMQP port
+      - "127.0.0.1:15672:15672"  # Management UI port
+    networks:
+      - domegym.postgres.network
+    volumes:
+      - domegym.rabbitmq.data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+
 volumes:
   domegym.postgres.data: {}
+  domegym.rabbitmq.data: {}
 
 networks:
   domegym.postgres.network: {}

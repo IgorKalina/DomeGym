@@ -1,7 +1,9 @@
 from dependency_injector import containers, providers
 
-from src.gym_management.infrastructure.background_services.cronjob.publish_domain_events import publish_domain_events
-from src.gym_management.infrastructure.injection.containers.repository_base import RepositoryContainer
+from src.gym_management.infrastructure.background_services.domain_events.cronjob.publish_domain_events import (
+    publish_domain_events,
+)
+from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
 
 
 class BackgroundTaskContainer(containers.DeclarativeContainer):

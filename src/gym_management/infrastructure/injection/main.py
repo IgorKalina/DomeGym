@@ -7,10 +7,11 @@ from dependency_injector import containers, providers
 from src.gym_management.infrastructure.injection.containers.background_task import BackgroundTaskContainer
 from src.gym_management.infrastructure.injection.containers.command import CommandContainer
 from src.gym_management.infrastructure.injection.containers.domain_event import DomainEventContainer
+from src.gym_management.infrastructure.injection.containers.eventbus.base import EventbusContainer
 from src.gym_management.infrastructure.injection.containers.query import QueryContainer
-from src.gym_management.infrastructure.injection.containers.repository_base import RepositoryContainer
+from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
 from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
-from src.shared_kernel.infrastructure.event.eventbus_memory import DomainEventBusMemory
+from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
 from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
 
 
@@ -54,6 +55,7 @@ def init_background_task_scheduler(background_tasks: BackgroundTaskContainer) ->
 class DiContainer(containers.DeclarativeContainer):
     # dependencies
     repository_container: RepositoryContainer = providers.DependenciesContainer()
+    eventbus_container: EventbusContainer = providers.DependenciesContainer()
 
     domain_eventbus = providers.Singleton(
         DomainEventBusMemory,

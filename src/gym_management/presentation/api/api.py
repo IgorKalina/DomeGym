@@ -24,6 +24,8 @@ def api_lifespan(di_container: DiContainer) -> Callable[[FastAPI], AsyncContextM
     async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
         await di_container.init_resources()
         try:
+            # todo: init queues here instead of DI container
+            # todo: init AsyncIOScheduler here instead of DI container
             yield
         finally:
             await di_container.shutdown_resources()

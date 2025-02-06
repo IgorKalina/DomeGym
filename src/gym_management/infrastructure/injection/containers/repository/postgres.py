@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from src.gym_management.infrastructure.config.database import DatabaseConfig
-from src.gym_management.infrastructure.injection.containers.repository_base import RepositoryContainer
+from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
 from src.gym_management.infrastructure.postgres.repository.admin import (
     AdminPostgresRepository,
 )
@@ -18,7 +18,7 @@ from src.gym_management.infrastructure.postgres.repository.room import RoomPostg
 from src.gym_management.infrastructure.postgres.repository.subscription import (
     SubscriptionPostgresRepository,
 )
-from src.shared_kernel.infrastructure.event.failed_events_tinydb_repository import (
+from src.shared_kernel.infrastructure.eventbus.failed_events_tinydb_repository import (
     FailedDomainEventTinyDBRepository,
 )
 

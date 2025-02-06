@@ -6,15 +6,17 @@ from src.gym_management.application.common.dto.repository.domain_event_outbox.do
 from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
     DomainEventOutboxRepository,
 )
+from src.gym_management.infrastructure.background_services.domain_events.publisher import DomainEventPublisher
 
 logger = logging.getLogger(__name__)
 
 
 async def publish_domain_events(
-    domain_event_outbox_repository: DomainEventOutboxRepository,
+    domain_event_outbox_repository: DomainEventOutboxRepository, event_publisher: DomainEventPublisher
 ) -> None:
-    logger.info("Publishing domain events...")
     domain_events = await domain_event_outbox_repository.get_multi(status=DomainEventProcessingStatus.PENDING)
+    logger.info(f"Publishing '{len(domain_events)}' domain events")
     for event in domain_events:
-        logger.info(f"Sending domain event to the domain events topic: {event}")
-        logger.info(f"Updating its status to PUBLISHED: {event}")
+        await event_publisher.publish(event)
+        await domain_event_outbox_repository.update(event.set_to_published())
+        logger.debug(f"event id was published and the status was set to PUBLISHED: {event.id}")

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List
 import pytest
 
 from src.gym_management.application.common.dto.repository import RoomDB
-from src.shared_kernel.infrastructure.event.eventbus_memory import DomainEventBusMemory
+from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_domain_event_factory import GymDomainEventFactory
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
