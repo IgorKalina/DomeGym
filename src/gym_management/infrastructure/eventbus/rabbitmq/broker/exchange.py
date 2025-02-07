@@ -17,12 +17,11 @@ class RabbitmqExchangePool:
 
         self.__exchanges: Dict[str, AbstractRobustExchange] = {}
 
-    async def add(self, options: RabbitmqExchangeOptions) -> None:
-        exchange = await self.__connection.channel.declare_exchange(
-            name=options.name, type=options.type, durable=options.durable
-        )
-        self.__exchanges[options.name] = exchange
-        logger.info(f"Added exchange: {options.name}")
+    async def add_exchange(self, options: RabbitmqExchangeOptions) -> None:
+        async with self.__connection.channel() as channel:
+            exchange = await channel.declare_exchange(name=options.name, type=options.type, durable=options.durable)
+            self.__exchanges[options.name] = exchange
+            logger.info(f"Added exchange: {options.name}")
 
     async def get(self, name: str) -> AbstractRobustExchange:
         cached_exchange = self.__exchanges.get(name)
@@ -33,9 +32,15 @@ class RabbitmqExchangePool:
             exchange = cached_exchange
         return exchange
 
+    def clear_cache(self) -> None:
+        self.__exchanges = {}
+
     async def __fetch_exchange(self, name: str) -> AbstractRobustExchange:
         try:
-            exchange = await self.__connection.channel.get_exchange(name)
-        except ChannelNotFoundEntity:
-            raise ExchangeDoesNotExistError(exchange_name=name, broker_url=self.__connection.options.get_url())
+            async with self.__connection.channel() as channel:
+                exchange = await channel.get_exchange(name)
+        except ChannelNotFoundEntity as err:
+            if f"no exchange '{name}'" in str(err):
+                raise ExchangeDoesNotExistError(exchange_name=name, broker_url=self.__connection.options.get_url())
+            raise err
         return exchange

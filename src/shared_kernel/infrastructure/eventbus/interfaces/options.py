@@ -11,3 +11,7 @@ class SubscribeOptions(BaseModel):
 
 class PublishOptions(BaseModel):
     pass
+
+
+class TopicOptions(BaseModel):
+    pass

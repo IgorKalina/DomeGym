@@ -9,10 +9,9 @@ from src.gym_management.infrastructure.eventbus.rabbitmq.broker.subscriber impor
 from src.gym_management.infrastructure.eventbus.rabbitmq.dto.event import RabbitmqEvent
 from src.gym_management.infrastructure.eventbus.rabbitmq.options import (
     RabbitmqBrokerOptions,
-    RabbitmqExchangeOptions,
     RabbitmqPublishOptions,
-    RabbitmqQueueOptions,
     RabbitmqSubscribeOptions,
+    RabbitmqTopicOptions,
 )
 from src.shared_kernel.infrastructure.eventbus.interfaces.broker import EventBroker, EventHandler
 
@@ -23,37 +22,42 @@ class RabbitmqEventBroker(EventBroker):
     def __init__(self, options: RabbitmqBrokerOptions) -> None:
         self.__options = options
 
-        self.__connection = RabbitmqConnection(options)
+        self.__connection = RabbitmqConnection(self.__options)
         self.__exchange_pool = RabbitmqExchangePool(self.__connection)
         self.__queue_pool = RabbitmqQueuePool(connection=self.__connection, exchange=self.__exchange_pool)
-        self.__subscriber_pool = RabbitmqSubscriberPool(self.__queue_pool)
+        self.__subscriber_pool = RabbitmqSubscriberPool(connection=self.__connection, queue=self.__queue_pool)
 
     async def connect(self) -> None:
         await self.__connection.establish()
 
     async def disconnect(self) -> None:
         await self.__subscriber_pool.shutdown_subscribers()
+        self.__exchange_pool.clear_cache()
+        self.__queue_pool.clear_cache()
         await self.__connection.close()
         logger.debug(f"Disconnected from RabbitMQ by URL: {self.__options.get_url()}")
 
-    async def declare_exchange(self, options: RabbitmqExchangeOptions) -> None:
-        await self.__exchange_pool.add(options)
+    async def create_topic(self, options: RabbitmqTopicOptions) -> None:
+        await self.__exchange_pool.add_exchange(options.exchange)
+        await self.__queue_pool.add_queue(options.queue)
 
-    async def declare_queue(self, options: RabbitmqQueueOptions) -> None:
-        await self.__queue_pool.add(options)
+    @property
+    def options(self) -> RabbitmqBrokerOptions:
+        return self.__options.model_copy()
 
     async def publish(self, event: RabbitmqEvent, options: RabbitmqPublishOptions) -> None:
-        exchange = await self.__exchange_pool.get(options.exchange_name)
+        async with self.__connection.channel():
+            exchange = await self.__exchange_pool.get(options.exchange_name)
 
-        logger.info(f"Publishing event id '{event.id}' to '{options.routing_key}' routing key")
-        await exchange.publish(
-            message=event.to_pika_message(),
-            routing_key=options.routing_key,
-        )
-        logger.info("Event was published")
+            logger.info(f"Publishing event id '{event.id}' to '{options.routing_key}' routing key")
+            await exchange.publish(
+                message=event.to_pika_message(),
+                routing_key=options.routing_key,
+            )
+            logger.info("Event was published")
 
     async def subscribe(self, handler: EventHandler, options: RabbitmqSubscribeOptions) -> None:
-        await self.__subscriber_pool.subscribe(handler, options)
+        await self.__subscriber_pool.add_subscriber(handler, options)
 
     async def __aenter__(self) -> Self:
         await self.connect()

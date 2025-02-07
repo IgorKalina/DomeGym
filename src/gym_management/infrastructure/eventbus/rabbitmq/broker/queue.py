@@ -2,8 +2,10 @@ import logging
 from typing import Dict
 
 from aio_pika.abc import AbstractRobustQueue
+from aiormq import ChannelNotFoundEntity
 
 from src.gym_management.infrastructure.eventbus.rabbitmq.broker import RabbitmqConnection, RabbitmqExchangePool
+from src.gym_management.infrastructure.eventbus.rabbitmq.exceptions import QueueDoesNotExistError
 from src.gym_management.infrastructure.eventbus.rabbitmq.options import RabbitmqQueueOptions
 
 logger = logging.getLogger(__name__)
@@ -12,14 +14,15 @@ logger = logging.getLogger(__name__)
 class RabbitmqQueuePool:
     def __init__(self, connection: RabbitmqConnection, exchange: RabbitmqExchangePool) -> None:
         self.__connection = connection
-        self.__exchange = exchange
+        self.__exchange_pool = exchange
 
         self.__queues: Dict[str, AbstractRobustQueue] = {}
 
-    async def add(self, options: RabbitmqQueueOptions) -> None:
-        exchange = await self.__exchange.get(options.exchange_name)
-        queue = await self.__connection.channel.declare_queue(name=options.name, durable=options.durable)
-        await queue.bind(exchange=exchange, routing_key=options.routing_key)
+    async def add_queue(self, options: RabbitmqQueueOptions) -> None:
+        exchange = await self.__exchange_pool.get(options.exchange_name)
+        async with self.__connection.channel() as channel:
+            queue = await channel.declare_queue(name=options.name, durable=options.durable)
+            await queue.bind(exchange=exchange, routing_key=options.routing_key)
         self.__queues[options.name] = queue
         logger.info(
             f"Declared queue: {options.name} (bound to {options.exchange_name} with key '{options.routing_key}')"
@@ -34,6 +37,15 @@ class RabbitmqQueuePool:
             exchange = cached_queue
         return exchange
 
+    def clear_cache(self) -> None:
+        self.__queues = {}
+
     async def __fetch_queue(self, name: str) -> AbstractRobustQueue:
-        # todo: add try-except in case queue does not exist
-        return await self.__connection.channel.get_queue(name)
+        try:
+            async with self.__connection.channel() as channel:
+                queue = await channel.get_queue(name)
+        except ChannelNotFoundEntity as err:
+            if f"no queue '{name}'" in str(err):
+                raise QueueDoesNotExistError(queue_name=name, broker_url=self.__connection.options.get_url())
+            raise err
+        return queue
