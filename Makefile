@@ -25,6 +25,7 @@ lint:
 .PHONY: build
 build-app:
 	docker-compose --profile api build
+
 .PHONY: build-test
 build-test:
 	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}
@@ -64,7 +65,6 @@ test-integration:
 .PHONY: create-migrations
 create-migrations:
 	alembic revision --autogenerate
-
 
 .PHONY: migrate
 migrate:

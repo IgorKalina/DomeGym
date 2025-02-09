@@ -96,16 +96,20 @@ async def _truncate_all_tables(session: AsyncSession) -> None:
 # RabbitMQ
 @pytest.fixture(scope="session", autouse=True)
 def rabbitmq(config: ConfigTest) -> Generator[RabbitMqContainer, None, None]:
+    def get_container_host_ip(*args, **kwargs) -> str:  # noqa:  ARG001
+        return "localhost"
+
     rabbitmq = RabbitMqContainer(
         "rabbitmq:4.0.5-management-alpine",
         username=config.database.user.name,
         password=config.rabbitmq.user.password.get_secret_value(),
-        port=config.rabbitmq.port,
     )
     _remove_running_container_if_exists(
         docker_client=rabbitmq.get_docker_client().client, host_port=config.rabbitmq.port
     )
     rabbitmq.with_bind_ports(container=rabbitmq.RABBITMQ_NODE_PORT, host=config.rabbitmq.port)
+    rabbitmq.with_env("DOCKER_HOST", "host.docker.internal")
+    rabbitmq.get_container_host_ip = get_container_host_ip.__get__(rabbitmq, RabbitMqContainer)
     try:
         rabbitmq.start()
         yield rabbitmq

@@ -16,6 +16,7 @@ services:
         condition: service_healthy
     networks:
       - domegym.postgres.network
+      - domegym.rabbitmq.network
     volumes:
       - ./.env:/app/.env:ro
     environment:
@@ -87,7 +88,7 @@ services:
       - "127.0.0.1:5672:5672"  # AMQP port
       - "127.0.0.1:15672:15672"  # Management UI port
     networks:
-      - domegym.postgres.network
+      - domegym.rabbitmq.network
     volumes:
       - domegym.rabbitmq.data:/var/lib/rabbitmq
     environment:
@@ -106,3 +107,4 @@ volumes:
 
 networks:
   domegym.postgres.network: {}
+  domegym.rabbitmq.network: {}

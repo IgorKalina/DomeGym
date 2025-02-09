@@ -3,7 +3,7 @@ rabbitmq:
     name: "placeholder"
     password: "placeholder"
   host: "localhost"
-  port: 15672
+  port: 5672
   queues:
     - queue_name: "domain_events"
       exchange_name: "domain_events"
