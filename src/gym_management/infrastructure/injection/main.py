@@ -72,7 +72,9 @@ class DiContainer(containers.DeclarativeContainer):
         DomainEventContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
     )
 
-    background_tasks = providers.Container(BackgroundTaskContainer, repository_container=repository_container)
+    background_tasks = providers.Container(
+        BackgroundTaskContainer, repository_container=repository_container, eventbus_container=eventbus_container
+    )
 
     command_invoker = providers.Resource(
         register_commands,
