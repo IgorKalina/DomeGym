@@ -39,10 +39,10 @@ jobs:
 
       - name: Tests
         run: |
-          docker-compose
-            -f docker-compose.test.yaml
-            --env-file .env.test
-            --profile runner
+          docker-compose \
+            -f docker-compose.test.yaml \
+            --env-file .env.test \
+            --profile runner \
             run --rm -e ENV=test -v $(pwd)/coverage:/app/coverage test
 
       - name: Add coverage comment
