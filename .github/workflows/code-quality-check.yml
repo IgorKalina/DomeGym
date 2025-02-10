@@ -29,11 +29,11 @@ jobs:
 
       - name: Build test image
         run: |
-          docker build -f ${{ env.TEST_DOCKERFILE_NAME }} . -t ${{ env.TEST_IMAGE_NAME }}
+          make build-test
 
       - name: Tests
         run: |
-          docker run --rm  -e ENV=test -v $(pwd)/coverage:/app/coverage -v /var/run/docker.sock:/var/run/docker.sock --network host ${{ env.TEST_IMAGE_NAME }} make test
+          docker-compose -f docker-compose.test.yaml --env-file .env.test run --rm -e ENV=test -v $(pwd)/coverage:/app/coverage test
 
       - name: Add coverage comment
         uses: MishaKav/pytest-coverage-comment@main
