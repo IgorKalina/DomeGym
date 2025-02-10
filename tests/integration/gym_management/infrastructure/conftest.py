@@ -46,7 +46,7 @@ async def _purge_topics(broker: RabbitmqEventBroker, config: ConfigTest) -> None
     except ChannelInvalidStateError:
         logger.warning("Channel is already closed. Skip purging messages from queues.")
     except Exception as e:
-        logger.warning(f"Error purging queue '{existing_queue.queue_name}': {e}")
+        logger.warning(f"Error purging queue '{existing_queue.queue_name}': {type(e).__name__}({e})")
 
 
 @pytest.fixture(autouse=True)
