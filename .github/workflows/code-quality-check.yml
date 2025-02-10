@@ -27,6 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "./docker-compose.test.yaml"
+
       - name: Build test image
         run: |
           make build-test
