@@ -39,7 +39,11 @@ jobs:
 
       - name: Tests
         run: |
-          docker-compose -f docker-compose.test.yaml --env-file .env.test run --rm -e ENV=test -v $(pwd)/coverage:/app/coverage test
+          docker-compose
+            -f docker-compose.test.yaml
+            --env-file .env.test
+            --profile runner
+            run --rm -e ENV=test -v $(pwd)/coverage:/app/coverage test
 
       - name: Add coverage comment
         uses: MishaKav/pytest-coverage-comment@main

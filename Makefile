@@ -35,7 +35,7 @@ build-lint:
 .PHONY: build-test
 build-test:
 	@${TEARDOWN_TEST_CONTAINER}
-	docker-compose -f docker-compose.test.yaml --env-file .env.test build
+	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile runner build
 
 .PHONY: build-test-dependency
 build-test-dependency:
@@ -56,7 +56,7 @@ stop-docker:
 
 .PHONY: build-test
 test-docker:
-	docker-compose -f docker-compose.test.yaml --env-file .env.test run --rm test
+	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile runner run --rm test
 	@${TEARDOWN_TEST_CONTAINER}
 
 .PHONY: lint-docker
