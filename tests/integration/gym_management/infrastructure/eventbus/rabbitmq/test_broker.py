@@ -35,9 +35,7 @@ class TestRabbitmqEventBroker:
         # Arrange
         mock = Mock()
 
-        async def simple_handler(message: aio_pika.IncomingMessage) -> None:
-            # async with message.process():
-            event = RabbitmqEvent.from_pika_message(message)
+        async def simple_handler(event: RabbitmqEvent) -> None:
             rabbitmq_event_to_domain_event(event)
             mock()
 
@@ -55,9 +53,7 @@ class TestRabbitmqEventBroker:
         # Arrange
         mock = Mock()
 
-        async def simple_handler(message: aio_pika.IncomingMessage) -> None:
-            # async with message.process():
-            event = RabbitmqEvent.from_pika_message(message)
+        async def simple_handler(event: RabbitmqEvent) -> None:
             rabbitmq_event_to_domain_event(event)
             mock()
 

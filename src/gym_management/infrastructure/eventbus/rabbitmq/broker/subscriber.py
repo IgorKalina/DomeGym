@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import functools
 import logging
 import uuid
 from typing import List
@@ -39,9 +40,10 @@ class RabbitmqSubscriberPool:
     ) -> None:
         consumer_tag = f"{options.queue_name}-{uuid.uuid4()}"
         logger.info(f"Consuming messages from queue: {options.queue_name} with tag: {consumer_tag}")
+        consumer_handler = functools.partial(self.__handle, handler=handler)
         try:
             async with self.__connection.channel():
-                await queue.consume(handler, consumer_tag=consumer_tag)
+                await queue.consume(consumer_handler, consumer_tag=consumer_tag)
                 await asyncio.Future()  # Keeps the consumer running
         except asyncio.CancelledError:
             logger.info("Consumer task has been cancelled.")
@@ -50,6 +52,13 @@ class RabbitmqSubscriberPool:
             logger.info("Consumer stopped gracefully.")
 
     @staticmethod
-    async def __handle(event: aio_pika.IncomingMessage, handler: EventHandler) -> None:
-        event = RabbitmqEvent.from_pika_message(event)
-        await handler(event)
+    async def __handle(message: aio_pika.IncomingMessage, handler: EventHandler) -> None:
+        logger.info(f"Handling event {message.routing_key}")
+        try:
+            event = RabbitmqEvent.from_pika_message(message)
+            await handler(event)
+        except Exception as e:
+            logger.error(f"Encountered error while processing message: {type(e).__name__}({e}), nacking message.")
+            await message.nack(requeue=True)
+        else:
+            await message.ack()
