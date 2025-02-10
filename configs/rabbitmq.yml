@@ -4,6 +4,7 @@ rabbitmq:
     password: "placeholder"
   host: "localhost"
   port: 5672
+  management_port: 15672
   queues:
     - queue_name: "domain_events"
       exchange_name: "domain_events"

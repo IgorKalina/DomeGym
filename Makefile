@@ -1,6 +1,8 @@
 APP_CONTAINER_NAME := gym-management
 TEST_CONTAINER_NAME := gym-management-test
 
+TEARDOWN_TEST_CONTAINER := docker-compose -f docker-compose.test.yaml --profile runner down -v
+
 .PHONY: install
 install:
 	poetry install --with dev,test
@@ -26,9 +28,23 @@ lint:
 build-app:
 	docker-compose --profile api build
 
+.PHONY: build-lint
+build-lint:
+	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}
+
 .PHONY: build-test
 build-test:
-	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}
+	@${TEARDOWN_TEST_CONTAINER}
+	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile runner build
+
+.PHONY: build-test-dependency
+build-test-dependency:
+	@${MAKE} stop-test-dependency
+	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile dependency up -d --build
+
+.PHONY: stop-test-dependency
+stop-test-dependency:
+	docker-compose -f docker-compose.test.yaml --profile dependency down -v
 
 .PHONY: run-docker
 run-docker: build-app
@@ -36,14 +52,15 @@ run-docker: build-app
 
 .PHONY: stop-docker
 stop-docker:
-	docker-compose --profile api down
+	docker-compose --profile api down --remove-orphans
 
-.PHONY: test-docker
-test-docker: build-test
-	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host ${TEST_CONTAINER_NAME} make test
+.PHONY: build-test
+test-docker:
+	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile runner run --rm test
+	@${TEARDOWN_TEST_CONTAINER}
 
 .PHONY: lint-docker
-lint-docker: build-test
+lint-docker: build-lint
 	docker run ${TEST_CONTAINER_NAME} make lint
 
 .PHONY: test

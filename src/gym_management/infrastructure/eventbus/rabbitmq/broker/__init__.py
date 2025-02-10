@@ -27,6 +27,14 @@ class RabbitmqEventBroker(EventBroker):
         self.__queue_pool = RabbitmqQueuePool(connection=self.__connection, exchange=self.__exchange_pool)
         self.__subscriber_pool = RabbitmqSubscriberPool(connection=self.__connection, queue=self.__queue_pool)
 
+    @property
+    def connection(self) -> RabbitmqConnection:
+        return self.__connection
+
+    @property
+    def options(self) -> RabbitmqBrokerOptions:
+        return self.__options.model_copy()
+
     async def connect(self) -> None:
         await self.__connection.establish()
 
@@ -40,10 +48,6 @@ class RabbitmqEventBroker(EventBroker):
     async def create_topic(self, options: RabbitmqTopicOptions) -> None:
         await self.__exchange_pool.add_exchange(options.exchange)
         await self.__queue_pool.add_queue(options.queue)
-
-    @property
-    def options(self) -> RabbitmqBrokerOptions:
-        return self.__options.model_copy()
 
     async def publish(self, event: RabbitmqEvent, options: RabbitmqPublishOptions) -> None:
         async with self.__connection.channel():
