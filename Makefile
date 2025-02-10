@@ -30,17 +30,30 @@ build-app:
 build-test:
 	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}
 
+.PHONY: build-test-dependency
+build-test-dependency:
+	@${MAKE} stop-test-dependency
+	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile dependency up -d --build
+
+.PHONY: stop-test-dependency
+stop-test-dependency:
+	docker-compose -f docker-compose.test.yaml --profile dependency down -v
+
 .PHONY: run-docker
 run-docker: build-app
 	docker-compose --profile api up
 
 .PHONY: stop-docker
 stop-docker:
-	docker-compose --profile api down
+	docker-compose --profile api down --remove-orphans
 
 .PHONY: test-docker
-test-docker: build-test
-	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host ${TEST_CONTAINER_NAME} make test
+test-docker:
+	docker-compose -f docker-compose.test.yaml --profile runner down -v
+	docker-compose -f docker-compose.test.yaml --env-file .env.test build
+	docker-compose -f docker-compose.test.yaml --env-file .env.test run --rm test
+	docker-compose -f docker-compose.test.yaml --profile runner down -v
+
 
 .PHONY: lint-docker
 lint-docker: build-test

@@ -10,18 +10,20 @@ services:
     expose:
       - "8000"
     ports:
-      - "8000:8000"
+      - "${GYM_MANAGEMENT_UVICORN__PORT}:8000"
     depends_on:
       postgres:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      postgres_migration:
+        condition: service_completed_successfully
     networks:
-      - domegym.postgres.network
-      - domegym.rabbitmq.network
+      - domegym.network
     volumes:
       - ./.env:/app/.env:ro
     environment:
       GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres
-      GYM_MANAGEMENT_DATABASE__PORT: 5432
     healthcheck:
       test: [ "CMD", "python", "/app/scripts/gym_management_healthcheck.py" ]
       interval: 10s
@@ -38,13 +40,13 @@ services:
     expose:
       - "5432"
     ports:
-      - "127.0.0.1:15432:5432"
+      - "${GYM_MANAGEMENT_DATABASE__PORT}:5432"
     networks:
-      - domegym.postgres.network
+      - domegym.network
     environment:
       POSTGRES_PASSWORD: $GYM_MANAGEMENT_DATABASE__USER__PASSWORD
-      POSTGRES_USER: ${GYM_MANAGEMENT_DATABASE__USER__NAME:-$USER}
-      POSTGRES_DB: ${GYM_MANAGEMENT_DATABASE__NAME:-$USER}
+      POSTGRES_USER: ${GYM_MANAGEMENT_DATABASE__USER__NAME}
+      POSTGRES_DB: ${GYM_MANAGEMENT_DATABASE__NAME}
     volumes:
       - domegym.postgres.data:/var/lib/postgresql/domegym.gym_mamangement:rw
     healthcheck:
@@ -65,14 +67,14 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - domegym.postgres.network
+      - domegym.network
     volumes:
       - ./alembic.ini:/app/alembic.ini:ro
       - ./.env:/app/.env:ro
       - ./src/gym_management/infrastructure/common/postgres/migrations:/app/src/gym_management/infrastructure/common/postgres/migrations:ro
     environment:
       GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres
-      GYM_MANAGEMENT_DATABASE__PORT: 5432
+      GYM_MANAGEMENT_DATABASE__PORT: ${GYM_MANAGEMENT_DATABASE__PORT}
     command: ["-m", "alembic", "upgrade", "head"]
 
   rabbitmq:
@@ -85,15 +87,15 @@ services:
       - "5672"
       - "15672"
     ports:
-      - "127.0.0.1:5672:5672"  # AMQP port
-      - "127.0.0.1:15672:15672"  # Management UI port
+      - "${GYM_MANAGEMENT_RABBITMQ__PORT}:5672"
+      - "${GYM_MANAGEMENT_RABBITMQ__MANAGEMENT_PORT}:15672"
     networks:
-      - domegym.rabbitmq.network
+      - domegym.network
     volumes:
       - domegym.rabbitmq.data:/var/lib/rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+      RABBITMQ_DEFAULT_USER: ${GYM_MANAGEMENT_RABBITMQ__USER__NAME}
+      RABBITMQ_DEFAULT_PASS: ${GYM_MANAGEMENT_RABBITMQ__USER__PASSWORD}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 10s
@@ -106,5 +108,4 @@ volumes:
   domegym.rabbitmq.data: {}
 
 networks:
-  domegym.postgres.network: {}
-  domegym.rabbitmq.network: {}
+  domegym.network: {}

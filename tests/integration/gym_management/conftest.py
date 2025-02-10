@@ -1,15 +1,9 @@
-import asyncio
 import logging
-from typing import AsyncGenerator, Generator
+from typing import AsyncGenerator
 
 import pytest
-from alembic.command import upgrade
-from alembic.config import Config as AlembicConfig
-from docker import DockerClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from testcontainers.postgres import PostgresContainer
-from testcontainers.rabbitmq import RabbitMqContainer
 
 from src.gym_management.infrastructure.injection.containers.eventbus.rabbitmq import EventbusRabbitmqContainer
 
@@ -20,7 +14,6 @@ from src.gym_management.infrastructure.injection.containers.repository.postgres 
 from src.gym_management.infrastructure.injection.main import DiContainer
 from src.gym_management.infrastructure.postgres.models.base_model import BaseModel
 from tests.common.gym_management.common.config.config import ConfigTest
-from tests.common.gym_management.common.config.mappers import map_database_full_url_to_config
 
 logger = logging.getLogger(__name__)
 
@@ -28,52 +21,6 @@ logger = logging.getLogger(__name__)
 @pytest.fixture(scope="session")
 def config() -> ConfigTest:
     return ConfigTest()
-
-
-def _remove_running_container_if_exists(docker_client: DockerClient, host_port: int) -> None:
-    for container in docker_client.containers.list():
-        port_mappings = container.attrs["NetworkSettings"]["Ports"] or {}
-        for port_mapping, port_configs in port_mappings.items():
-            if port_configs is None:
-                continue
-            for config in port_configs:
-                if config.get("HostPort") == str(host_port):
-                    logger.info(f"Stopping container {container.id} using port {host_port}...")
-                    container.stop()
-                    container.remove(v=True)
-
-
-# Postgres
-@pytest.fixture(scope="session", autouse=True)
-def postgres(config: ConfigTest) -> Generator[PostgresContainer, None, None]:
-    postgres = PostgresContainer(
-        "postgres:16-alpine",
-        dbname=config.database.name,
-        user=config.database.user.name,
-        password=config.database.user.password.get_secret_value(),
-    )
-    _remove_running_container_if_exists(
-        docker_client=postgres.get_docker_client().client, host_port=config.database.port
-    )
-    postgres.with_bind_ports(container=postgres.port_to_expose, host=config.database.port)
-    try:
-        postgres.start()
-        yield postgres
-    finally:
-        if postgres.get_wrapped_container() is not None:
-            postgres.stop()
-
-
-@pytest.fixture(scope="session")
-def postgres_url(postgres: PostgresContainer) -> str:
-    return postgres.get_connection_url().replace("psycopg2", "asyncpg")
-
-
-@pytest.fixture(scope="session", autouse=True)
-async def _apply_db_migrations(postgres_url: str, config: ConfigTest) -> None:  # noqa: ARG001
-    alembic_config = AlembicConfig("alembic.ini")
-    alembic_config.set_main_option("sqlalchemy.url", config.database.full_url)
-    await asyncio.to_thread(upgrade, alembic_config, "head")
 
 
 async def _truncate_all_tables(session: AsyncSession) -> None:
@@ -93,35 +40,9 @@ async def _truncate_all_tables(session: AsyncSession) -> None:
     await session.commit()
 
 
-# RabbitMQ
-@pytest.fixture(scope="session", autouse=True)
-def rabbitmq(config: ConfigTest) -> Generator[RabbitMqContainer, None, None]:
-    def get_container_host_ip(*args, **kwargs) -> str:  # noqa:  ARG001
-        return "localhost"
-
-    rabbitmq = RabbitMqContainer(
-        "rabbitmq:4.0.5-management-alpine",
-        username=config.database.user.name,
-        password=config.rabbitmq.user.password.get_secret_value(),
-    )
-    _remove_running_container_if_exists(
-        docker_client=rabbitmq.get_docker_client().client, host_port=config.rabbitmq.port
-    )
-    rabbitmq.with_bind_ports(container=rabbitmq.RABBITMQ_NODE_PORT, host=config.rabbitmq.port)
-    rabbitmq.with_env("DOCKER_HOST", "host.docker.internal")
-    rabbitmq.get_container_host_ip = get_container_host_ip.__get__(rabbitmq, RabbitMqContainer)
-    try:
-        rabbitmq.start()
-        yield rabbitmq
-    finally:
-        if rabbitmq.get_wrapped_container() is not None:
-            rabbitmq.stop()
-
-
 @pytest.fixture
-async def di_container(postgres_url: str, config: ConfigTest) -> AsyncGenerator[DiContainer, None]:  # noqa: ARG001
-    database_config = map_database_full_url_to_config(postgres_url)
-    repository_container = RepositoryPostgresContainer(config=database_config)
+async def di_container(config: ConfigTest) -> AsyncGenerator[DiContainer, None]:  # noqa: ARG001
+    repository_container = RepositoryPostgresContainer(config=config.database)
     eventbus_container = EventbusRabbitmqContainer(config=config.rabbitmq)
     di_container = DiContainer(
         repository_container=repository_container,

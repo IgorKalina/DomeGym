@@ -1,0 +1,101 @@
+services:
+  test:
+    container_name: domegym.test_runner
+    profiles: ["runner" ]
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    restart: "no"
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+      rabbitmq_test:
+        condition: service_healthy
+      postgres_migration_test:
+        condition: service_completed_successfully
+    networks:
+      - domegym.test_network
+    environment:
+      GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres_test
+      GYM_MANAGEMENT_DATABASE__PORT: 5432
+      GYM_MANAGEMENT_RABBITMQ__HOST: domegym.rabbitmq_test
+      GYM_MANAGEMENT_RABBITMQ__PORT: 5672
+    command: [ "make", "test" ]
+
+  postgres_test:
+    container_name: domegym.postgres_test
+    profiles: ["runner", "dependency" ]
+    image: "postgres:16-alpine"
+    hostname: domegym.postgres_test
+    restart: unless-stopped
+    expose:
+      - "5432"
+    ports:
+      - "${GYM_MANAGEMENT_DATABASE__PORT}:5432"
+    networks:
+      - domegym.test_network
+    volumes:
+      - ./.env.test:/app/.env:ro
+      - domegym.postgres.test_data:/var/lib/postgresql/data:rw
+    environment:
+      POSTGRES_PASSWORD: ${GYM_MANAGEMENT_DATABASE__USER__PASSWORD}
+      POSTGRES_USER: ${GYM_MANAGEMENT_DATABASE__USER__NAME}
+      POSTGRES_DB: ${GYM_MANAGEMENT_DATABASE__NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${GYM_MANAGEMENT_DATABASE__NAME} -U ${GYM_MANAGEMENT_DATABASE__USER__NAME}"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+
+  postgres_migration_test:
+    container_name: domegym.postgres_migration_test
+    profiles: ["runner", "dependency" ]
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    restart: on-failure
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    networks:
+      - domegym.test_network
+    volumes:
+      - ./alembic.ini:/app/alembic.ini:ro
+      - ./.env.test:/app/.env:ro
+      - ./src/gym_management/infrastructure/common/postgres/migrations:/app/src/gym_management/infrastructure/common/postgres/migrations:ro
+    environment:
+      GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres_test
+      GYM_MANAGEMENT_DATABASE__PORT: 5432
+    command: ["poetry", "run", "python", "-m", "alembic", "upgrade", "head"]
+
+  rabbitmq_test:
+    container_name: domegym.rabbitmq_test
+    profiles: ["runner", "dependency" ]
+    image: "rabbitmq:4.0.5-management-alpine"
+    hostname: domegym.rabbitmq_test
+    restart: unless-stopped
+    expose:
+      - "5672"
+    ports:
+      - "${GYM_MANAGEMENT_RABBITMQ__PORT}:5672"
+    networks:
+      - domegym.test_network
+    environment:
+      RABBITMQ_DEFAULT_USER: ${GYM_MANAGEMENT_RABBITMQ__USER__NAME}
+      RABBITMQ_DEFAULT_PASS: ${GYM_MANAGEMENT_RABBITMQ__USER__PASSWORD}
+    volumes:
+      - domegym.rabbitmq.test_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  domegym.postgres.test_data: {}
+  domegym.rabbitmq.test_data: {}
+
+networks:
+  domegym.test_network: {}
