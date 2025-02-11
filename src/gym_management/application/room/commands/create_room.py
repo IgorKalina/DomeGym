@@ -28,13 +28,13 @@ class CreateRoom(Command):
 class CreateRoomHandler(CommandHandler):
     def __init__(
         self,
-        query_invoker: QueryInvoker,
         room_repository: RoomRepository,
         eventbus: DomainEventBus,
+        query_invoker: QueryInvoker,
     ) -> None:
         self.__room_repository = room_repository
-        self.__eventbus = eventbus
 
+        self.__eventbus = eventbus
         self.__query_invoker = query_invoker
 
     async def handle(self, command: CreateRoom) -> RoomDB:
