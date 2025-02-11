@@ -61,13 +61,19 @@ class DiContainer(containers.DeclarativeContainer):
         DomainEventBusMemory,
         event_repository=repository_container.failed_domain_event_repository,
     )
+    query_invoker = providers.Singleton(QueryInvokerMemory)
+    command_invoker = providers.Singleton(CommandInvokerMemory)
+
     # containers
     query_container = providers.Container(
-        QueryContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
+        QueryContainer,
+        query_invoker=query_invoker,
+        repository_container=repository_container,
+        domain_eventbus=domain_eventbus,
     )
     command_container = providers.Container(
         CommandContainer,
-        query_container=query_container,
+        query_invoker=query_invoker,
         repository_container=repository_container,
         domain_eventbus=domain_eventbus,
     )
@@ -80,19 +86,19 @@ class DiContainer(containers.DeclarativeContainer):
         BackgroundTaskContainer, repository_container=repository_container, eventbus_container=eventbus_container
     )
 
-    command_invoker = providers.Resource(
+    _register_commands = providers.Resource(
         register_commands,
-        command_invoker=providers.Singleton(CommandInvokerMemory),
+        command_invoker=command_invoker,
         commands=command_container.commands,
     )
 
-    query_invoker = providers.Resource(
+    _register_queries = providers.Resource(
         register_queries,
-        query_invoker=providers.Singleton(QueryInvokerMemory),
+        query_invoker=query_invoker,
         queries=query_container.queries,
     )
 
-    domain_eventbus = providers.Resource(
+    _register_domain_events = providers.Resource(
         register_domain_events, domain_eventbus=domain_eventbus, domain_events=domain_event_container.domain_events
     )
 

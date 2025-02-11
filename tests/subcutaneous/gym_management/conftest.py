@@ -1,3 +1,5 @@
+from typing import AsyncGenerator
+
 import pytest
 
 from src.gym_management.application.common.dto.repository import RoomDB
@@ -22,23 +24,28 @@ from tests.common.gym_management.subscription.repository.memory import (
 
 
 @pytest.fixture
-async def di_container() -> DiContainer:
-    return DiContainer(repository_container=RepositoryMemoryContainer())
+async def di_container() -> AsyncGenerator[DiContainer, None]:
+    di_container = DiContainer(repository_container=RepositoryMemoryContainer())
+    await di_container.init_resources()
+
+    yield di_container
+
+    await di_container.shutdown_resources()
 
 
 @pytest.fixture
 async def command_invoker(di_container: DiContainer) -> CommandInvokerMemory:
-    return await di_container.command_invoker()
+    return di_container.command_invoker()
 
 
 @pytest.fixture
 async def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
-    return await di_container.query_invoker()
+    return di_container.query_invoker()
 
 
 @pytest.fixture
 async def domain_eventbus(di_container: DiContainer) -> QueryInvokerMemory:
-    return await di_container.domain_eventbus()
+    return di_container.domain_eventbus()
 
 
 @pytest.fixture

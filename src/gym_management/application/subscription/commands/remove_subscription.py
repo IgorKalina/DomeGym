@@ -8,11 +8,12 @@ from src.gym_management.application.common.interfaces.repository.subscription_re
 from src.gym_management.application.subscription.exceptions import (
     SubscriptionDoesNotHaveAdminError,
 )
-from src.gym_management.application.subscription.queries.get_subscription import GetSubscription, GetSubscriptionHandler
+from src.gym_management.application.subscription.queries.get_subscription import GetSubscription
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
 
 if TYPE_CHECKING:
     from src.gym_management.application.common.dto.repository.admin import AdminDB
@@ -25,16 +26,16 @@ class RemoveSubscription(Command):
 class RemoveSubscriptionHandler(CommandHandler):
     def __init__(
         self,
-        get_subscription_handler: GetSubscriptionHandler,
+        query_invoker: QueryInvoker,
         subscription_repository: SubscriptionRepository,
         admin_repository: AdminRepository,
         eventbus: DomainEventBus,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
-        self.__eventbus = eventbus
 
-        self.__get_subscription_handler = get_subscription_handler
+        self.__query_invoker = query_invoker
+        self.__eventbus = eventbus
 
     async def handle(self, command: RemoveSubscription) -> SubscriptionDB:
         subscription: Subscription = await self.__get_subscription(command)
@@ -48,7 +49,7 @@ class RemoveSubscriptionHandler(CommandHandler):
 
     async def __get_subscription(self, command: RemoveSubscription) -> Subscription:
         get_subscription_query = GetSubscription(subscription_id=command.subscription_id)
-        subscription_db: SubscriptionDB = await self.__get_subscription_handler.handle(get_subscription_query)
+        subscription_db: SubscriptionDB = await self.__query_invoker.invoke(get_subscription_query)
         return dto.mappers.subscription.db_to_domain(subscription_db)
 
     async def __get_admin(self, subscription: Subscription) -> Admin:
