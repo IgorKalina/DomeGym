@@ -1,15 +1,12 @@
-import typing
 import uuid
 
+from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
-from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
-from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
+from src.gym_management.application.subscription.queries.get_subscription import GetSubscription, GetSubscriptionHandler
+from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler
-
-if typing.TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 
 
 class GetGym(Query):
@@ -18,18 +15,19 @@ class GetGym(Query):
 
 
 class GetGymHandler(QueryHandler):
-    def __init__(self, subscription_repository: SubscriptionRepository, gym_repository: GymRepository) -> None:
-        self.__subscription_repository = subscription_repository
+    def __init__(self, get_subscription_handler: GetSubscriptionHandler, gym_repository: GymRepository) -> None:
         self.__gym_repository = gym_repository
 
-    async def handle(self, query: GetGym) -> GymDB:
-        subscription: SubscriptionDB | None = await self.__subscription_repository.get_by_id(query.subscription_id)
-        if subscription is None:
-            raise SubscriptionDoesNotExistError()
+        self.__get_subscription_handler = get_subscription_handler
 
-        gym: GymDB | None = await self.__gym_repository.get_by_id(
-            gym_id=query.gym_id, subscription_id=query.subscription_id
-        )
+    async def handle(self, query: GetGym) -> GymDB:
+        subscription: Subscription = await self.__get_subscription(query)
+        gym: GymDB | None = await self.__gym_repository.get_by_id(gym_id=query.gym_id, subscription_id=subscription.id)
         if gym is None:
             raise GymDoesNotExistError()
         return gym
+
+    async def __get_subscription(self, query: GetGym) -> Subscription:
+        get_subscription_query = GetSubscription(subscription_id=query.subscription_id)
+        subscription_db = await self.__get_subscription_handler.handle(get_subscription_query)
+        return dto.mappers.subscription.db_to_domain(subscription_db)

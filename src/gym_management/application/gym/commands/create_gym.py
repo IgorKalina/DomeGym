@@ -5,17 +5,14 @@ from typing import TYPE_CHECKING
 from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
-from src.gym_management.application.common.interfaces.repository.subscription_repository import (
-    SubscriptionRepository,
-)
-from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
+from src.gym_management.application.subscription.queries.get_subscription import GetSubscription, GetSubscriptionHandler
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
 
 if TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
+    from src.gym_management.application.common.dto.repository import SubscriptionDB
 
 logger = logging.getLogger(__name__)
 
@@ -28,16 +25,17 @@ class CreateGym(Command):
 class CreateGymHandler(CommandHandler):
     def __init__(
         self,
-        subscription_repository: SubscriptionRepository,
+        get_subscription_handler: GetSubscriptionHandler,
         gym_repository: GymRepository,
         eventbus: DomainEventBus,
     ) -> None:
-        self.__subscription_repository = subscription_repository
         self.__gym_repository = gym_repository
         self.__eventbus = eventbus
 
+        self.__get_subscription_handler = get_subscription_handler
+
     async def handle(self, command: CreateGym) -> GymDB:
-        subscription: Subscription = await self.__get_subscription_domain(command)
+        subscription: Subscription = await self.__get_subscription(command)
         gym = Gym(
             name=command.name,
             max_rooms=subscription.max_rooms,
@@ -49,10 +47,9 @@ class CreateGymHandler(CommandHandler):
         await self.__create_domain_events_in_db(subscription)
         return gym_db
 
-    async def __get_subscription_domain(self, command: CreateGym) -> Subscription:
-        subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
-        if subscription_db is None:
-            raise SubscriptionDoesNotExistError()
+    async def __get_subscription(self, command: CreateGym) -> Subscription:
+        get_subscription_query = GetSubscription(subscription_id=command.subscription_id)
+        subscription_db: SubscriptionDB = await self.__get_subscription_handler.handle(get_subscription_query)
         return dto.mappers.subscription.db_to_domain(subscription_db)
 
     async def __create_gym_in_db(self, gym: Gym) -> GymDB:

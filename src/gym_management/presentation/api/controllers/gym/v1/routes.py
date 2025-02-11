@@ -16,8 +16,7 @@ from src.shared_kernel.application.command import CommandInvoker
 from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.domain.gym.aggregate_root import Gym
-
+    from src.gym_management.application.common.dto.repository import GymDB
 
 router = APIRouter(
     prefix="/v1/subscriptions/{subscription_id}/gyms",
@@ -36,7 +35,7 @@ async def create_gym(
     command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
 ) -> ORJSONResponse:
     command = CreateGym(name=request.name, subscription_id=subscription_id)
-    gym: Gym = await command_invoker.invoke(command)
+    gym: GymDB = await command_invoker.invoke(command)
     gym_response: GymResponse = GymResponse(
         id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
     )
@@ -54,7 +53,7 @@ async def get_gym(
     query_invoker: QueryInvoker = Depends(Provide[DiContainer.query_invoker]),
 ) -> ORJSONResponse:
     query = GetGym(gym_id=gym_id, subscription_id=subscription_id)
-    gym: Gym = await query_invoker.invoke(query)
+    gym: GymDB = await query_invoker.invoke(query)
     gym_response: GymResponse = GymResponse(
         id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
     )

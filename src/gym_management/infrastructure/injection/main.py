@@ -62,12 +62,16 @@ class DiContainer(containers.DeclarativeContainer):
         event_repository=repository_container.failed_domain_event_repository,
     )
     # containers
-    command_container = providers.Container(
-        CommandContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
-    )
     query_container = providers.Container(
         QueryContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
     )
+    command_container = providers.Container(
+        CommandContainer,
+        query_container=query_container,
+        repository_container=repository_container,
+        domain_eventbus=domain_eventbus,
+    )
+
     domain_event_container = providers.Container(
         DomainEventContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
     )

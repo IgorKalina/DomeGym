@@ -6,9 +6,9 @@ from src.gym_management.application.common.dto.repository.subscription import Su
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.application.subscription.exceptions import (
-    SubscriptionDoesNotExistError,
     SubscriptionDoesNotHaveAdminError,
 )
+from src.gym_management.application.subscription.queries.get_subscription import GetSubscription, GetSubscriptionHandler
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
@@ -25,17 +25,20 @@ class RemoveSubscription(Command):
 class RemoveSubscriptionHandler(CommandHandler):
     def __init__(
         self,
-        admin_repository: AdminRepository,
+        get_subscription_handler: GetSubscriptionHandler,
         subscription_repository: SubscriptionRepository,
+        admin_repository: AdminRepository,
         eventbus: DomainEventBus,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
         self.__eventbus = eventbus
 
+        self.__get_subscription_handler = get_subscription_handler
+
     async def handle(self, command: RemoveSubscription) -> SubscriptionDB:
-        subscription: Subscription = await self.__get_subscription_domain(command)
-        admin: Admin = await self.__get_admin_domain(subscription)
+        subscription: Subscription = await self.__get_subscription(command)
+        admin: Admin = await self.__get_admin(subscription)
         admin.unset_subscription(subscription)
 
         await self.__update_admin_in_db(admin)
@@ -43,13 +46,12 @@ class RemoveSubscriptionHandler(CommandHandler):
         await self.__create_domain_events_in_db(admin)
         return subscription_db
 
-    async def __get_subscription_domain(self, command: RemoveSubscription) -> Subscription:
-        subscription_db: SubscriptionDB | None = await self.__subscription_repository.get_by_id(command.subscription_id)
-        if subscription_db is None:
-            raise SubscriptionDoesNotExistError()
+    async def __get_subscription(self, command: RemoveSubscription) -> Subscription:
+        get_subscription_query = GetSubscription(subscription_id=command.subscription_id)
+        subscription_db: SubscriptionDB = await self.__get_subscription_handler.handle(get_subscription_query)
         return dto.mappers.subscription.db_to_domain(subscription_db)
 
-    async def __get_admin_domain(self, subscription: Subscription) -> Admin:
+    async def __get_admin(self, subscription: Subscription) -> Admin:
         admin_db: AdminDB | None = await self.__admin_repository.get_by_id(subscription.admin_id)
         if admin_db is None:
             raise SubscriptionDoesNotHaveAdminError()

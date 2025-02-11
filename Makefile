@@ -77,6 +77,7 @@ test-subcutaneous:
 
 .PHONY: test-integration
 test-integration:
+	@${MAKE} build-test-dependency
 	poetry run pytest -v ./tests/integration
 
 .PHONY: create-migrations
