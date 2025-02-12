@@ -24,6 +24,7 @@ services:
       - ./.env:/app/.env:ro
     environment:
       GYM_MANAGEMENT_DATABASE__HOST: domegym.postgres
+      GYM_MANAGEMENT_RABBITMQ__HOST: domegym.rabbitmq
     healthcheck:
       test: [ "CMD", "python", "/app/scripts/gym_management_healthcheck.py" ]
       interval: 10s
