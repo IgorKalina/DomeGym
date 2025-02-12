@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING, List
 
 import pytest
 
-from src.gym_management.application.common import dto
-from src.gym_management.application.common.dto.repository import GymDB, RoomDB, SubscriptionDB
+from src.gym_management.application.common.dto.repository import RoomDB
 from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_domain_event_factory import GymDomainEventFactory
@@ -42,14 +41,10 @@ class TestRoomGymRemovedHandler:
         # room_db should stay untouched
         gym_id = uuid.uuid4()
         subscription: Subscription = SubscriptionFactory.create_subscription(gym_ids=[gym_id])
-        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
-        await self._subscription_repository.create(subscription_db)
         rooms: List[RoomDB] = await self._create_rooms(gym_id=gym_id)
         gym: Gym = GymFactory.create_gym(
             id=gym_id, room_ids=[room.id for room in rooms], subscription_id=subscription.id
         )
-        gym_db: GymDB = dto.mappers.gym.domain_to_db(gym)
-        await self._gym_repository.create(gym_db)
         event: GymRemovedEvent = GymDomainEventFactory.create_gym_removed_event(subscription=subscription, gym=gym)
 
         # Act

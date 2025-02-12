@@ -80,7 +80,6 @@ class DiContainer(containers.DeclarativeContainer):
     domain_event_container = providers.Container(
         DomainEventContainer,
         repository_container=repository_container,
-        command_bus=command_bus,
         domain_event_bus=domain_event_bus,
     )
 
