@@ -2,5 +2,5 @@
 @gymId=6e4d4bbb-9c4e-4c04-bda3-e4cec951378c
 
 
-GET http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/{{gymId}}/rooms
+DELETE http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/{{gymId}}
 Content-Type: application/json

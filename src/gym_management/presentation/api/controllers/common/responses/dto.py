@@ -31,7 +31,7 @@ class Response(abc.ABC, BaseModel):
 
 
 class OkResponse(Response, Generic[DataType]):
-    data: List[DataType]
+    data: List[DataType] = []
     errors: List = []
 
     def to_orjson(self) -> ORJSONResponse:

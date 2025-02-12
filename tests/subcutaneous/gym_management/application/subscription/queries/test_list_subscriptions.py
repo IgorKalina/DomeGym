@@ -3,8 +3,8 @@ from typing import List
 
 import pytest
 
+from src.gym_management.application.common.dto.repository import AdminDB, SubscriptionDB
 from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
-from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
 from tests.common.gym_management.subscription.factory.subscription_query_factory import SubscriptionQueryFactory
 from tests.common.gym_management.subscription.repository.memory import (
     SubscriptionMemoryRepository,
@@ -25,10 +25,12 @@ class TestListSubscriptions:
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
-    async def test_list_subscriptions_when_exist_should_return_all_subscriptions(self) -> None:
+    async def test_list_subscriptions_when_exist_should_return_all_subscriptions(
+        self,
+        admin_db_with_subscription: AdminDB,  # noqa: ARG002
+        subscription_db: SubscriptionDB,  # noqa: ARG002
+    ) -> None:
         # Arrange
-        subscription = SubscriptionDBFactory.create_subscription()
-        await self._subscription_repository.create(subscription)
         query = SubscriptionQueryFactory.create_list_subscription_query()
 
         # Act
@@ -36,7 +38,7 @@ class TestListSubscriptions:
 
         # Assert
         assert len(result) == 1
-        assert result[0] == subscription
+        assert result[0] == subscription_db
 
     @pytest.mark.asyncio
     async def test_list_subscriptions_when_not_exist_should_return_empty_result(self) -> None:

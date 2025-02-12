@@ -1,0 +1,5 @@
+@subscriptionId=ef0619cc-3155-4694-9d46-6367739f99aa
+
+
+GET http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/
+Content-Type: application/json

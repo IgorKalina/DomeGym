@@ -1,6 +1,7 @@
 import pytest
 
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
+from src.gym_management.application.common.dto.repository import AdminDB
 from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
@@ -36,10 +37,12 @@ class TestCreateSubscription:
         await self._assert_admin_in_db(create_subscription_command)
 
     @pytest.mark.asyncio
-    async def test_create_subscription_when_admin_already_exists_should_fail(self) -> None:
+    async def test_create_subscription_when_admin_already_exists_should_fail(
+        self,
+        admin_db_with_subscription: AdminDB,  # noqa: ARG002
+    ) -> None:  # noqa: ARG002
         # Arrange
         create_subscription_command = SubscriptionCommandFactory.create_create_subscription_command()
-        await self._command_bus.invoke(create_subscription_command)
 
         # Act
         with pytest.raises(AdminAlreadyExistsError) as err:

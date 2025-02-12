@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 
+from src.gym_management.application.admin.queries.get_admin import GetAdmin, GetAdminHandler
 from src.gym_management.application.gym.queries.get_gym import GetGym, GetGymHandler
 from src.gym_management.application.gym.queries.list_gyms import ListGyms, ListGymsHandler
 from src.gym_management.application.room.queries.get_room import GetRoom, GetRoomHandler
@@ -16,6 +17,12 @@ from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 class QueryContainer(containers.DeclarativeContainer):
     repository_container: RepositoryContainer = providers.DependenciesContainer()
     query_bus: QueryBus = providers.Dependency(instance_of=QueryBus)
+
+    # Admin
+    get_admin_handler = providers.Factory(
+        GetAdminHandler,
+        admin_repository=repository_container.admin_repository,
+    )
 
     # Subscription
     get_subscription_handler = providers.Factory(
@@ -50,6 +57,8 @@ class QueryContainer(containers.DeclarativeContainer):
 
     queries = providers.Dict(
         {
+            # Admin
+            GetAdmin: get_admin_handler,
             # Subscription
             GetSubscription: get_subscription_handler,
             ListSubscriptions: list_subscriptions_handler,

@@ -7,6 +7,8 @@ from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
 from src.gym_management.application.room.commands.create_room import CreateRoom
+from src.gym_management.application.room.commands.remove_room import RemoveRoom
+from src.gym_management.application.room.queries.get_room import GetRoom
 from src.gym_management.application.room.queries.list_rooms import ListRooms
 from src.gym_management.infrastructure.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
@@ -68,3 +70,42 @@ async def list_rooms(
         for room in rooms
     ]
     return OkResponse(status=status.HTTP_200_OK, data=response).to_orjson()
+
+
+@router.get(
+    "/{room_id}",
+    response_model=OkResponse[RoomResponse],
+)
+@inject
+async def get_room(
+    room_id: uuid.UUID,
+    gym_id: uuid.UUID,
+    subscription_id: uuid.UUID,
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+) -> ORJSONResponse:
+    query = GetRoom(room_id=room_id, gym_id=gym_id, subscription_id=subscription_id)
+    room: RoomDB = await query_bus.invoke(query)
+    response: RoomResponse = RoomResponse(
+        id=room.id,
+        name=room.name,
+        gym_id=room.gym_id,
+        subscription_id=room.subscription_id,
+        created_at=room.created_at,
+    )
+    return OkResponse(status=status.HTTP_200_OK, data=response).to_orjson()
+
+
+@router.delete(
+    "/{room_id}",
+    response_model=OkResponse[RoomResponse],
+)
+@inject
+async def remove_room(
+    room_id: uuid.UUID,
+    gym_id: uuid.UUID,
+    subscription_id: uuid.UUID,
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+) -> ORJSONResponse:
+    command = RemoveRoom(room_id=room_id, gym_id=gym_id, subscription_id=subscription_id)
+    await command_bus.invoke(command)
+    return OkResponse(status=status.HTTP_204_NO_CONTENT).to_orjson()

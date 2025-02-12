@@ -6,7 +6,9 @@ from fastapi import Depends, status
 from fastapi.routing import APIRouter
 
 from src.gym_management.application.gym.commands.create_gym import CreateGym
+from src.gym_management.application.gym.commands.remove_gym import RemoveGym
 from src.gym_management.application.gym.queries.get_gym import GetGym
+from src.gym_management.application.gym.queries.list_gyms import ListGyms
 from src.gym_management.infrastructure.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
@@ -58,3 +60,39 @@ async def get_gym(
         id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
     )
     return OkResponse(status=status.HTTP_200_OK, data=[gym_response]).to_orjson()
+
+
+@router.get(
+    "",
+    response_model=OkResponse[GymResponse],
+)
+@inject
+async def list_gyms(
+    subscription_id: uuid.UUID,
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+) -> ORJSONResponse:
+    query = ListGyms(subscription_id=subscription_id)
+    gyms: typing.List[GymDB] = await query_bus.invoke(query)
+    gym_response: typing.List[GymResponse] = [
+        GymResponse(id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at)
+        for gym in gyms
+    ]
+    return OkResponse(status=status.HTTP_200_OK, data=gym_response).to_orjson()
+
+
+@router.delete(
+    "/{gym_id}",
+    response_model=OkResponse[GymResponse],
+    responses={
+        status.HTTP_204_NO_CONTENT: {},
+    },
+)
+@inject
+async def remove_gym(
+    gym_id: uuid.UUID,
+    subscription_id: uuid.UUID,
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+) -> ORJSONResponse:
+    command = RemoveGym(gym_id=gym_id, subscription_id=subscription_id)
+    await command_bus.invoke(command)
+    return OkResponse(status=status.HTTP_204_NO_CONTENT).to_orjson()
