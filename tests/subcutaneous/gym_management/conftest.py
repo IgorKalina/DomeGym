@@ -44,8 +44,8 @@ async def query_bus(di_container: DiContainer) -> QueryBusMemory:
 
 
 @pytest.fixture
-async def domain_eventbus(di_container: DiContainer) -> QueryBusMemory:
-    return di_container.domain_eventbus()
+async def domain_event_bus(di_container: DiContainer) -> QueryBusMemory:
+    return di_container.domain_event_bus()
 
 
 @pytest.fixture

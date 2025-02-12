@@ -9,35 +9,37 @@ from src.gym_management.domain.admin.events.subscription_unset_event import Subs
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent, SomeEvent
 from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
 from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
+from src.shared_kernel.application.command import CommandBus
 from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 
 class DomainEventContainer(containers.DeclarativeContainer):
     repository_container: RepositoryContainer = providers.DependenciesContainer()
-    domain_eventbus = providers.Dependency(instance_of=DomainEventBus)
+    domain_event_bus = providers.Dependency(instance_of=DomainEventBus)
+    command_bus = providers.Dependency(instance_of=CommandBus)
 
-    gym_added_handler = providers.Factory(GymAddedEventHandler, eventbus=domain_eventbus)
+    gym_added_handler = providers.Factory(GymAddedEventHandler, domain_event_bus=domain_event_bus)
     some_event_handler = providers.Factory(SomeEventHandler)
     subscription_unset_handler = providers.Factory(
         SubscriptionUnsetHandler,
         gym_repository=repository_container.gym_repository,
-        eventbus=domain_eventbus,
+        command_bus=command_bus,
     )
     gym_removed_handler = providers.Factory(
         GymRemovedHandler,
         room_repository=repository_container.room_repository,
-        eventbus=domain_eventbus,
+        command_bus=command_bus,
     )
 
     domain_events = providers.Dict(
         {
             # Subscription
             SubscriptionSetEvent: providers.List(gym_added_handler),
+            SubscriptionUnsetEvent: providers.List(subscription_unset_handler),
             # Gym
             GymAddedEvent: providers.List(gym_added_handler),
             GymRemovedEvent: providers.List(gym_removed_handler),
             # Other
-            SubscriptionUnsetEvent: providers.List(subscription_unset_handler),
             SomeEvent: providers.List(some_event_handler),
         }
     )

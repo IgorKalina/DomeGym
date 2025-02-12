@@ -27,11 +27,11 @@ async def register_queries(query_bus: QueryBusMemory, queries: Dict) -> QueryBus
     return query_bus
 
 
-async def register_domain_events(domain_eventbus: DomainEventBusMemory, domain_events: Dict) -> DomainEventBusMemory:
+async def register_domain_events(domain_event_bus: DomainEventBusMemory, domain_events: Dict) -> DomainEventBusMemory:
     for event, handlers in domain_events.items():
         for handler in handlers:
-            await domain_eventbus.subscribe(event, handler)
-    return domain_eventbus
+            await domain_event_bus.subscribe(event, handler)
+    return domain_event_bus
 
 
 def init_background_task_scheduler(background_tasks: BackgroundTaskContainer) -> AsyncIOScheduler:
@@ -57,7 +57,7 @@ class DiContainer(containers.DeclarativeContainer):
     repository_container: RepositoryContainer = providers.DependenciesContainer()
     eventbus_container: EventbusContainer = providers.DependenciesContainer()
 
-    domain_eventbus = providers.Singleton(
+    domain_event_bus = providers.Singleton(
         DomainEventBusMemory,
         event_repository=repository_container.failed_domain_event_repository,
     )
@@ -69,17 +69,19 @@ class DiContainer(containers.DeclarativeContainer):
         QueryContainer,
         query_bus=query_bus,
         repository_container=repository_container,
-        domain_eventbus=domain_eventbus,
     )
     command_container = providers.Container(
         CommandContainer,
         query_bus=query_bus,
         repository_container=repository_container,
-        domain_eventbus=domain_eventbus,
+        domain_event_bus=domain_event_bus,
     )
 
     domain_event_container = providers.Container(
-        DomainEventContainer, repository_container=repository_container, domain_eventbus=domain_eventbus
+        DomainEventContainer,
+        repository_container=repository_container,
+        command_bus=command_bus,
+        domain_event_bus=domain_event_bus,
     )
 
     background_tasks = providers.Container(
@@ -99,7 +101,7 @@ class DiContainer(containers.DeclarativeContainer):
     )
 
     _register_domain_events = providers.Resource(
-        register_domain_events, domain_eventbus=domain_eventbus, domain_events=domain_event_container.domain_events
+        register_domain_events, domain_event_bus=domain_event_bus, domain_events=domain_event_container.domain_events
     )
 
     background_task_scheduler = providers.Resource(

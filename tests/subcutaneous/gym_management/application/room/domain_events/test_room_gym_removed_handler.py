@@ -3,14 +3,17 @@ from typing import TYPE_CHECKING, List
 
 import pytest
 
-from src.gym_management.application.common.dto.repository import RoomDB
+from src.gym_management.application.common import dto
+from src.gym_management.application.common.dto.repository import GymDB, RoomDB, SubscriptionDB
 from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_domain_event_factory import GymDomainEventFactory
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
+from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_db_factory import RoomDBFactory
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
+from tests.common.gym_management.subscription.repository.memory import SubscriptionMemoryRepository
 
 if TYPE_CHECKING:
     from src.gym_management.domain.gym.aggregate_root import Gym
@@ -23,11 +26,15 @@ class TestRoomGymRemovedHandler:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        domain_eventbus: DomainEventBusMemory,
+        domain_event_bus: DomainEventBusMemory,
         room_repository: RoomMemoryRepository,
+        gym_repository: GymMemoryRepository,
+        subscription_repository: SubscriptionMemoryRepository,
     ) -> None:
-        self._domain_eventbus = domain_eventbus
+        self._domain_eventbus = domain_event_bus
         self._room_repository = room_repository
+        self._gym_repository = gym_repository
+        self._subscription_repository = subscription_repository
         self._rooms_count = 10
 
     async def test_when_removed_gym_has_rooms_should_remove_all(self, room_db: RoomDB) -> None:
@@ -35,10 +42,14 @@ class TestRoomGymRemovedHandler:
         # room_db should stay untouched
         gym_id = uuid.uuid4()
         subscription: Subscription = SubscriptionFactory.create_subscription(gym_ids=[gym_id])
+        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
+        await self._subscription_repository.create(subscription_db)
         rooms: List[RoomDB] = await self._create_rooms(gym_id=gym_id)
         gym: Gym = GymFactory.create_gym(
             id=gym_id, room_ids=[room.id for room in rooms], subscription_id=subscription.id
         )
+        gym_db: GymDB = dto.mappers.gym.domain_to_db(gym)
+        await self._gym_repository.create(gym_db)
         event: GymRemovedEvent = GymDomainEventFactory.create_gym_removed_event(subscription=subscription, gym=gym)
 
         # Act

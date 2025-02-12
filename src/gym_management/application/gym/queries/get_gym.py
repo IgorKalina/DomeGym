@@ -20,7 +20,7 @@ class GetGym(Query):
 
 
 class GetGymHandler(QueryHandler):
-    def __init__(self, query_bus: QueryBus, gym_repository: GymRepository) -> None:
+    def __init__(self, gym_repository: GymRepository, query_bus: QueryBus) -> None:
         self.__gym_repository = gym_repository
 
         self.__query_bus = query_bus

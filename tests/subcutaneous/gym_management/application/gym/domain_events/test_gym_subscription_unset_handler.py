@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, List
 
 import pytest
 
+from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository import GymDB
 from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
 from tests.common.gym_management.common import constants
@@ -12,6 +13,7 @@ from tests.common.gym_management.subscription.factory.subscription_domain_event_
     SubscriptionDomainEventFactory,
 )
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
+from tests.common.gym_management.subscription.repository.memory import SubscriptionMemoryRepository
 
 if TYPE_CHECKING:
     from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
@@ -23,11 +25,13 @@ class TestGymSubscriptionUnsetHandler:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        domain_eventbus: DomainEventBusMemory,
+        domain_event_bus: DomainEventBusMemory,
         gym_repository: GymMemoryRepository,
+        subscription_repository: SubscriptionMemoryRepository,
     ) -> None:
-        self._domain_eventbus = domain_eventbus
+        self._domain_eventbus = domain_event_bus
         self._gym_repository = gym_repository
+        self._subscription_repository = subscription_repository
 
         self._gyms_count = 10
 
@@ -39,6 +43,8 @@ class TestGymSubscriptionUnsetHandler:
         subscription: Subscription = SubscriptionFactory.create_subscription(
             id=subscription_id, gym_ids=[gym.id for gym in gyms]
         )
+        subscription_db = dto.mappers.subscription.domain_to_db(subscription)
+        await self._subscription_repository.create(subscription_db)
         event: SubscriptionUnsetEvent = SubscriptionDomainEventFactory.create_subscription_unset_event(
             subscription=subscription
         )
