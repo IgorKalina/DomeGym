@@ -28,11 +28,11 @@ class CreateSubscriptionHandler(CommandHandler):
         self,
         admin_repository: AdminRepository,
         subscription_repository: SubscriptionRepository,
-        eventbus: DomainEventBus,
+        domain_event_bus: DomainEventBus,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
-        self.__event_bus = eventbus
+        self.__event_bus = domain_event_bus
 
     async def handle(self, command: CreateSubscription) -> SubscriptionDB:
         admin: Admin = await self.__get_admin(command)

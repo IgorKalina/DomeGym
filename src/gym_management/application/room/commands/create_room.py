@@ -29,12 +29,12 @@ class CreateRoomHandler(CommandHandler):
     def __init__(
         self,
         room_repository: RoomRepository,
-        eventbus: DomainEventBus,
+        domain_event_bus: DomainEventBus,
         query_bus: QueryBus,
     ) -> None:
         self.__room_repository = room_repository
 
-        self.__eventbus = eventbus
+        self.__domain_event_bus = domain_event_bus
         self.__query_bus = query_bus
 
     async def handle(self, command: CreateRoom) -> RoomDB:
@@ -64,4 +64,4 @@ class CreateRoomHandler(CommandHandler):
 
     async def __create_domain_events_in_db(self, aggregates: typing.List[AggregateRoot]) -> None:
         domain_events = list(itertools.chain.from_iterable([aggregate.pop_domain_events() for aggregate in aggregates]))
-        await self.__eventbus.publish(domain_events)
+        await self.__domain_event_bus.publish(domain_events)

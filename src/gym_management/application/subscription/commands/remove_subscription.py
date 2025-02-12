@@ -29,13 +29,13 @@ class RemoveSubscriptionHandler(CommandHandler):
         query_bus: QueryBus,
         subscription_repository: SubscriptionRepository,
         admin_repository: AdminRepository,
-        eventbus: DomainEventBus,
+        domain_event_bus: DomainEventBus,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
 
         self.__query_bus = query_bus
-        self.__eventbus = eventbus
+        self.__domain_event_bus = domain_event_bus
 
     async def handle(self, command: RemoveSubscription) -> SubscriptionDB:
         subscription: Subscription = await self.__get_subscription(command)
@@ -68,4 +68,4 @@ class RemoveSubscriptionHandler(CommandHandler):
         return subscription_db
 
     async def __create_domain_events_in_db(self, admin: Admin) -> None:
-        await self.__eventbus.publish(admin.pop_domain_events())
+        await self.__domain_event_bus.publish(admin.pop_domain_events())

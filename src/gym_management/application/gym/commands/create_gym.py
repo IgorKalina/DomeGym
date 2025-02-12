@@ -26,12 +26,12 @@ class CreateGym(Command):
 class CreateGymHandler(CommandHandler):
     def __init__(
         self,
-        query_bus: QueryBus,
         gym_repository: GymRepository,
-        eventbus: DomainEventBus,
+        query_bus: QueryBus,
+        domain_event_bus: DomainEventBus,
     ) -> None:
         self.__gym_repository = gym_repository
-        self.__eventbus = eventbus
+        self.__domain_event_bus = domain_event_bus
 
         self.__query_bus = query_bus
 
@@ -59,4 +59,4 @@ class CreateGymHandler(CommandHandler):
         return gym_db
 
     async def __create_domain_events_in_db(self, subscription: Subscription) -> None:
-        await self.__eventbus.publish(subscription.pop_domain_events())
+        await self.__domain_event_bus.publish(subscription.pop_domain_events())
