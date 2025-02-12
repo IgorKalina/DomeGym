@@ -31,8 +31,8 @@ class CreateGymHandler(CommandHandler):
         domain_event_bus: DomainEventBus,
     ) -> None:
         self.__gym_repository = gym_repository
-        self.__domain_event_bus = domain_event_bus
 
+        self.__domain_event_bus = domain_event_bus
         self.__query_bus = query_bus
 
     async def handle(self, command: CreateGym) -> GymDB:
