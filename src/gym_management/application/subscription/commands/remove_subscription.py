@@ -12,8 +12,8 @@ from src.gym_management.application.subscription.queries.get_subscription import
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 if TYPE_CHECKING:
     from src.gym_management.application.common.dto.repository.admin import AdminDB
@@ -26,7 +26,7 @@ class RemoveSubscription(Command):
 class RemoveSubscriptionHandler(CommandHandler):
     def __init__(
         self,
-        query_invoker: QueryInvoker,
+        query_bus: QueryBus,
         subscription_repository: SubscriptionRepository,
         admin_repository: AdminRepository,
         eventbus: DomainEventBus,
@@ -34,7 +34,7 @@ class RemoveSubscriptionHandler(CommandHandler):
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
 
-        self.__query_invoker = query_invoker
+        self.__query_bus = query_bus
         self.__eventbus = eventbus
 
     async def handle(self, command: RemoveSubscription) -> SubscriptionDB:
@@ -49,7 +49,7 @@ class RemoveSubscriptionHandler(CommandHandler):
 
     async def __get_subscription(self, command: RemoveSubscription) -> Subscription:
         get_subscription_query = GetSubscription(subscription_id=command.subscription_id)
-        subscription_db: SubscriptionDB = await self.__query_invoker.invoke(get_subscription_query)
+        subscription_db: SubscriptionDB = await self.__query_bus.invoke(get_subscription_query)
         return dto.mappers.subscription.db_to_domain(subscription_db)
 
     async def __get_admin(self, subscription: Subscription) -> Admin:

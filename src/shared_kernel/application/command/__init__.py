@@ -1,10 +1,10 @@
 from .interfaces.command import Command, CommandHandler, CommandResult, CommandType
-from .interfaces.command_invoker import CommandInvoker
+from .interfaces.command_bus import CommandBus
 
 __all__ = [
     "Command",
     "CommandResult",
     "CommandType",
     "CommandHandler",
-    "CommandInvoker",
+    "CommandBus",
 ]

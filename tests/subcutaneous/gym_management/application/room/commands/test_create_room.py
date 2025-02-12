@@ -9,7 +9,7 @@ from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_command_factory import RoomCommandFactory
@@ -23,14 +23,14 @@ class TestCreateRoom:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        command_invoker: CommandInvokerMemory,
+        command_bus: CommandBusMemory,
         subscription_repository: SubscriptionMemoryRepository,
         gym_repository: GymMemoryRepository,
         room_repository: RoomMemoryRepository,
         gym_db: GymDB,
         subscription_db: SubscriptionDB,
     ) -> None:
-        self._command_invoker = command_invoker
+        self._command_bus = command_bus
         self._subscription_repository = subscription_repository
         self._gym_repository = gym_repository
         self._room_repository = room_repository
@@ -46,7 +46,7 @@ class TestCreateRoom:
         )
 
         # Act
-        room: RoomDB = await self._command_invoker.invoke(create_room)
+        room: RoomDB = await self._command_bus.invoke(create_room)
 
         # Assert
         assert isinstance(room, RoomDB)
@@ -67,7 +67,7 @@ class TestCreateRoom:
 
         # Act
         with pytest.raises(SubscriptionDoesNotExistError) as err:
-            await self._command_invoker.invoke(create_room)
+            await self._command_bus.invoke(create_room)
 
         # Assert
         assert err.value.title == "Subscription.Not_found"
@@ -84,7 +84,7 @@ class TestCreateRoom:
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:
-            await self._command_invoker.invoke(create_room)
+            await self._command_bus.invoke(create_room)
 
         # Assert
         assert err.value.title == "Gym.Not_found"
@@ -100,11 +100,11 @@ class TestCreateRoom:
         )
         created_rooms: List[RoomDB] = []
         for _ in range(constants.subscription.MAX_ROOMS_FREE_TIER):
-            created_rooms.append(await self._command_invoker.invoke(create_room))
+            created_rooms.append(await self._command_bus.invoke(create_room))
 
         # Act
         with pytest.raises(GymCannotHaveMoreRoomsThanSubscriptionAllowsError) as err:
-            await self._command_invoker.invoke(create_room)
+            await self._command_bus.invoke(create_room)
 
         # Assert
         assert err.value.max_rooms == constants.subscription.MAX_ROOMS_FREE_TIER

@@ -11,7 +11,7 @@ from src.gym_management.application.subscription.exceptions import SubscriptionD
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.exceptions import SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
@@ -24,11 +24,11 @@ class TestCreateGym:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        command_invoker: CommandInvokerMemory,
+        command_bus: CommandBusMemory,
         gym_repository: GymMemoryRepository,
         subscription_db: SubscriptionDB,
     ) -> None:
-        self._command_invoker = command_invoker
+        self._command_bus = command_bus
         self._gym_repository = gym_repository
 
         self._subscription_db: SubscriptionDB = subscription_db
@@ -46,7 +46,7 @@ class TestCreateGym:
 
         # Act
         with freeze_time(constants.common.NEW_UPDATED_AT):
-            gym: GymDB = await self._command_invoker.invoke(create_gym)
+            gym: GymDB = await self._command_bus.invoke(create_gym)
 
         # Assert
         assert isinstance(gym, GymDB)
@@ -58,11 +58,11 @@ class TestCreateGym:
         create_gym = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription_db.id)
         created_gyms: List[Gym] = []
         for _ in range(self._subscription.max_gyms):
-            created_gyms.append(await self._command_invoker.invoke(create_gym))
+            created_gyms.append(await self._command_bus.invoke(create_gym))
 
         # Act
         with pytest.raises(SubscriptionCannotHaveMoreGymsThanSubscriptionAllowsError) as err:
-            await self._command_invoker.invoke(create_gym)
+            await self._command_bus.invoke(create_gym)
 
         # Assert
         assert err.value.max_gyms == self._subscription.max_gyms
@@ -82,7 +82,7 @@ class TestCreateGym:
 
         # Act
         with pytest.raises(SubscriptionDoesNotExistError) as err:
-            await self._command_invoker.invoke(create_gym)
+            await self._command_bus.invoke(create_gym)
 
         # Assert
         assert err.value.title == "Subscription.Not_found"

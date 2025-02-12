@@ -6,7 +6,7 @@ from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.application.gym.queries.get_gym import GetGym
 from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 
 class ListRooms(Query):
@@ -17,12 +17,12 @@ class ListRooms(Query):
 class ListRoomsHandler(QueryHandler):
     def __init__(
         self,
-        query_invoker: QueryInvoker,
+        query_bus: QueryBus,
         room_repository: RoomRepository,
     ) -> None:
         self.__room_repository = room_repository
 
-        self.__query_invoker = query_invoker
+        self.__query_bus = query_bus
 
     async def handle(self, query: ListRooms) -> List[RoomDB]:
         gym: GymDB = await self.__get_gym(query)
@@ -30,5 +30,5 @@ class ListRoomsHandler(QueryHandler):
 
     async def __get_gym(self, query: ListRooms) -> GymDB:
         get_gym_query = GetGym(gym_id=query.gym_id, subscription_id=query.subscription_id)
-        gym_db: GymDB = await self.__query_invoker.invoke(get_gym_query)
+        gym_db: GymDB = await self.__query_bus.invoke(get_gym_query)
         return gym_db

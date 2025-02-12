@@ -11,8 +11,8 @@ from src.gym_management.application.gym.queries.get_gym import GetGym
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
-from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
+from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
+from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
 from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
@@ -22,12 +22,12 @@ class TestGetGym:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        command_invoker: CommandInvokerMemory,
-        query_invoker: QueryInvokerMemory,
+        command_bus: CommandBusMemory,
+        query_bus: QueryBusMemory,
         subscription_repository: SubscriptionRepository,
     ) -> None:
-        self._command_invoker = command_invoker
-        self._query_invoker = query_invoker
+        self._command_bus = command_bus
+        self._query_bus = query_bus
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
@@ -36,11 +36,11 @@ class TestGetGym:
     ) -> None:
         # Arrange
         create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription_db.id)
-        expected_gym: GymDB = await self._command_invoker.invoke(create_gym_command)
+        expected_gym: GymDB = await self._command_bus.invoke(create_gym_command)
         get_gym: GetGym = GetGym(subscription_id=constants.subscription.SUBSCRIPTION_ID, gym_id=expected_gym.id)
 
         # Act
-        gym: GymDB = await self._query_invoker.invoke(get_gym)
+        gym: GymDB = await self._query_bus.invoke(get_gym)
 
         # Assert
         assert gym == expected_gym
@@ -52,7 +52,7 @@ class TestGetGym:
 
         # Act
         with pytest.raises(SubscriptionDoesNotExistError) as err:
-            await self._query_invoker.invoke(get_gym)
+            await self._query_bus.invoke(get_gym)
 
         # Assert
         assert err.value.title == "Subscription.Not_found"
@@ -68,7 +68,7 @@ class TestGetGym:
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:
-            await self._query_invoker.invoke(get_gym)
+            await self._query_bus.invoke(get_gym)
 
         # Assert
         assert err.value.title == "Gym.Not_found"
@@ -85,7 +85,7 @@ class TestGetGym:
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:
-            await self._query_invoker.invoke(get_gym)
+            await self._query_bus.invoke(get_gym)
 
         # Assert
         assert err.value.title == "Gym.Not_found"

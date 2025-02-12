@@ -9,7 +9,7 @@ from src.gym_management.domain.admin.events.subscription_unset_event import Subs
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent, SomeEvent
 from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
 from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 
 class DomainEventContainer(containers.DeclarativeContainer):

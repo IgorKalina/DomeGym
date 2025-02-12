@@ -6,8 +6,8 @@ from src.gym_management.application.common.dto.repository import RoomDB
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.infrastructure.injection.main import DiContainer
-from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
-from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
+from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
+from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.admin.factory.admin_db_factory import AdminDBFactory
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
 from tests.common.gym_management.common.injection.containers.repository_memory_container import (
@@ -34,17 +34,17 @@ async def di_container() -> AsyncGenerator[DiContainer, None]:
 
 
 @pytest.fixture
-async def command_invoker(di_container: DiContainer) -> CommandInvokerMemory:
-    return di_container.command_invoker()
+async def command_bus(di_container: DiContainer) -> CommandBusMemory:
+    return di_container.command_bus()
 
 
 @pytest.fixture
-async def query_invoker(di_container: DiContainer) -> QueryInvokerMemory:
-    return di_container.query_invoker()
+async def query_bus(di_container: DiContainer) -> QueryBusMemory:
+    return di_container.query_bus()
 
 
 @pytest.fixture
-async def domain_eventbus(di_container: DiContainer) -> QueryInvokerMemory:
+async def domain_eventbus(di_container: DiContainer) -> QueryBusMemory:
     return di_container.domain_eventbus()
 
 

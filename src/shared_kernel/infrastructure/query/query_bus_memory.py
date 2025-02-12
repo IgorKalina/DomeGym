@@ -3,12 +3,12 @@ from typing import Dict, Type
 
 from src.shared_kernel.application.exceptions import HandlerNotFoundError
 from src.shared_kernel.application.query.interfaces.query import Query, QueryHandler, QueryResult, QueryType
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 logger = logging.getLogger(__name__)
 
 
-class QueryInvokerMemory(QueryInvoker):
+class QueryBusMemory(QueryBus):
     def __init__(self) -> None:
         self.__query_handlers: Dict[Type[Query], QueryHandler] = {}
 

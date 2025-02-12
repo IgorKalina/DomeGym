@@ -3,7 +3,7 @@ from typing import List
 
 import pytest
 
-from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
+from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
 from tests.common.gym_management.subscription.factory.subscription_query_factory import SubscriptionQueryFactory
 from tests.common.gym_management.subscription.repository.memory import (
@@ -18,10 +18,10 @@ class TestListSubscriptions:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        query_invoker: QueryInvokerMemory,
+        query_bus: QueryBusMemory,
         subscription_repository: SubscriptionMemoryRepository,
     ) -> None:
-        self._query_invoker = query_invoker
+        self._query_bus = query_bus
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
@@ -32,7 +32,7 @@ class TestListSubscriptions:
         query = SubscriptionQueryFactory.create_list_subscription_query()
 
         # Act
-        result: List[Subscription] = await self._query_invoker.invoke(query)
+        result: List[Subscription] = await self._query_bus.invoke(query)
 
         # Assert
         assert len(result) == 1
@@ -44,7 +44,7 @@ class TestListSubscriptions:
         query = SubscriptionQueryFactory.create_list_subscription_query()
 
         # Act
-        result: List[Subscription] = await self._query_invoker.invoke(query)
+        result: List[Subscription] = await self._query_bus.invoke(query)
 
         # Assert
         assert result == []

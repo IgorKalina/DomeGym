@@ -11,8 +11,8 @@ from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.room.aggregate_root import Room
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 if typing.TYPE_CHECKING:
@@ -30,12 +30,12 @@ class CreateRoomHandler(CommandHandler):
         self,
         room_repository: RoomRepository,
         eventbus: DomainEventBus,
-        query_invoker: QueryInvoker,
+        query_bus: QueryBus,
     ) -> None:
         self.__room_repository = room_repository
 
         self.__eventbus = eventbus
-        self.__query_invoker = query_invoker
+        self.__query_bus = query_bus
 
     async def handle(self, command: CreateRoom) -> RoomDB:
         subscription: Subscription = await self.__get_subscription(command)
@@ -49,12 +49,12 @@ class CreateRoomHandler(CommandHandler):
 
     async def __get_subscription(self, command: CreateRoom) -> Subscription:
         get_subscription_query = GetSubscription(subscription_id=command.subscription_id)
-        subscription_db: SubscriptionDB = await self.__query_invoker.invoke(get_subscription_query)
+        subscription_db: SubscriptionDB = await self.__query_bus.invoke(get_subscription_query)
         return dto.mappers.subscription.db_to_domain(subscription_db)
 
     async def __get_gym(self, command: CreateRoom, subscription: Subscription) -> Gym:
         get_gym_query = GetGym(gym_id=command.gym_id, subscription_id=command.subscription_id)
-        gym_db: GymDB = await self.__query_invoker.invoke(get_gym_query)
+        gym_db: GymDB = await self.__query_bus.invoke(get_gym_query)
         return dto.mappers.gym.db_to_domain(gym=gym_db, subscription=subscription)
 
     async def __create_room_in_db(self, room: Room, gym: Gym) -> RoomDB:

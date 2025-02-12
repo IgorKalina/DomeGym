@@ -11,14 +11,14 @@ from src.gym_management.application.subscription.commands.remove_subscription im
     RemoveSubscriptionHandler,
 )
 from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 
 class CommandContainer(containers.DeclarativeContainer):
     repository_container: RepositoryContainer = providers.DependenciesContainer()
     domain_eventbus: DomainEventBus = providers.Dependency(instance_of=DomainEventBus)
-    query_invoker: QueryInvoker = providers.Dependency(instance_of=QueryInvoker)
+    query_bus: QueryBus = providers.Dependency(instance_of=QueryBus)
 
     create_subscription_handler = providers.Factory(
         CreateSubscriptionHandler,
@@ -28,20 +28,20 @@ class CommandContainer(containers.DeclarativeContainer):
     )
     create_gym_handler = providers.Factory(
         CreateGymHandler,
-        query_invoker=query_invoker,
+        query_bus=query_bus,
         gym_repository=repository_container.gym_repository,
         eventbus=domain_eventbus,
     )
 
     create_room_handler = providers.Factory(
         CreateRoomHandler,
-        query_invoker=query_invoker,
+        query_bus=query_bus,
         room_repository=repository_container.room_repository,
         eventbus=domain_eventbus,
     )
     remove_subscription_handler = providers.Factory(
         RemoveSubscriptionHandler,
-        query_invoker=query_invoker,
+        query_bus=query_bus,
         admin_repository=repository_container.admin_repository,
         subscription_repository=repository_container.subscription_repository,
         eventbus=domain_eventbus,

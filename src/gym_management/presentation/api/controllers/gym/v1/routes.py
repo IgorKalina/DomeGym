@@ -12,8 +12,8 @@ from src.gym_management.presentation.api.controllers.common.responses.dto import
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.gym.v1.requests.create_gym_request import CreateGymRequest
 from src.gym_management.presentation.api.controllers.gym.v1.responses.gym_response import GymResponse
-from src.shared_kernel.application.command import CommandInvoker
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.command import CommandBus
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 if typing.TYPE_CHECKING:
     from src.gym_management.application.common.dto.repository import GymDB
@@ -32,10 +32,10 @@ router = APIRouter(
 async def create_gym(
     request: CreateGymRequest,
     subscription_id: uuid.UUID,
-    command_invoker: CommandInvoker = Depends(Provide[DiContainer.command_invoker]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
 ) -> ORJSONResponse:
     command = CreateGym(name=request.name, subscription_id=subscription_id)
-    gym: GymDB = await command_invoker.invoke(command)
+    gym: GymDB = await command_bus.invoke(command)
     gym_response: GymResponse = GymResponse(
         id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
     )
@@ -50,10 +50,10 @@ async def create_gym(
 async def get_gym(
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
-    query_invoker: QueryInvoker = Depends(Provide[DiContainer.query_invoker]),
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
 ) -> ORJSONResponse:
     query = GetGym(gym_id=gym_id, subscription_id=subscription_id)
-    gym: GymDB = await query_invoker.invoke(query)
+    gym: GymDB = await query_bus.invoke(query)
     gym_response: GymResponse = GymResponse(
         id=gym.id, name=gym.name, subscription_id=gym.subscription_id, created_at=gym.created_at
     )

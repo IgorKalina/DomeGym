@@ -9,7 +9,7 @@ from src.gym_management.application.common.interfaces.repository.subscription_re
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
+from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.room.factory.room_db_factory import RoomDBFactory
 from tests.common.gym_management.room.factory.room_query_factory import RoomQueryFactory
@@ -24,12 +24,12 @@ class TestListRooms:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        query_invoker: QueryInvokerMemory,
+        query_bus: QueryBusMemory,
         room_repository: RoomMemoryRepository,
         subscription_repository: SubscriptionRepository,
         gym_db: GymDB,
     ) -> None:
-        self._query_invoker = query_invoker
+        self._query_bus = query_bus
         self._room_repository = room_repository
         self._subscription_repository = subscription_repository
 
@@ -43,7 +43,7 @@ class TestListRooms:
         list_rooms = RoomQueryFactory.create_list_rooms_query()
 
         # Act
-        result: List[RoomDB] = await self._query_invoker.invoke(list_rooms)
+        result: List[RoomDB] = await self._query_bus.invoke(list_rooms)
 
         # Assert
         assert len(result) == 1
@@ -55,7 +55,7 @@ class TestListRooms:
         list_rooms = RoomQueryFactory.create_list_rooms_query()
 
         # Act
-        result: List[RoomDB] = await self._query_invoker.invoke(list_rooms)
+        result: List[RoomDB] = await self._query_bus.invoke(list_rooms)
 
         # Assert
         assert result == []
@@ -67,7 +67,7 @@ class TestListRooms:
 
         # Act
         with pytest.raises(SubscriptionDoesNotExistError) as err:
-            await self._query_invoker.invoke(list_rooms)
+            await self._query_bus.invoke(list_rooms)
 
         # Assert
         assert err.value.title == "Subscription.Not_found"
@@ -81,7 +81,7 @@ class TestListRooms:
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:
-            await self._query_invoker.invoke(list_rooms)
+            await self._query_bus.invoke(list_rooms)
 
         # Assert
         assert err.value.title == "Gym.Not_found"
@@ -101,7 +101,7 @@ class TestListRooms:
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:
-            await self._query_invoker.invoke(list_rooms)
+            await self._query_bus.invoke(list_rooms)
 
         # Assert
         assert err.value.title == "Gym.Not_found"

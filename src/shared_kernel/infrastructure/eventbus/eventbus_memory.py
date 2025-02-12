@@ -3,7 +3,7 @@ import queue
 from collections import defaultdict
 from typing import Dict, List, Type
 
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 from src.shared_kernel.application.event.domain.repository import FailedDomainEventRepository
 from src.shared_kernel.application.exceptions import EventHandlerAlreadyExistsError, EventualConsistencyError
 from src.shared_kernel.domain.common.event import DomainEvent, DomainEventHandler

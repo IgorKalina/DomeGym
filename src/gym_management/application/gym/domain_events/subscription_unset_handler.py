@@ -6,7 +6,7 @@ from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 from src.shared_kernel.domain.common.event import DomainEventHandler
 
 logger = logging.getLogger(__name__)

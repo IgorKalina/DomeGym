@@ -13,7 +13,7 @@ from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 logger = logging.getLogger(__name__)
 

@@ -10,21 +10,21 @@ from src.gym_management.infrastructure.injection.containers.domain_event import 
 from src.gym_management.infrastructure.injection.containers.eventbus.base import EventbusContainer
 from src.gym_management.infrastructure.injection.containers.query import QueryContainer
 from src.gym_management.infrastructure.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
-from src.shared_kernel.infrastructure.query.query_invoker_memory import QueryInvokerMemory
+from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 
 
-async def register_commands(command_invoker: CommandInvokerMemory, commands: Dict) -> CommandInvokerMemory:
+async def register_commands(command_bus: CommandBusMemory, commands: Dict) -> CommandBusMemory:
     for command, handler in commands.items():
-        command_invoker.register_command_handler(command, handler)
-    return command_invoker
+        command_bus.register_command_handler(command, handler)
+    return command_bus
 
 
-async def register_queries(query_invoker: QueryInvokerMemory, queries: Dict) -> QueryInvokerMemory:
+async def register_queries(query_bus: QueryBusMemory, queries: Dict) -> QueryBusMemory:
     for query, handler in queries.items():
-        query_invoker.register_query_handler(query, handler)
-    return query_invoker
+        query_bus.register_query_handler(query, handler)
+    return query_bus
 
 
 async def register_domain_events(domain_eventbus: DomainEventBusMemory, domain_events: Dict) -> DomainEventBusMemory:
@@ -61,19 +61,19 @@ class DiContainer(containers.DeclarativeContainer):
         DomainEventBusMemory,
         event_repository=repository_container.failed_domain_event_repository,
     )
-    query_invoker = providers.Singleton(QueryInvokerMemory)
-    command_invoker = providers.Singleton(CommandInvokerMemory)
+    query_bus = providers.Singleton(QueryBusMemory)
+    command_bus = providers.Singleton(CommandBusMemory)
 
     # containers
     query_container = providers.Container(
         QueryContainer,
-        query_invoker=query_invoker,
+        query_bus=query_bus,
         repository_container=repository_container,
         domain_eventbus=domain_eventbus,
     )
     command_container = providers.Container(
         CommandContainer,
-        query_invoker=query_invoker,
+        query_bus=query_bus,
         repository_container=repository_container,
         domain_eventbus=domain_eventbus,
     )
@@ -88,13 +88,13 @@ class DiContainer(containers.DeclarativeContainer):
 
     _register_commands = providers.Resource(
         register_commands,
-        command_invoker=command_invoker,
+        command_bus=command_bus,
         commands=command_container.commands,
     )
 
     _register_queries = providers.Resource(
         register_queries,
-        query_invoker=query_invoker,
+        query_bus=query_bus,
         queries=query_container.queries,
     )
 

@@ -6,7 +6,7 @@ from fastapi.requests import Request
 from fastapi.responses import Response
 
 from src.gym_management.infrastructure.injection.main import DiContainer
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 
 async def process_domain_events_middleware(

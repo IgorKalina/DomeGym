@@ -2,7 +2,7 @@ import logging
 import typing
 from typing import List
 
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 from src.shared_kernel.application.event.domain.repository import FailedDomainEventRepository
 
 if typing.TYPE_CHECKING:

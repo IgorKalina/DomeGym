@@ -6,7 +6,7 @@ from src.gym_management.application.subscription.exceptions import (
     SubscriptionDoesNotHaveAdminError,
 )
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.infrastructure.command.command_invoker_memory import CommandInvokerMemory
+from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.subscription.factory.subscription_command_factory import SubscriptionCommandFactory
@@ -19,11 +19,11 @@ class TestRemoveSubscription:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
-        command_invoker: CommandInvokerMemory,
+        command_bus: CommandBusMemory,
         admin_repository: AdminMemoryRepository,
         subscription_repository: SubscriptionMemoryRepository,
     ) -> None:
-        self._command_invoker = command_invoker
+        self._command_bus = command_bus
         self._admin_repository = admin_repository
         self._subscription_repository = subscription_repository
 
@@ -36,7 +36,7 @@ class TestRemoveSubscription:
         remove_subscription_command = SubscriptionCommandFactory.create_remove_subscription_command()
 
         # Act
-        await self._command_invoker.invoke(remove_subscription_command)
+        await self._command_bus.invoke(remove_subscription_command)
 
         # Assert
         await self._assert_admin_has_no_subscription()
@@ -51,7 +51,7 @@ class TestRemoveSubscription:
 
         # Act
         with pytest.raises(SubscriptionDoesNotExistError) as err:
-            await self._command_invoker.invoke(remove_subscription_command)
+            await self._command_bus.invoke(remove_subscription_command)
 
         # Assert
         assert err.value.title == "Subscription.Not_found"
@@ -67,7 +67,7 @@ class TestRemoveSubscription:
 
         # Act
         with pytest.raises(SubscriptionDoesNotHaveAdminError) as err:
-            await self._command_invoker.invoke(remove_subscription_command)
+            await self._command_bus.invoke(remove_subscription_command)
 
         # Assert
         assert err.value.title == "Subscription.Unexpected"

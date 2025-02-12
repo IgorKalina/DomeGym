@@ -6,7 +6,7 @@ from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 from src.shared_kernel.domain.common.event import DomainEventHandler
 
 if TYPE_CHECKING:

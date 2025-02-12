@@ -4,7 +4,7 @@ from typing import Type
 from .command import Command, CommandHandler, CommandResult, CommandType
 
 
-class CommandInvoker(abc.ABC):
+class CommandBus(abc.ABC):
     @abc.abstractmethod
     async def invoke(self, command: Command) -> CommandResult:
         pass

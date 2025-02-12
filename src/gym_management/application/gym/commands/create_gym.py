@@ -9,8 +9,8 @@ from src.gym_management.application.subscription.queries.get_subscription import
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.eventbus import DomainEventBus
-from src.shared_kernel.application.query.interfaces.query_invoker import QueryInvoker
+from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
+from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 if TYPE_CHECKING:
     from src.gym_management.application.common.dto.repository import SubscriptionDB
@@ -26,14 +26,14 @@ class CreateGym(Command):
 class CreateGymHandler(CommandHandler):
     def __init__(
         self,
-        query_invoker: QueryInvoker,
+        query_bus: QueryBus,
         gym_repository: GymRepository,
         eventbus: DomainEventBus,
     ) -> None:
         self.__gym_repository = gym_repository
         self.__eventbus = eventbus
 
-        self.__query_invoker = query_invoker
+        self.__query_bus = query_bus
 
     async def handle(self, command: CreateGym) -> GymDB:
         subscription: Subscription = await self.__get_subscription(command)
@@ -50,7 +50,7 @@ class CreateGymHandler(CommandHandler):
 
     async def __get_subscription(self, command: CreateGym) -> Subscription:
         get_subscription_query = GetSubscription(subscription_id=command.subscription_id)
-        subscription_db: SubscriptionDB = await self.__query_invoker.invoke(get_subscription_query)
+        subscription_db: SubscriptionDB = await self.__query_bus.invoke(get_subscription_query)
         return dto.mappers.subscription.db_to_domain(subscription_db)
 
     async def __create_gym_in_db(self, gym: Gym) -> GymDB:

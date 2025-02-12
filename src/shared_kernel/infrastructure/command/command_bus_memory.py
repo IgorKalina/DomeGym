@@ -2,13 +2,13 @@ import logging
 from typing import Dict, Type
 
 from src.shared_kernel.application.command.interfaces.command import Command, CommandHandler, CommandResult, CommandType
-from src.shared_kernel.application.command.interfaces.command_invoker import CommandInvoker
+from src.shared_kernel.application.command.interfaces.command_bus import CommandBus
 from src.shared_kernel.application.exceptions import HandlerNotFoundError
 
 logger = logging.getLogger(__name__)
 
 
-class CommandInvokerMemory(CommandInvoker):
+class CommandBusMemory(CommandBus):
     def __init__(self) -> None:
         self.__command_handlers: Dict[Type[Command], CommandHandler] = {}
 
