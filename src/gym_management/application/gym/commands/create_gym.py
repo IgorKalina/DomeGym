@@ -43,7 +43,7 @@ class CreateGymHandler(CommandHandler):
         subscription.add_gym(gym)
 
         gym_db: GymDB = await self.__create_gym_in_db(gym)
-        await self.__create_domain_events_in_db(subscription)
+        await self.__domain_event_bus.publish(subscription.pop_domain_events())
         return gym_db
 
     async def __create_gym_in_db(self, gym: Gym) -> GymDB:
@@ -51,5 +51,3 @@ class CreateGymHandler(CommandHandler):
         await self.__gym_repository.create(gym_db)
         return gym_db
 
-    async def __create_domain_events_in_db(self, subscription: Subscription) -> None:
-        await self.__domain_event_bus.publish(subscription.pop_domain_events())
