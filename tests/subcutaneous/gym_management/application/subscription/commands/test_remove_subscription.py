@@ -59,10 +59,10 @@ class TestRemoveSubscription:
         assert err.value.error_type == ErrorType.NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_remove_subscription_when_admin_not_exists_should_fail(self, subscription_db: SubscriptionDB) -> None:
+    async def test_remove_subscription_when_admin_not_exists_should_fail(self, subscription: SubscriptionDB) -> None:
         # Arrange
         remove_subscription_command = SubscriptionCommandFactory.create_remove_subscription_command(
-            subscription_id=subscription_db.id
+            subscription_id=subscription.id
         )
 
         # Act

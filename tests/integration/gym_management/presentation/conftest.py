@@ -3,8 +3,8 @@ import typing
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from src.gym_management.infrastructure.config import load_config
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.config import load_config
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.api import init_api
 from src.gym_management.presentation.api.controllers.gym.v1.responses.gym_response import GymResponse
 from src.gym_management.presentation.api.controllers.room.v1.responses.room_response import RoomResponse

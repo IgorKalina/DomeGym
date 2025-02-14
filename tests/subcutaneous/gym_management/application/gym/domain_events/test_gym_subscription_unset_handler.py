@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, List
 
 import pytest
 
-from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository import GymDB
 from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
 from tests.common.gym_management.common import constants
@@ -43,8 +42,7 @@ class TestGymSubscriptionUnsetHandler:
         subscription: Subscription = SubscriptionFactory.create_subscription(
             id=subscription_id, gym_ids=[gym.id for gym in gyms]
         )
-        subscription_db = dto.mappers.subscription.domain_to_db(subscription)
-        await self._subscription_repository.create(subscription_db)
+        await self._subscription_repository.create(subscription)
         event: SubscriptionUnsetEvent = SubscriptionDomainEventFactory.create_subscription_unset_event(
             subscription=subscription
         )

@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime, timezone
 from typing import Self
 
 from pydantic import Field
@@ -19,15 +18,12 @@ class DomainEventDB(RepositoryDto):
 
     def set_to_published(self) -> Self:
         self.processing_status = DomainEventProcessingStatus.PUBLISHED
-        self.updated_at = datetime.now(timezone.utc)
         return self
 
     def set_to_failed(self) -> Self:
         self.processing_status = DomainEventProcessingStatus.FAILED
-        self.updated_at = datetime.now(timezone.utc)
         return self
 
     def set_to_processed(self) -> Self:
         self.processing_status = DomainEventProcessingStatus.PROCESSED
-        self.updated_at = datetime.now(timezone.utc)
         return self

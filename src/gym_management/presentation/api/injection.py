@@ -1,10 +1,10 @@
 from src.gym_management import presentation
-from src.gym_management.infrastructure.config import load_config
-from src.gym_management.infrastructure.injection.containers.eventbus.rabbitmq import EventbusRabbitmqContainer
-from src.gym_management.infrastructure.injection.containers.repository.postgres import (
+from src.gym_management.infrastructure.common.config import load_config
+from src.gym_management.infrastructure.common.injection.containers.eventbus.rabbitmq import EventbusRabbitmqContainer
+from src.gym_management.infrastructure.common.injection.containers.repository.postgres import (
     RepositoryPostgresContainer,
 )
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 
 
 def create_dependency_injection_container() -> DiContainer:

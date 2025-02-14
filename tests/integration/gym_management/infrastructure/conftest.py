@@ -4,14 +4,14 @@ from typing import TYPE_CHECKING, AsyncGenerator
 import pytest
 from aiormq import ChannelInvalidStateError
 
-from src.gym_management.infrastructure.eventbus.rabbitmq.broker import RabbitmqEventBroker
-from src.gym_management.infrastructure.eventbus.rabbitmq.exceptions import BrokerNotConnectedError
-from src.gym_management.infrastructure.eventbus.rabbitmq.options import (
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.broker import RabbitmqEventBroker
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.exceptions import BrokerNotConnectedError
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import (
     RabbitmqExchangeOptions,
     RabbitmqQueueOptions,
     RabbitmqTopicOptions,
 )
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from tests.common.gym_management.common.config.config import ConfigTest
 
 if TYPE_CHECKING:

@@ -5,7 +5,8 @@ import pytest
 from src.gym_management.application.common.dto.repository import RoomDB
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.domain.subscription.aggregate_root import Subscription
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.admin.factory.admin_db_factory import AdminDBFactory
@@ -17,7 +18,7 @@ from tests.common.gym_management.gym.factory.gym_db_factory import GymDBFactory
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_db_factory import RoomDBFactory
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
-from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
+from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 from tests.common.gym_management.subscription.repository.memory import (
     SubscriptionMemoryRepository,
 )
@@ -69,19 +70,19 @@ def room_repository(di_container: DiContainer) -> RoomMemoryRepository:
 
 
 @pytest.fixture
-async def subscription_db(
+async def subscription(
     subscription_repository: SubscriptionMemoryRepository,
-) -> SubscriptionDB:
-    subscription = SubscriptionDBFactory.create_subscription()
+) -> Subscription:
+    subscription = SubscriptionFactory.create_subscription()
     await subscription_repository.create(subscription)
     return subscription
 
 
 @pytest.fixture
 async def admin_db_with_subscription(
-    subscription_db: SubscriptionDB, admin_repository: AdminMemoryRepository
+    subscription: SubscriptionDB, admin_repository: AdminMemoryRepository
 ) -> SubscriptionDB:
-    admin = AdminDBFactory.create_admin(subscription_id=subscription_db.id)
+    admin = AdminDBFactory.create_admin(subscription_id=subscription.id)
     await admin_repository.create(admin)
     return admin
 
@@ -94,8 +95,8 @@ async def admin_db_no_subscription(admin_repository: AdminMemoryRepository) -> S
 
 
 @pytest.fixture
-async def gym_db(subscription_db: SubscriptionDB, gym_repository: GymMemoryRepository) -> GymDB:
-    gym: GymDB = GymDBFactory.create_gym(subscription_id=subscription_db.id)
+async def gym_db(subscription: SubscriptionDB, gym_repository: GymMemoryRepository) -> GymDB:
+    gym: GymDB = GymDBFactory.create_gym(subscription_id=subscription.id)
     await gym_repository.create(gym)
     return gym
 

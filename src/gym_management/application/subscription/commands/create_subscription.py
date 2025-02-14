@@ -4,7 +4,6 @@ import uuid
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository.admin import AdminDB
-from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import (
     SubscriptionRepository,
@@ -34,15 +33,15 @@ class CreateSubscriptionHandler(CommandHandler):
         self.__subscription_repository = subscription_repository
         self.__event_bus = domain_event_bus
 
-    async def handle(self, command: CreateSubscription) -> SubscriptionDB:
+    async def handle(self, command: CreateSubscription) -> Subscription:
         admin: Admin = await self.__get_admin(command)
         subscription: Subscription = Subscription(admin_id=command.admin_id, type=command.subscription_type)
         admin.set_subscription(subscription)
 
-        subscription_db: SubscriptionDB = await self.__create_subscription_in_db(subscription)
+        await self.__subscription_repository.create(subscription)
         await self.__update_admin_in_db(admin)
-        await self.__create_domain_events_in_db(admin)
-        return subscription_db
+        await self.__event_bus.publish(admin.pop_domain_events())
+        return subscription
 
     async def __get_admin(self, command: CreateSubscription) -> Admin:
         admin_db: AdminDB | None = await self.__admin_repository.get_by_id(command.admin_id)
@@ -56,11 +55,3 @@ class CreateSubscriptionHandler(CommandHandler):
     async def __update_admin_in_db(self, admin: Admin) -> None:
         admin_db: AdminDB = dto.mappers.admin.domain_to_db(admin)
         await self.__admin_repository.update(admin_db)
-
-    async def __create_subscription_in_db(self, subscription: Subscription) -> SubscriptionDB:
-        subscription_db: SubscriptionDB = dto.mappers.subscription.domain_to_db(subscription)
-        await self.__subscription_repository.create(subscription_db)
-        return subscription_db
-
-    async def __create_domain_events_in_db(self, admin: Admin) -> None:
-        await self.__event_bus.publish(admin.pop_domain_events())

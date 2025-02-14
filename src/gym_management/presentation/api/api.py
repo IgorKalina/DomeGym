@@ -10,8 +10,8 @@ from fastapi.responses import (
     ORJSONResponse,
 )
 
-from src.gym_management.infrastructure.config.api import ApiConfig, UvicornConfig
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.config.api import ApiConfig, UvicornConfig
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.main import setup_controllers
 from src.gym_management.presentation.api.injection import create_dependency_injection_container
 from src.gym_management.presentation.api.middlewares import setup_middlewares

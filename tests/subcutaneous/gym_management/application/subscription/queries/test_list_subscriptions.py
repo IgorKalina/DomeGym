@@ -28,7 +28,7 @@ class TestListSubscriptions:
     async def test_list_subscriptions_when_exist_should_return_all_subscriptions(
         self,
         admin_db_with_subscription: AdminDB,  # noqa: ARG002
-        subscription_db: SubscriptionDB,  # noqa: ARG002
+        subscription: SubscriptionDB,  # noqa: ARG002
     ) -> None:
         # Arrange
         query = SubscriptionQueryFactory.create_list_subscription_query()
@@ -38,7 +38,7 @@ class TestListSubscriptions:
 
         # Assert
         assert len(result) == 1
-        assert result[0] == subscription_db
+        assert result[0] == subscription
 
     @pytest.mark.asyncio
     async def test_list_subscriptions_when_not_exist_should_return_empty_result(self) -> None:

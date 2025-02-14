@@ -4,18 +4,21 @@ from unittest.mock import Mock
 import aio_pika
 import pytest
 
-from src.gym_management.infrastructure.background_services.domain_events.mappers import (
+from src.gym_management.infrastructure.common.background_services.domain_events.mappers import (
     domain_event_to_rabbitmq_event,
     rabbitmq_event_to_domain_event,
 )
-from src.gym_management.infrastructure.eventbus.rabbitmq.broker import RabbitmqEventBroker
-from src.gym_management.infrastructure.eventbus.rabbitmq.dto.event import RabbitmqEvent
-from src.gym_management.infrastructure.eventbus.rabbitmq.exceptions import (
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.broker import RabbitmqEventBroker
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.dto.event import RabbitmqEvent
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.exceptions import (
     BrokerNotConnectedError,
     ExchangeDoesNotExistError,
     QueueDoesNotExistError,
 )
-from src.gym_management.infrastructure.eventbus.rabbitmq.options import RabbitmqPublishOptions, RabbitmqSubscribeOptions
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import (
+    RabbitmqPublishOptions,
+    RabbitmqSubscribeOptions,
+)
 from tests.common.gym_management.gym.factory.gym_domain_event_factory import GymDomainEventFactory
 
 

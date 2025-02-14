@@ -2,7 +2,7 @@ import abc
 from abc import abstractmethod
 from typing import Awaitable, Callable
 
-from src.gym_management.infrastructure.eventbus.rabbitmq.options import PublishOptions, SubscribeOptions
+from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import PublishOptions, SubscribeOptions
 from src.shared_kernel.infrastructure.eventbus.interfaces.event import Event
 from src.shared_kernel.infrastructure.eventbus.interfaces.options import BrokerOptions, TopicOptions
 

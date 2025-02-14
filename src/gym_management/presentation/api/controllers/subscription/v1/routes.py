@@ -1,6 +1,5 @@
-import typing
 import uuid
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
@@ -10,7 +9,7 @@ from src.gym_management.application.admin.exceptions import AdminAlreadyExistsEr
 from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
 from src.gym_management.application.subscription.commands.remove_subscription import RemoveSubscription
 from src.gym_management.application.subscription.queries.list_subscriptions import ListSubscriptions
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
 from src.gym_management.presentation.api.controllers.subscription.v1.requests.create_subscription_request import (
     CreateSubscriptionRequest,
@@ -21,8 +20,8 @@ from src.gym_management.presentation.api.controllers.subscription.v1.responses.s
 from src.shared_kernel.application.command import CommandBus
 from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
-if typing.TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
+if TYPE_CHECKING:
+    from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 router = APIRouter(
     prefix="/v1/subscriptions",
@@ -44,7 +43,7 @@ async def create_subscription(
     command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
 ) -> OkResponse[SubscriptionResponse]:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
-    subscription: SubscriptionDB = await command_bus.invoke(command)
+    subscription: Subscription = await command_bus.invoke(command)
     subscription_response = SubscriptionResponse(
         id=subscription.id,
         type=subscription.type,
@@ -67,7 +66,7 @@ async def list_subscriptions(
     query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
 ) -> OkResponse[SubscriptionResponse]:
     query = ListSubscriptions()
-    result: List[SubscriptionDB] = await query_bus.invoke(query)
+    result: List[Subscription] = await query_bus.invoke(query)
     subscriptions_response = [
         SubscriptionResponse(
             id=subscription.id,
@@ -94,7 +93,7 @@ async def delete_subscription(
     command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
 ) -> OkResponse[SubscriptionResponse]:
     command = RemoveSubscription(subscription_id=subscription_id)
-    subscription: SubscriptionDB = await command_bus.invoke(command)
+    subscription: Subscription = await command_bus.invoke(command)
     subscription_response = SubscriptionResponse(
         id=subscription.id,
         type=subscription.type,

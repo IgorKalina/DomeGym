@@ -5,7 +5,7 @@ from fastapi import BackgroundTasks, Depends
 from fastapi.requests import Request
 from fastapi.responses import Response
 
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 

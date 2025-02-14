@@ -26,17 +26,17 @@ class TestCreateGym:
         self,
         command_bus: CommandBusMemory,
         gym_repository: GymMemoryRepository,
-        subscription_db: SubscriptionDB,
+        subscription: SubscriptionDB,
     ) -> None:
         self._command_bus = command_bus
         self._gym_repository = gym_repository
 
-        self._subscription_db: SubscriptionDB = subscription_db
+        self._subscription_db: SubscriptionDB = subscription
         self._subscription: Subscription = Subscription(
             id=self._subscription_db.id,
             type=self._subscription_db.type,
             admin_id=self._subscription_db.admin_id,
-            created_at=subscription_db.created_at,
+            created_at=subscription.created_at,
         )
 
     @pytest.mark.asyncio

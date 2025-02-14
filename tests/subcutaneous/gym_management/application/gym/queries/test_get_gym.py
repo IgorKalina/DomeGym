@@ -31,11 +31,9 @@ class TestGetGym:
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
-    async def test_get_gym_when_gym_and_subscription_exist_should_return_gym(
-        self, subscription_db: Subscription
-    ) -> None:
+    async def test_get_gym_when_gym_and_subscription_exist_should_return_gym(self, subscription: Subscription) -> None:
         # Arrange
-        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription_db.id)
+        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription.id)
         expected_gym: GymDB = await self._command_bus.invoke(create_gym_command)
         get_gym: GetGym = GetGym(subscription_id=constants.subscription.SUBSCRIPTION_ID, gym_id=expected_gym.id)
 
@@ -61,10 +59,10 @@ class TestGetGym:
 
     @pytest.mark.asyncio
     async def test_get_gym_when_subscription_exists_and_no_gym_should_raise_exception(
-        self, subscription_db: Subscription
+        self, subscription: Subscription
     ) -> None:
         # Arrange
-        get_gym: GetGym = GetGym(subscription_id=subscription_db.id, gym_id=constants.gym.GYM_ID)
+        get_gym: GetGym = GetGym(subscription_id=subscription.id, gym_id=constants.gym.GYM_ID)
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:

@@ -9,7 +9,7 @@ from src.gym_management.application.gym.commands.create_gym import CreateGym
 from src.gym_management.application.gym.commands.remove_gym import RemoveGym
 from src.gym_management.application.gym.queries.get_gym import GetGym
 from src.gym_management.application.gym.queries.list_gyms import ListGyms
-from src.gym_management.infrastructure.injection.main import DiContainer
+from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import OkResponse
 from src.gym_management.presentation.api.controllers.common.responses.orjson import ORJSONResponse
 from src.gym_management.presentation.api.controllers.gym.v1.requests.create_gym_request import CreateGymRequest

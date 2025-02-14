@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime, timezone
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -8,5 +9,10 @@ class DataTransferObject(BaseModel):
 
 
 class RepositoryDto(DataTransferObject):
-    created_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc))
-    updated_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name != "updated_at":
+            super().__setattr__("updated_at", datetime.now(timezone.utc))
+        super().__setattr__(name, value)
