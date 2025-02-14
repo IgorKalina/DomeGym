@@ -21,11 +21,14 @@ class DomainEventContainer(containers.DeclarativeContainer):
     subscription_unset_handler = providers.Factory(
         SubscriptionUnsetHandler,
         gym_repository=repository_container.gym_repository,
+        subscription_repository=repository_container.subscription_repository,
         domain_event_bus=domain_event_bus,
     )
     gym_removed_handler = providers.Factory(
         GymRemovedHandler,
         room_repository=repository_container.room_repository,
+        gym_repository=repository_container.gym_repository,
+        subscription_repository=repository_container.subscription_repository,
         domain_event_bus=domain_event_bus,
     )
 

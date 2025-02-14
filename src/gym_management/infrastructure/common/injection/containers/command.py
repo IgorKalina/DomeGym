@@ -58,13 +58,14 @@ class CommandContainer(containers.DeclarativeContainer):
         CreateRoomHandler,
         room_repository=repository_container.room_repository,
         subscription_repository=repository_container.subscription_repository,
-        query_bus=query_bus,
+        gym_repository=repository_container.gym_repository,
         domain_event_bus=domain_event_bus,
     )
     remove_room_handler = providers.Factory(
         RemoveRoomHandler,
         room_repository=repository_container.room_repository,
         subscription_repository=repository_container.subscription_repository,
+        gym_repository=repository_container.gym_repository,
         query_bus=query_bus,
         domain_event_bus=domain_event_bus,
     )

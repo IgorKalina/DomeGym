@@ -8,13 +8,14 @@ from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
+from src.gym_management.domain.gym.aggregate_root import Gym
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.room.factory.room_db_factory import RoomDBFactory
 from tests.common.gym_management.room.factory.room_query_factory import RoomQueryFactory
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
-from tests.common.gym_management.subscription.factory.subscription_db_factory import SubscriptionDBFactory
+from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
 
 if typing.TYPE_CHECKING:
     from src.gym_management.application.common.dto.repository.room import RoomDB
@@ -27,13 +28,13 @@ class TestListRooms:
         query_bus: QueryBusMemory,
         room_repository: RoomMemoryRepository,
         subscription_repository: SubscriptionRepository,
-        gym_db: GymDB,
+        gym: GymDB,
     ) -> None:
         self._query_bus = query_bus
         self._room_repository = room_repository
         self._subscription_repository = subscription_repository
 
-        self._gym_db = gym_db
+        self._gym_db = gym
 
     @pytest.mark.asyncio
     async def test_list_rooms_when_exist_should_return_all_subscriptions(self) -> None:
@@ -89,13 +90,13 @@ class TestListRooms:
         assert err.value.error_type == ErrorType.NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_list_rooms_when_gym_not_belongs_to_subscription_should_raise_exception(self, gym_db: GymDB) -> None:
+    async def test_list_rooms_when_gym_not_belongs_to_subscription_should_raise_exception(self, gym: Gym) -> None:
         # Arrange
-        subscription_other = SubscriptionDBFactory.create_subscription(id=uuid.uuid4())
+        subscription_other = SubscriptionFactory.create_subscription(id=uuid.uuid4())
         await self._subscription_repository.create(subscription_other)
 
         list_rooms = RoomQueryFactory.create_list_rooms_query(
-            gym_id=gym_db.id,
+            gym_id=gym.id,
             subscription_id=subscription_other.id,
         )
 

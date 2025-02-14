@@ -37,7 +37,6 @@ class QueryContainer(containers.DeclarativeContainer):
         GetGymHandler,
         gym_repository=repository_container.gym_repository,
         subscription_repository=repository_container.subscription_repository,
-        query_bus=query_bus,
     )
     list_gyms_handler = providers.Factory(
         ListGymsHandler,
@@ -47,13 +46,14 @@ class QueryContainer(containers.DeclarativeContainer):
     # Room
     list_rooms_handler = providers.Factory(
         ListRoomsHandler,
-        query_bus=query_bus,
         room_repository=repository_container.room_repository,
+        gym_repository=repository_container.gym_repository,
+        subscription_repository=repository_container.subscription_repository,
     )
     get_room_handler = providers.Factory(
         GetRoomHandler,
         room_repository=repository_container.room_repository,
-        query_bus=query_bus,
+        gym_repository=repository_container.gym_repository,
     )
 
     queries = providers.Dict(

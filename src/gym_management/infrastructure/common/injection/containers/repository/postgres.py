@@ -76,7 +76,9 @@ class RepositoryPostgresContainer(RepositoryContainer):
 
     admin_repository = providers.Factory(AdminPostgresRepository, session=session_provider)
     subscription_repository = providers.Factory(SubscriptionPostgresRepository, session=session_provider)
-    gym_repository = providers.Factory(GymPostgresRepository, session=session_provider)
+    gym_repository = providers.Factory(
+        GymPostgresRepository, session=session_provider, subscription_repository=subscription_repository
+    )
     room_repository = providers.Factory(RoomPostgresRepository, session=session_provider)
     domain_event_outbox_repository = providers.Factory(DomainEventOutboxPostgresRepository, session=session_provider)
     failed_domain_event_repository = providers.Factory(FailedDomainEventTinyDBRepository)

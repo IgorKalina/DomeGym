@@ -27,7 +27,7 @@ class TestCreateRoom:
         subscription_repository: SubscriptionMemoryRepository,
         gym_repository: GymMemoryRepository,
         room_repository: RoomMemoryRepository,
-        gym_db: GymDB,
+        gym: GymDB,
         subscription: SubscriptionDB,
     ) -> None:
         self._command_bus = command_bus
@@ -35,7 +35,7 @@ class TestCreateRoom:
         self._gym_repository = gym_repository
         self._room_repository = room_repository
 
-        self._gym_db: GymDB = gym_db
+        self._gym_db: GymDB = gym
         self._subscription_db: SubscriptionDB = subscription
 
     @pytest.mark.asyncio

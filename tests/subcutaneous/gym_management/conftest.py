@@ -3,8 +3,8 @@ from typing import AsyncGenerator
 import pytest
 
 from src.gym_management.application.common.dto.repository import RoomDB
-from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
+from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
@@ -14,7 +14,7 @@ from tests.common.gym_management.admin.repository.memory import AdminMemoryRepos
 from tests.common.gym_management.common.injection.containers.repository_memory_container import (
     RepositoryMemoryContainer,
 )
-from tests.common.gym_management.gym.factory.gym_db_factory import GymDBFactory
+from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_db_factory import RoomDBFactory
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
@@ -80,8 +80,8 @@ async def subscription(
 
 @pytest.fixture
 async def admin_db_with_subscription(
-    subscription: SubscriptionDB, admin_repository: AdminMemoryRepository
-) -> SubscriptionDB:
+    subscription: Subscription, admin_repository: AdminMemoryRepository
+) -> Subscription:
     admin = AdminDBFactory.create_admin(subscription_id=subscription.id)
     await admin_repository.create(admin)
     return admin
@@ -95,14 +95,14 @@ async def admin_db_no_subscription(admin_repository: AdminMemoryRepository) -> S
 
 
 @pytest.fixture
-async def gym_db(subscription: SubscriptionDB, gym_repository: GymMemoryRepository) -> GymDB:
-    gym: GymDB = GymDBFactory.create_gym(subscription_id=subscription.id)
+async def gym(subscription: Subscription, gym_repository: GymMemoryRepository) -> Gym:
+    gym: Gym = GymFactory.create_gym(subscription_id=subscription.id)
     await gym_repository.create(gym)
     return gym
 
 
 @pytest.fixture
-async def room_db(gym_db: GymDB, room_repository: RoomMemoryRepository) -> RoomDB:
-    room: RoomDB = RoomDBFactory.create_room(gym_id=gym_db.id, subscription_id=gym_db.subscription_id)
+async def room_db(gym: Gym, room_repository: RoomMemoryRepository) -> RoomDB:
+    room: RoomDB = RoomDBFactory.create_room(gym_id=gym.id, subscription_id=gym.subscription_id)
     await room_repository.create(room)
     return room

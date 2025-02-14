@@ -28,6 +28,7 @@ class RepositoryMemoryContainer(RepositoryContainer):
     gym_repository = providers.Singleton(
         GymMemoryRepository,
         shared_state=repository_shared_state,
+        subscription_repository=subscription_repository,
     )
     room_repository = providers.Singleton(
         RoomMemoryRepository,

@@ -1,11 +1,11 @@
 from typing import List
 
-from src.gym_management.application.common.dto.repository import GymDB
 from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
+from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 
-def subscription_unset_event_to_domain(event: SubscriptionUnsetEvent, gyms: List[GymDB]) -> Subscription:
+def subscription_unset_event_to_domain(event: SubscriptionUnsetEvent, gyms: List[Gym]) -> Subscription:
     return Subscription(
         id=event.subscription.id,
         type=event.subscription.type,
