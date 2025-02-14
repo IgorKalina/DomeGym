@@ -1,15 +1,18 @@
 import logging
 import uuid
+from typing import TYPE_CHECKING
 
 from src.gym_management.application.common import dto
 from src.gym_management.application.common.dto.repository.gym import GymDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.domain.gym.aggregate_root import Gym
-from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.shared_kernel.application.command import Command, CommandHandler
 from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
+
+if TYPE_CHECKING:
+    from src.gym_management.domain.subscription.aggregate_root import Subscription
 
 logger = logging.getLogger(__name__)
 
@@ -50,4 +53,3 @@ class CreateGymHandler(CommandHandler):
         gym_db: GymDB = dto.mappers.gym.domain_to_db(gym)
         await self.__gym_repository.create(gym_db)
         return gym_db
-

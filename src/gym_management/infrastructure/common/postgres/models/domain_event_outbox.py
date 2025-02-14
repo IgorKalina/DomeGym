@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Self, Type
+from typing import Self
 
 from sqlalchemy import Enum, String
 from sqlalchemy.dialects.postgresql import JSONB
@@ -9,8 +9,10 @@ from src.gym_management.application.common.dto.repository import DomainEventDB
 from src.gym_management.application.common.dto.repository.domain_event_outbox.domain_event_processing_status import (
     DomainEventProcessingStatus,
 )
+from src.gym_management.infrastructure.common.background_services.domain_events.event_registry.registry import (
+    DomainEventRegistry,
+)
 from src.gym_management.infrastructure.common.postgres.models.base_model import TimedBaseModel
-from src.shared_kernel.domain.common.event import DomainEvent
 
 
 class DomainEventOutbox(TimedBaseModel):
@@ -26,9 +28,10 @@ class DomainEventOutbox(TimedBaseModel):
 
     @classmethod
     def from_dto(cls, dto: DomainEventDB) -> Self:
+        registry = DomainEventRegistry()
         return cls(
             id=dto.event.id,
-            event_type=type(dto.event).__name__,
+            event_type=registry.get_event_type(dto.event),
             event_data=dto.event.model_dump(),
             processing_status=dto.processing_status,
             created_at=dto.created_at,
@@ -36,18 +39,11 @@ class DomainEventOutbox(TimedBaseModel):
         )
 
     def to_dto(self) -> DomainEventDB:
-        domain_event_class = self.__map_event_type_to_event_class()
+        registry = DomainEventRegistry()
         return DomainEventDB(
             id=self.id,
-            event=domain_event_class(**self.event_data),
+            event=registry.get_event_type(self.event_type),
             processing_status=self.processing_status,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
-
-    def __map_event_type_to_event_class(self) -> Type[DomainEvent]:
-        subclasses: List[Type[DomainEvent]] = DomainEvent.__subclasses__()
-        for subclass in subclasses:
-            if subclass.__name__ == self.event_type:
-                return subclass
-        raise TypeError(f"Domain event type '{self.event_type}' does not exist")
