@@ -33,6 +33,8 @@ class RepositoryMemoryContainer(RepositoryContainer):
     room_repository = providers.Singleton(
         RoomMemoryRepository,
         shared_state=repository_shared_state,
+        subscription_repository=subscription_repository,
+        gym_repository=gym_repository,
     )
     domain_event_outbox_repository = providers.Singleton(DomainEventOutboxMemoryRepository)
     failed_domain_event_repository = providers.Singleton(FailedDomainEventTinyDBRepository)

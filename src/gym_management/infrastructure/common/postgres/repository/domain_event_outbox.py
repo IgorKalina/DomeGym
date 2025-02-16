@@ -20,7 +20,7 @@ from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_rep
 
 class DomainEventOutboxPostgresRepository(SQLAlchemyRepository, DomainEventOutboxRepository):
     async def create_multi(self, events: List[DomainEventDB]) -> None:
-        domain_event_outboxes = [DomainEventOutbox.from_dto(event) for event in events]
+        domain_event_outboxes = [DomainEventOutbox.from_domain(event) for event in events]
         self._session.add_all(domain_event_outboxes)
         await self._session.commit()
 
@@ -30,7 +30,7 @@ class DomainEventOutboxPostgresRepository(SQLAlchemyRepository, DomainEventOutbo
                 select(DomainEventOutbox).filter(DomainEventOutbox.processing_status == status)
             )
             domain_event_outboxes = result.scalars().all()
-            return [domain_event_outbox.to_dto() for domain_event_outbox in domain_event_outboxes]
+            return [domain_event_outbox.to_domain() for domain_event_outbox in domain_event_outboxes]
         except NoResultFound:
             return []
 
@@ -39,10 +39,10 @@ class DomainEventOutboxPostgresRepository(SQLAlchemyRepository, DomainEventOutbo
         if not domain_event_db:
             raise DomainEventDoesNotExistError(event_id=event.event.id)
 
-        domain_event_db_updated = models.DomainEventOutbox.from_dto(event)
+        domain_event_db_updated = models.DomainEventOutbox.from_domain(event)
         await self._session.merge(domain_event_db_updated)
         await self._session.commit()
-        return domain_event_db_updated.to_dto()
+        return domain_event_db_updated.to_domain()
 
     async def delete_multi(self, event_ids: List[uuid.UUID]) -> None:
         query = delete(DomainEventOutbox).where(DomainEventOutbox.id.in_(event_ids))

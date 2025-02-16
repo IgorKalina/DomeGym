@@ -10,7 +10,6 @@ from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 from src.shared_kernel.domain.common.event import DomainEventHandler
 
 if TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository.gym import GymDB
     from src.gym_management.domain.gym.aggregate_root import Gym
     from src.gym_management.domain.room.aggregate_root import Room
     from src.gym_management.domain.subscription.aggregate_root import Subscription
@@ -42,7 +41,7 @@ class GymRemovedHandler(DomainEventHandler):
 
     async def __remove_all_rooms_for_gym(self, event: GymRemovedEvent) -> None:
         subscription: Subscription = await self.__subscription_repository.get(event.subscription.id)
-        rooms: List[GymDB] = await self.__room_repository.get_by_gym_id(event.gym.id)
+        rooms: List[Room] = await self.__room_repository.get_by_gym_id(event.gym.id)
         gym: Gym = dto.mappers.gym.gym_removed_event_to_domain(event, rooms=rooms)
         for room_db in rooms:
             room: Room = dto.mappers.room.db_to_domain(room=room_db, subscription=subscription)

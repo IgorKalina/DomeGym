@@ -19,7 +19,7 @@ from src.shared_kernel.application.command import CommandBus
 from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
 
 if typing.TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository.room import RoomDB
+    from src.gym_management.domain.room.aggregate_root import Room
 
 
 router = APIRouter(
@@ -40,9 +40,9 @@ async def create_room(
     command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
 ) -> ORJSONResponse:
     command = CreateRoom(name=request.name, gym_id=gym_id, subscription_id=subscription_id)
-    room: RoomDB = await command_bus.invoke(command)
+    room: Room = await command_bus.invoke(command)
     room_response: RoomResponse = RoomResponse(
-        id=room.id, name=room.name, gym_id=room.gym_id, subscription_id=room.subscription_id, created_at=room.created_at
+        id=room.id, name=room.name, gym_id=room.gym_id, subscription_id=subscription_id, created_at=room.created_at
     )
     return OkResponse(status=status.HTTP_201_CREATED, data=[room_response]).to_orjson()
 
@@ -58,13 +58,13 @@ async def list_rooms(
     query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
 ) -> ORJSONResponse:
     query = ListRooms(gym_id=gym_id, subscription_id=subscription_id)
-    rooms: List[RoomDB] = await query_bus.invoke(query)
+    rooms: List[Room] = await query_bus.invoke(query)
     response: List[RoomResponse] = [
         RoomResponse(
             id=room.id,
             name=room.name,
             gym_id=room.gym_id,
-            subscription_id=room.subscription_id,
+            subscription_id=subscription_id,
             created_at=room.created_at,
         )
         for room in rooms
@@ -84,7 +84,7 @@ async def get_room(
     query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
 ) -> ORJSONResponse:
     query = GetRoom(room_id=room_id, gym_id=gym_id, subscription_id=subscription_id)
-    room: RoomDB = await query_bus.invoke(query)
+    room: Room = await query_bus.invoke(query)
     response: RoomResponse = RoomResponse(
         id=room.id,
         name=room.name,

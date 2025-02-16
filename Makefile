@@ -28,6 +28,14 @@ lint:
 build-app:
 	docker-compose --profile api build
 
+.PHONY: build-dependency
+build-dependency:
+	docker-compose --profile dependency up --build
+
+.PHONY: stop-dependency
+stop-dependency:
+	docker-compose --profile dependency down
+
 .PHONY: build-lint
 build-lint:
 	docker build -f Dockerfile.test . -t ${TEST_CONTAINER_NAME}

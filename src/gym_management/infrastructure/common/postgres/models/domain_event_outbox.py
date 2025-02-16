@@ -27,7 +27,7 @@ class DomainEventOutbox(TimedBaseModel):
         return f"DomainEventOutbox(id={self.id!r}, name={self.event_type!r}"
 
     @classmethod
-    def from_dto(cls, dto: DomainEventDB) -> Self:
+    def from_domain(cls, dto: DomainEventDB) -> Self:
         registry = DomainEventRegistry()
         return cls(
             id=dto.event.id,
@@ -38,11 +38,12 @@ class DomainEventOutbox(TimedBaseModel):
             updated_at=dto.updated_at,
         )
 
-    def to_dto(self) -> DomainEventDB:
+    def to_domain(self) -> DomainEventDB:
         registry = DomainEventRegistry()
+        domain_event_class = registry.get_event_class(self.event_type)
         return DomainEventDB(
             id=self.id,
-            event=registry.get_event_type(self.event_type),
+            event=domain_event_class(**self.event_data),
             processing_status=self.processing_status,
             created_at=self.created_at,
             updated_at=self.updated_at,

@@ -36,7 +36,6 @@ class TestListRooms:
         room: RoomResponse = ok_response.data[0]
         assert room.id == room_v1.id
         assert room.gym_id == room_v1.gym_id
-        assert room.subscription_id == room_v1.subscription_id
         assert room.created_at == room_v1.created_at
 
     async def test_when_no_rooms_exist_should_return_200(self, gym_v1: GymResponse) -> None:

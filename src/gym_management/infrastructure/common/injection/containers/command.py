@@ -61,9 +61,7 @@ class CommandContainer(containers.DeclarativeContainer):
     remove_room_handler = providers.Factory(
         RemoveRoomHandler,
         room_repository=repository_container.room_repository,
-        subscription_repository=repository_container.subscription_repository,
         gym_repository=repository_container.gym_repository,
-        query_bus=query_bus,
         domain_event_bus=domain_event_bus,
     )
 

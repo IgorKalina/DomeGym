@@ -1,8 +1,6 @@
 import typing
 import uuid
 
-from src.gym_management.application.common import dto
-from src.gym_management.application.common.dto.repository.room import RoomDB
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
@@ -37,18 +35,18 @@ class CreateRoomHandler(CommandHandler):
 
         self.__domain_event_bus = domain_event_bus
 
-    async def handle(self, command: CreateRoom) -> RoomDB:
+    async def handle(self, command: CreateRoom) -> Room:
         subscription: Subscription = await self.__subscription_repository.get(command.subscription_id)
         gym: Gym = await self.__gym_repository.get(command.gym_id)
         room = Room(gym_id=gym.id, name=command.name, max_daily_sessions=subscription.max_daily_sessions)
         gym.add_room(room)
 
-        room_db: RoomDB = dto.mappers.room.domain_to_db(room=room, gym=gym)
-        await self.__room_repository.create(room_db)
+        await self.__room_repository.create(room)
+        await self.__gym_repository.update(gym)
         await self.__domain_event_bus.publish(
             [
                 *gym.pop_domain_events(),
                 *room.pop_domain_events(),
             ]
         )
-        return room_db
+        return room

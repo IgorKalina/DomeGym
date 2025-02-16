@@ -1,6 +1,7 @@
-from . import gym, subscription
+from . import gym, room, subscription
 
 __all__ = [
+    "room",
     "gym",
     "subscription",
 ]

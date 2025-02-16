@@ -4,7 +4,7 @@ from typing import Self
 from sqlalchemy import TIMESTAMP, MetaData, sql
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry
 
-from src.shared_kernel.application.dto import DataTransferObject
+from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 convention = {
     "ix": "ix_%(column_0_label)s",  # INDEX
@@ -40,8 +40,8 @@ class TimedBaseModel(BaseModel):
     )
 
     @classmethod
-    def from_dto(cls, dto: DataTransferObject) -> Self:
+    def from_domain(cls, aggregate: AggregateRoot) -> Self:
         raise NotImplementedError()
 
-    def to_dto(self) -> DataTransferObject:
+    def to_domain(self) -> AggregateRoot:
         raise NotImplementedError()
