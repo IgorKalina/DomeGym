@@ -36,8 +36,8 @@ class RoomPostgresRepository(SQLAlchemyRepository, RoomRepository):
         result: List[models.Room] = await self._session.scalars(query)
         return [room.to_domain() for room in result]
 
-    async def delete(self, room: Room) -> None:
-        room_model: models.Room = await self._session.get(models.Room, room.id)
+    async def delete(self, room_id: uuid.UUID) -> None:
+        room_model: models.Room = await self._session.get(models.Room, room_id)
         if not room_model:
             raise RoomDoesNotExistError()
         await self._session.delete(room_model)

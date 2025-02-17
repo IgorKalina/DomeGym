@@ -24,8 +24,8 @@ class TestGymAggregate:
     def test_add_room_when_more_than_subscription_allows_should_fail(self) -> None:
         # Arrange
         gym = GymFactory.create_gym(max_rooms=1)
-        room1 = RoomFactory.create_room()
-        room2 = RoomFactory.create_room()
+        room1 = RoomFactory.create_room(id=uuid.uuid4())
+        room2 = RoomFactory.create_room(id=uuid.uuid4())
         gym.add_room(room1)
 
         # Act

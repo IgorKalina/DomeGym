@@ -2,7 +2,6 @@ import logging
 import uuid
 from typing import TYPE_CHECKING
 
-from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.shared_kernel.application.command import Command, CommandHandler
@@ -22,13 +21,10 @@ class CreateGym(Command):
 class CreateGymHandler(CommandHandler):
     def __init__(
         self,
-        gym_repository: GymRepository,
         subscription_repository: SubscriptionRepository,
         domain_event_bus: DomainEventBus,
     ) -> None:
-        self.__gym_repository = gym_repository
         self.__subscription_repository = subscription_repository
-
         self.__domain_event_bus = domain_event_bus
 
     async def handle(self, command: CreateGym) -> Gym:
@@ -40,6 +36,6 @@ class CreateGymHandler(CommandHandler):
         )
         subscription.add_gym(gym)
 
-        await self.__gym_repository.create(gym)
+        await self.__subscription_repository.update(subscription)
         await self.__domain_event_bus.publish(subscription.pop_domain_events())
         return gym

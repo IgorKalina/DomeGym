@@ -90,4 +90,4 @@ class TestListRooms:
         assert len(response_data.errors) == 1
         error = response_data.errors[0]
         assert error.title == "Gym.Not_found"
-        assert error.detail == "Gym with the provided id not found"
+        assert error.detail == f"Gym with the provided id not found: {constants.common.NON_EXISTING_ID}"

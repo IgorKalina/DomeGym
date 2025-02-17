@@ -27,7 +27,7 @@ class TestListSubscriptions:
     @pytest.mark.asyncio
     async def test_list_subscriptions_when_exist_should_return_all_subscriptions(
         self,
-        admin_db_with_subscription: AdminDB,  # noqa: ARG002
+        admin_with_subscription: AdminDB,  # noqa: ARG002
         subscription: SubscriptionDB,  # noqa: ARG002
     ) -> None:
         # Arrange

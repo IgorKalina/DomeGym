@@ -26,7 +26,6 @@ class CommandContainer(containers.DeclarativeContainer):
     create_subscription_handler = providers.Factory(
         CreateSubscriptionHandler,
         admin_repository=repository_container.admin_repository,
-        subscription_repository=repository_container.subscription_repository,
         domain_event_bus=domain_event_bus,
     )
     remove_subscription_handler = providers.Factory(
@@ -40,7 +39,6 @@ class CommandContainer(containers.DeclarativeContainer):
     create_gym_handler = providers.Factory(
         CreateGymHandler,
         subscription_repository=repository_container.subscription_repository,
-        gym_repository=repository_container.gym_repository,
         domain_event_bus=domain_event_bus,
     )
     remove_gym_handler = providers.Factory(
@@ -53,7 +51,6 @@ class CommandContainer(containers.DeclarativeContainer):
     # Room
     create_room_handler = providers.Factory(
         CreateRoomHandler,
-        room_repository=repository_container.room_repository,
         subscription_repository=repository_container.subscription_repository,
         gym_repository=repository_container.gym_repository,
         domain_event_bus=domain_event_bus,

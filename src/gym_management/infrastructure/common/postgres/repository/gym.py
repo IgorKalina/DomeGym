@@ -15,7 +15,7 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
     async def get(self, gym_id: uuid.UUID) -> Gym:
         gym: Gym | None = await self.get_or_none(gym_id)
         if gym is None:
-            raise GymDoesNotExistError()
+            raise GymDoesNotExistError(gym_id=gym_id)
         return gym
 
     async def get_or_none(self, gym_id: uuid.UUID) -> Gym | None:
@@ -52,7 +52,7 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
     async def update(self, gym: Gym) -> Gym:
         subscription_model: models.Gym = await self._session.get(models.Gym, gym.id)
         if not subscription_model:
-            raise GymDoesNotExistError()
+            raise GymDoesNotExistError(gym_id=gym.id)
 
         gym_model_updated: models.Gym = models.Gym.from_domain(gym)
         gym_model_updated.room_ids = models.GymRoomIds.from_domain(gym)
@@ -64,6 +64,6 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
     async def delete(self, gym: Gym) -> None:
         gym_model: models.Gym = await self._session.get(models.Gym, gym.id)
         if not gym_model:
-            raise GymDoesNotExistError()
+            raise GymDoesNotExistError(gym_id=gym.id)
         await self._session.delete(gym_model)
         await self._session.commit()

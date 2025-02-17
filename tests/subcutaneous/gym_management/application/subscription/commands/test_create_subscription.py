@@ -2,7 +2,7 @@ import pytest
 
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.common.dto.repository import AdminDB
-from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
+from src.gym_management.domain.subscription import Subscription
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
@@ -25,21 +25,22 @@ class TestCreateSubscription:
         self._subscription_repository = subscription_repository
 
     @pytest.mark.asyncio
-    async def test_create_subscription_when_valid_command_should_create_subscription(self) -> None:
+    async def test_create_subscription_when_admin_exists_should_create_subscription(self) -> None:
         # Arrange
         create_subscription_command = SubscriptionCommandFactory.create_create_subscription_command()
 
         # Act
-        await self._command_bus.invoke(create_subscription_command)
+        subscription: Subscription = await self._command_bus.invoke(create_subscription_command)
 
         # Assert
-        await self._assert_subscription_in_db(create_subscription_command)
-        await self._assert_admin_in_db(create_subscription_command)
+        assert isinstance(subscription, Subscription)
+        admin = await self._admin_repository.get(create_subscription_command.admin_id)
+        assert admin.subscription_id == subscription.id
 
     @pytest.mark.asyncio
     async def test_create_subscription_when_admin_already_exists_should_fail(
         self,
-        admin_db_with_subscription: AdminDB,  # noqa: ARG002
+        admin_with_subscription: AdminDB,  # noqa: ARG002
     ) -> None:  # noqa: ARG002
         # Arrange
         create_subscription_command = SubscriptionCommandFactory.create_create_subscription_command()
@@ -52,17 +53,3 @@ class TestCreateSubscription:
         assert err.value.title == "Admin.Conflict"
         assert err.value.detail == "Admin with the provided id already exists"
         assert err.value.error_type == ErrorType.CONFLICT
-
-    async def _assert_subscription_in_db(self, create_subscription: CreateSubscription) -> None:
-        subscriptions_in_db = await self._subscription_repository.get_multi()
-        assert len(subscriptions_in_db) == 1
-        subscription = subscriptions_in_db[0]
-        assert subscription.admin_id == create_subscription.admin_id
-        assert subscription.type == create_subscription.subscription_type
-
-    async def _assert_admin_in_db(self, create_subscription: CreateSubscription) -> None:
-        admin = await self._admin_repository.get_by_id(admin_id=create_subscription.admin_id)
-        assert admin is not None
-        subscription = await self._subscription_repository.get_by_admin_id(admin_id=create_subscription.admin_id)
-        assert subscription is not None
-        assert admin.subscription_id == subscription.id

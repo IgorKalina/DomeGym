@@ -30,7 +30,6 @@ class RemoveRoomHandler(CommandHandler):
     ) -> None:
         self.__room_repository = room_repository
         self.__gym_repository = gym_repository
-
         self.__domain_event_bus = domain_event_bus
 
     async def handle(self, command: RemoveRoom) -> RoomDB:
@@ -38,7 +37,7 @@ class RemoveRoomHandler(CommandHandler):
         room: Room = await self.__room_repository.get(command.room_id)
         gym.remove_room(room)
 
-        await self.__room_repository.delete(room)
+        await self.__gym_repository.update(gym)
         await self.__domain_event_bus.publish(gym.pop_domain_events())
         logger.info(f"Removed room with id: {room.id}")
         return room

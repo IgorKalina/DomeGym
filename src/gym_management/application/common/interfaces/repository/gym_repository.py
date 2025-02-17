@@ -23,5 +23,9 @@ class GymRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    async def update(self, gym: Gym) -> Gym:
+        pass
+
+    @abc.abstractmethod
     async def delete(self, gym: Gym) -> None:
         pass

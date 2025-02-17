@@ -23,5 +23,5 @@ class RoomRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def delete(self, room: Room) -> None:
+    async def delete(self, room_id: uuid.UUID) -> None:
         pass

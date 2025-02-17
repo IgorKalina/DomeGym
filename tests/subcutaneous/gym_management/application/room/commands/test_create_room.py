@@ -2,12 +2,12 @@ from typing import List
 
 import pytest
 
-from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
 from src.gym_management.application.gym.exceptions import GymDoesNotExistError
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from src.gym_management.domain.room.aggregate_root import Room
+from src.gym_management.domain.subscription import Subscription
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.common import constants
@@ -28,7 +28,7 @@ class TestCreateRoom:
         gym_repository: GymMemoryRepository,
         room_repository: RoomMemoryRepository,
         gym: Gym,
-        subscription: SubscriptionDB,
+        subscription: Subscription,
     ) -> None:
         self._command_bus = command_bus
         self._subscription_repository = subscription_repository
@@ -36,7 +36,7 @@ class TestCreateRoom:
         self._room_repository = room_repository
 
         self._gym: Gym = gym
-        self._subscription_db: SubscriptionDB = subscription
+        self._subscription_db: Subscription = subscription
 
     @pytest.mark.asyncio
     async def test_create_room_when_valid_command_should_create_room(self) -> None:
@@ -50,12 +50,8 @@ class TestCreateRoom:
 
         # Assert
         assert isinstance(room, Room)
-        rooms: List[Room] = await self._room_repository.get_by_gym_id(self._gym.id)
-        assert len(rooms) == 1
-        room = rooms[0]
-        assert room.id is not None
-        assert room.name == create_room.name
-        assert room.gym_id == create_room.gym_id
+        gym: Gym = await self._gym_repository.get(self._gym.id)
+        assert gym.has_room(room.id)
 
     @pytest.mark.asyncio
     async def test_create_room_when_subscription_not_exists_should_fail(self) -> None:
@@ -87,7 +83,7 @@ class TestCreateRoom:
 
         # Assert
         assert err.value.title == "Gym.Not_found"
-        assert err.value.detail == "Gym with the provided id not found"
+        assert err.value.detail == f"Gym with the provided id not found: {create_room.gym_id}"
         assert err.value.error_type == ErrorType.NOT_FOUND
 
     @pytest.mark.asyncio

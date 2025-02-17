@@ -28,7 +28,6 @@ class RemoveGymHandler(CommandHandler):
     ) -> None:
         self.__gym_repository = gym_repository
         self.__subscription_repository = subscription_repository
-
         self.__domain_event_bus = domain_event_bus
 
     async def handle(self, command: RemoveGym) -> Gym:
@@ -36,7 +35,7 @@ class RemoveGymHandler(CommandHandler):
         gym: Gym = await self.__gym_repository.get(command.gym_id)
         subscription.remove_gym(gym)
 
-        await self.__gym_repository.delete(gym)
+        await self.__subscription_repository.update(subscription)
         await self.__domain_event_bus.publish(subscription.pop_domain_events())
         logger.info(f"Removed gym with id: {gym.id}")
         return gym

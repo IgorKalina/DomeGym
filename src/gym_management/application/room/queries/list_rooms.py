@@ -31,5 +31,5 @@ class ListRoomsHandler(QueryHandler):
     async def handle(self, query: ListRooms) -> List[Room]:
         subscription: Subscription = await self.__subscription_repository.get(query.subscription_id)
         if not subscription.has_gym(query.gym_id):
-            raise GymDoesNotExistError()
+            raise GymDoesNotExistError(gym_id=query.gym_id)
         return await self.__room_repository.get_by_gym_id(gym_id=query.gym_id)

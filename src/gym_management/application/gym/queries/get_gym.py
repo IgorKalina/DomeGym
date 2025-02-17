@@ -24,5 +24,5 @@ class GetGymHandler(QueryHandler):
     async def handle(self, query: GetGym) -> Gym:
         subscription: Subscription = await self.__subscription_repository.get(query.subscription_id)
         if not subscription.has_gym(query.gym_id):
-            raise GymDoesNotExistError()
+            raise GymDoesNotExistError(gym_id=query.gym_id)
         return await self.__gym_repository.get(query.gym_id)

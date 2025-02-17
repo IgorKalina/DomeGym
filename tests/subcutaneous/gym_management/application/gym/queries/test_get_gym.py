@@ -1,5 +1,4 @@
 import uuid
-from typing import TYPE_CHECKING
 
 import pytest
 
@@ -16,12 +15,7 @@ from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.common import constants
-from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
-from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.subscription.factory.subscription_factory import SubscriptionFactory
-
-if TYPE_CHECKING:
-    from src.gym_management.application.common.dto.repository import GymDB
 
 
 class TestGetGym:
@@ -39,23 +33,23 @@ class TestGetGym:
         self._gym_repository = gym_repository
 
     @pytest.mark.asyncio
-    async def test_get_gym_when_gym_and_subscription_exist_should_return_gym(self, subscription: Subscription) -> None:
+    async def test_get_gym_when_gym_and_subscription_exist_should_return_gym(
+        self, subscription: Subscription, gym: Gym
+    ) -> None:
         # Arrange
-        create_gym_command = GymCommandFactory.create_create_gym_command(subscription_id=subscription.id)
-        expected_gym: GymDB = await self._command_bus.invoke(create_gym_command)
-        get_gym: GetGym = GetGym(subscription_id=constants.subscription.SUBSCRIPTION_ID, gym_id=expected_gym.id)
+        subscription.add_gym(gym)
+        await self._subscription_repository.update(subscription)
+        get_gym: GetGym = GetGym(subscription_id=subscription.id, gym_id=gym.id)
 
         # Act
-        gym: GymDB = await self._query_bus.invoke(get_gym)
+        actual_gym: Gym = await self._query_bus.invoke(get_gym)
 
         # Assert
-        assert gym == expected_gym
+        assert actual_gym == gym
 
     @pytest.mark.asyncio
-    async def test_get_gym_when_subscription_not_exist_should_raise_exception(self) -> None:
+    async def test_get_gym_when_subscription_not_exist_should_fail(self, gym: Gym) -> None:
         # Arrange
-        gym: Gym = GymFactory.create_gym(subscription_id=constants.common.NON_EXISTING_ID)
-        await self._gym_repository.create(gym)
         get_gym: GetGym = GetGym(subscription_id=constants.common.NON_EXISTING_ID, gym_id=gym.id)
 
         # Act
@@ -68,11 +62,9 @@ class TestGetGym:
         assert err.value.error_type == ErrorType.NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_get_gym_when_subscription_exists_and_no_gym_should_raise_exception(
-        self, subscription: Subscription
-    ) -> None:
+    async def test_get_gym_when_subscription_exists_and_no_gym_should_fail(self, subscription: Subscription) -> None:
         # Arrange
-        get_gym: GetGym = GetGym(subscription_id=subscription.id, gym_id=constants.gym.GYM_ID)
+        get_gym: GetGym = GetGym(subscription_id=subscription.id, gym_id=constants.common.NON_EXISTING_ID)
 
         # Act
         with pytest.raises(GymDoesNotExistError) as err:
@@ -80,11 +72,11 @@ class TestGetGym:
 
         # Assert
         assert err.value.title == "Gym.Not_found"
-        assert err.value.detail == "Gym with the provided id not found"
+        assert err.value.detail == f"Gym with the provided id not found: {get_gym.gym_id}"
         assert err.value.error_type == ErrorType.NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_get_gym_when_gym_not_belongs_to_subscription_should_raise_exception(self, gym: Gym) -> None:
+    async def test_get_gym_when_gym_not_belongs_to_subscription_should_fail(self, gym: Gym) -> None:
         # Arrange
         subscription_other = SubscriptionFactory.create_subscription(id=uuid.uuid4())
         await self._subscription_repository.create(subscription_other)
@@ -97,5 +89,5 @@ class TestGetGym:
 
         # Assert
         assert err.value.title == "Gym.Not_found"
-        assert err.value.detail == "Gym with the provided id not found"
+        assert err.value.detail == f"Gym with the provided id not found: {get_gym.gym_id}"
         assert err.value.error_type == ErrorType.NOT_FOUND

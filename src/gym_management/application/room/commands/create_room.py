@@ -2,7 +2,6 @@ import typing
 import uuid
 
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
-from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.domain.room.aggregate_root import Room
 from src.shared_kernel.application.command import Command, CommandHandler
@@ -24,14 +23,12 @@ class CreateRoom(Command):
 class CreateRoomHandler(CommandHandler):
     def __init__(
         self,
-        room_repository: RoomRepository,
         subscription_repository: SubscriptionRepository,
         gym_repository: GymRepository,
         domain_event_bus: DomainEventBus,
     ) -> None:
-        self.__room_repository = room_repository
-        self.__gym_repository = gym_repository
         self.__subscription_repository = subscription_repository
+        self.__gym_repository = gym_repository
 
         self.__domain_event_bus = domain_event_bus
 
@@ -41,12 +38,6 @@ class CreateRoomHandler(CommandHandler):
         room = Room(gym_id=gym.id, name=command.name, max_daily_sessions=subscription.max_daily_sessions)
         gym.add_room(room)
 
-        await self.__room_repository.create(room)
         await self.__gym_repository.update(gym)
-        await self.__domain_event_bus.publish(
-            [
-                *gym.pop_domain_events(),
-                *room.pop_domain_events(),
-            ]
-        )
+        await self.__domain_event_bus.publish(gym.pop_domain_events())
         return room

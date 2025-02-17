@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.asyncio
-class TestGymSubscriptionUnsetHandler:
+class TestSubscriptionUnsetHandler:
     @pytest.fixture(autouse=True)
     def setup_method(
         self,
@@ -34,7 +34,6 @@ class TestGymSubscriptionUnsetHandler:
 
         self._gyms_count = 10
 
-    @pytest.mark.skip(reason="broken after room repository rework")
     async def test_when_unset_subscription_has_gyms_should_remove_all(self, gym: Gym) -> None:
         # Arrange
         # gym_db should stay untouched

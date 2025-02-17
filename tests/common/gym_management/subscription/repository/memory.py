@@ -17,25 +17,23 @@ class SubscriptionMemoryRepository(SubscriptionRepository):
     async def get(self, subscription_id: uuid.UUID) -> Subscription:
         for sub in self.__subscriptions:
             if sub.id == subscription_id:
-                return self.__create_subscription(sub)
+                return sub
         raise SubscriptionDoesNotExistError()
 
     async def get_or_none(self, subscription_id: uuid.UUID) -> Subscription | None:
-        return next(
-            (self.__create_subscription(sub) for sub in self.__subscriptions if sub.id == subscription_id), None
-        )
+        return next((sub for sub in self.__subscriptions if sub.id == subscription_id), None)
 
     async def get_by_admin_id(self, admin_id: uuid.UUID) -> Subscription:
         for sub in self.__subscriptions:
             if sub.admin_id == admin_id:
-                return self.__create_subscription(sub)
+                return sub
         raise SubscriptionDoesNotExistError()
 
     async def create(self, subscription: Subscription) -> None:
         self.__subscriptions.append(subscription)
 
     async def get_multi(self) -> List[Subscription]:
-        return [self.__create_subscription(sub) for sub in self.__subscriptions]
+        return list(self.__subscriptions)
 
     async def update(self, subscription: Subscription) -> Subscription:
         updated_subscriptions = [sub for sub in self.__subscriptions if sub.id != subscription.id]
@@ -45,10 +43,3 @@ class SubscriptionMemoryRepository(SubscriptionRepository):
 
     async def delete(self, subscription: Subscription) -> None:
         self.__subscriptions = [sub for sub in self.__subscriptions if sub.id != subscription.id]
-
-    def __create_subscription(self, subscription: Subscription) -> Subscription:
-        return self.__add_gym_ids(subscription)
-
-    def __add_gym_ids(self, subscription: Subscription) -> Subscription:
-        subscription.gym_ids = [gym.id for gym in self.__shared_state.gyms if gym.subscription_id == subscription.id]
-        return subscription

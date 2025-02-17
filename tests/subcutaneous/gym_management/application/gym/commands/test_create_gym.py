@@ -3,8 +3,6 @@ from typing import List
 import pytest
 from freezegun import freeze_time
 
-from src.gym_management.application.common.dto.repository.subscription import SubscriptionDB
-from src.gym_management.application.gym.commands.create_gym import CreateGym
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
@@ -13,7 +11,7 @@ from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_command_factory import GymCommandFactory
-from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
+from tests.common.gym_management.subscription.repository.memory import SubscriptionMemoryRepository
 
 
 class TestCreateGym:
@@ -21,24 +19,17 @@ class TestCreateGym:
     def setup_method(
         self,
         command_bus: CommandBusMemory,
-        gym_repository: GymMemoryRepository,
-        subscription: SubscriptionDB,
+        subscription_repository: SubscriptionMemoryRepository,
+        subscription: Subscription,
     ) -> None:
         self._command_bus = command_bus
-        self._gym_repository = gym_repository
-
-        self._subscription_db: SubscriptionDB = subscription
-        self._subscription: Subscription = Subscription(
-            id=self._subscription_db.id,
-            type=self._subscription_db.type,
-            admin_id=self._subscription_db.admin_id,
-            created_at=subscription.created_at,
-        )
+        self._subscription_repository = subscription_repository
+        self._subscription = subscription
 
     @pytest.mark.asyncio
-    async def test_create_gym_when_valid_command_should_create_gym(self) -> None:
+    async def test_create_gym_when_subscription_exists_should_create_gym(self) -> None:
         # Arrange
-        create_gym = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription_db.id)
+        create_gym = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription.id)
 
         # Act
         with freeze_time(constants.common.NEW_UPDATED_AT):
@@ -46,12 +37,13 @@ class TestCreateGym:
 
         # Assert
         assert isinstance(gym, Gym)
-        await self._assert_gym_in_db(create_gym)
+        subscription: Subscription = await self._subscription_repository.get(self._subscription.id)
+        assert subscription.has_gym(gym.id)
 
     @pytest.mark.asyncio
     async def test_create_gym_when_more_than_subscription_allows_should_fail(self) -> None:
         # Arrange
-        create_gym = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription_db.id)
+        create_gym = GymCommandFactory.create_create_gym_command(subscription_id=self._subscription.id)
         created_gyms: List[Gym] = []
         for _ in range(self._subscription.max_gyms):
             created_gyms.append(await self._command_bus.invoke(create_gym))
@@ -84,11 +76,3 @@ class TestCreateGym:
         assert err.value.title == "Subscription.Not_found"
         assert err.value.detail == "Subscription with the provided id not found"
         assert err.value.error_type == ErrorType.NOT_FOUND
-
-    async def _assert_gym_in_db(self, command: CreateGym) -> None:
-        gyms: List[Gym] = await self._gym_repository.get_by_subscription_id(command.subscription_id)
-        assert len(gyms) == 1
-        gym = gyms[0]
-        assert gym.id is not None
-        assert gym.name == command.name
-        assert gym.subscription_id == command.subscription_id

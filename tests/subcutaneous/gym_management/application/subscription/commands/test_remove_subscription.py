@@ -1,10 +1,11 @@
 import pytest
 
-from src.gym_management.application.common.dto.repository import AdminDB, SubscriptionDB
+from src.gym_management.application.admin.exceptions import AdminDoesNotExistError
 from src.gym_management.application.subscription.exceptions import (
     SubscriptionDoesNotExistError,
-    SubscriptionDoesNotHaveAdminError,
 )
+from src.gym_management.domain.admin.aggregate_root import Admin
+from src.gym_management.domain.subscription import Subscription
 from src.shared_kernel.application.error_or import ErrorType
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
@@ -30,7 +31,7 @@ class TestRemoveSubscription:
     @pytest.mark.asyncio
     async def test_remove_subscription_when_subscription_exists_should_remove_subscription(
         self,
-        admin_db_with_subscription: AdminDB,  # noqa: ARG002
+        admin_with_subscription: Admin,  # noqa: ARG002
     ) -> None:
         # Arrange
         remove_subscription_command = SubscriptionCommandFactory.create_remove_subscription_command()
@@ -40,7 +41,6 @@ class TestRemoveSubscription:
 
         # Assert
         await self._assert_admin_has_no_subscription()
-        await self._assert_no_subscription_in_db()
 
     @pytest.mark.asyncio
     async def test_remove_subscription_when_subscription_not_exists_should_fail(self) -> None:
@@ -59,26 +59,22 @@ class TestRemoveSubscription:
         assert err.value.error_type == ErrorType.NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_remove_subscription_when_admin_not_exists_should_fail(self, subscription: SubscriptionDB) -> None:
+    async def test_remove_subscription_when_admin_not_exists_should_fail(self, subscription: Subscription) -> None:
         # Arrange
         remove_subscription_command = SubscriptionCommandFactory.create_remove_subscription_command(
             subscription_id=subscription.id
         )
 
         # Act
-        with pytest.raises(SubscriptionDoesNotHaveAdminError) as err:
+        with pytest.raises(AdminDoesNotExistError) as err:
             await self._command_bus.invoke(remove_subscription_command)
 
         # Assert
-        assert err.value.title == "Subscription.Unexpected"
-        assert err.value.detail == "Subscription with the provided id does not have an admin assigned"
-        assert err.value.error_type == ErrorType.UNEXPECTED
-
-    async def _assert_no_subscription_in_db(self) -> None:
-        subscriptions_in_db = await self._subscription_repository.get_multi()
-        assert len(subscriptions_in_db) == 0
+        assert err.value.title == "Admin.Not_found"
+        assert err.value.detail == "Admin with the provided id does not exist"
+        assert err.value.error_type == ErrorType.NOT_FOUND
 
     async def _assert_admin_has_no_subscription(self) -> None:
-        admin = await self._admin_repository.get_by_id(admin_id=constants.admin.ADMIN_ID)
+        admin = await self._admin_repository.get_or_none(admin_id=constants.admin.ADMIN_ID)
         assert admin is not None
         assert admin.subscription_id is None
