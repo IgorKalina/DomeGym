@@ -60,7 +60,7 @@ run-docker: build-app
 
 .PHONY: stop-docker
 stop-docker:
-	docker-compose --profile api down --remove-orphans
+	docker-compose --profile api down
 
 .PHONY: build-test
 test-docker:
