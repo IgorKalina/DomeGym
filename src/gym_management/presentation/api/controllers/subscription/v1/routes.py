@@ -40,7 +40,7 @@ router = APIRouter(
 @inject
 async def create_subscription(
     request: CreateSubscriptionRequest,
-    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> OkResponse[SubscriptionResponse]:
     command = CreateSubscription(subscription_type=request.subscription_type, admin_id=request.admin_id)
     subscription: Subscription = await command_bus.invoke(command)
@@ -63,7 +63,7 @@ async def create_subscription(
 )
 @inject
 async def list_subscriptions(
-    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_container.query_bus]),
 ) -> OkResponse[SubscriptionResponse]:
     query = ListSubscriptions()
     result: List[Subscription] = await query_bus.invoke(query)
@@ -90,7 +90,7 @@ async def list_subscriptions(
 @inject
 async def delete_subscription(
     subscription_id: uuid.UUID,
-    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> OkResponse[SubscriptionResponse]:
     command = RemoveSubscription(subscription_id=subscription_id)
     subscription: Subscription = await command_bus.invoke(command)

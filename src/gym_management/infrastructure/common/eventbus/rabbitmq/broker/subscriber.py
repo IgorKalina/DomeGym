@@ -11,7 +11,7 @@ from aio_pika.abc import AbstractRobustQueue
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.broker import RabbitmqConnection, RabbitmqQueuePool
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.dto.event import RabbitmqEvent
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import RabbitmqSubscribeOptions
-from src.shared_kernel.infrastructure.eventbus.interfaces.broker import EventHandler
+from src.shared_kernel.infrastructure.interfaces.eventbus.broker import EventHandler
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,9 @@ class RabbitmqSubscriberPool:
             event = RabbitmqEvent.from_pika_message(message)
             await handler(event)
         except Exception as e:
-            logger.error(f"Encountered error while processing message: {type(e).__name__}({e}), nacking message.")
+            logger.error(
+                f"Encountered error while processing message: {type(e).__name__}({e}), nacking message.", exc_info=e
+            )
             await message.nack(requeue=True)
         else:
             await message.ack()

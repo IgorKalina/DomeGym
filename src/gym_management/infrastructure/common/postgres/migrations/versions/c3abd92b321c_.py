@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5ad89cb89c52
+Revision ID: c3abd92b321c
 Revises:
-Create Date: 2025-02-17 15:37:45.874834
+Create Date: 2025-02-25 18:29:17.505582
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '5ad89cb89c52'
+revision: str = 'c3abd92b321c'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,20 +28,21 @@ def upgrade() -> None:
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_admin'))
     )
-    op.create_table('domain_event_outbox',
+    op.create_table('domain_event',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('event_type', sa.String(length=200), nullable=False),
     sa.Column('event_data', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-    sa.Column('processing_status', sa.Enum('PENDING', 'PUBLISHED', 'PROCESSED', 'FAILED', name='domaineventprocessingstatus'), nullable=False),
+    sa.Column('processing_status', sa.Enum('PENDING', 'PROCESSED', 'FAILED', name='domaineventprocessingstatus'), nullable=False),
+    sa.Column('error', sa.String(), nullable=True),
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_domain_event_outbox'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_domain_event'))
     )
     op.create_table('gym',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('subscription_id', sa.Uuid(), nullable=False),
-    sa.Column('max_rooms', sa.Integer(), nullable=False),
+    sa.Column('max_rooms', sa.BigInteger(), nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_gym'))
@@ -50,7 +51,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('gym_id', sa.Uuid(), nullable=False),
-    sa.Column('max_daily_sessions', sa.Integer(), nullable=False),
+    sa.Column('max_daily_sessions', sa.BigInteger(), nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_room'))
@@ -64,26 +65,24 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id', name=op.f('pk_subscription'))
     )
     op.create_table('gym_room_ids',
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('room_id', sa.Uuid(), nullable=False),
     sa.Column('gym_id', sa.Uuid(), nullable=False),
-    sa.ForeignKeyConstraint(['gym_id'], ['gym.id'], name=op.f('fk_gym_room_ids_gym_id_gym')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_gym_room_ids')),
+    sa.Column('room_id', sa.Uuid(), nullable=False),
+    sa.ForeignKeyConstraint(['gym_id'], ['gym.id'], name=op.f('fk_gym_room_ids_gym_id_gym'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('gym_id', 'room_id', name=op.f('pk_gym_room_ids')),
     sa.UniqueConstraint('room_id', 'gym_id', name='uq_room_gym')
     )
     op.create_table('gym_trainer_ids',
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('trainer_id', sa.Uuid(), nullable=False),
     sa.Column('gym_id', sa.Uuid(), nullable=False),
-    sa.ForeignKeyConstraint(['gym_id'], ['gym.id'], name=op.f('fk_gym_trainer_ids_gym_id_gym')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_gym_trainer_ids'))
+    sa.Column('trainer_id', sa.Uuid(), nullable=False),
+    sa.ForeignKeyConstraint(['gym_id'], ['gym.id'], name=op.f('fk_gym_trainer_ids_gym_id_gym'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('gym_id', 'trainer_id', name=op.f('pk_gym_trainer_ids')),
+    sa.UniqueConstraint('trainer_id', 'gym_id', name='uq_trainer_gym')
     )
     op.create_table('subscription_gym_ids',
-    sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('gym_id', sa.Uuid(), nullable=False),
     sa.Column('subscription_id', sa.Uuid(), nullable=False),
     sa.ForeignKeyConstraint(['subscription_id'], ['subscription.id'], name=op.f('fk_subscription_gym_ids_subscription_id_subscription')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_subscription_gym_ids')),
+    sa.PrimaryKeyConstraint('gym_id', 'subscription_id', name=op.f('pk_subscription_gym_ids')),
     sa.UniqueConstraint('subscription_id', 'gym_id', name='uq_subscription_gym')
     )
     # ### end Alembic commands ###
@@ -97,6 +96,6 @@ def downgrade() -> None:
     op.drop_table('subscription')
     op.drop_table('room')
     op.drop_table('gym')
-    op.drop_table('domain_event_outbox')
+    op.drop_table('domain_event')
     op.drop_table('admin')
     # ### end Alembic commands ###

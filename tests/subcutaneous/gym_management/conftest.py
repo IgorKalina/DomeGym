@@ -6,14 +6,17 @@ from src.gym_management.application.common.dto.repository import RoomDB
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.subscription.aggregate_root import Subscription
+from src.gym_management.infrastructure.common.injection.containers.eventbus.rabbitmq import EventbusRabbitmqContainer
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.shared_kernel.infrastructure.command.command_bus_memory import CommandBusMemory
 from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 from tests.common.gym_management.admin.factory.admin_factory import AdminFactory
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
+from tests.common.gym_management.common.config.config import ConfigTest
 from tests.common.gym_management.common.injection.containers.repository_memory_container import (
     RepositoryMemoryContainer,
 )
+from tests.common.gym_management.domain_event.repository.memory import DomainEventMemoryRepository
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.factory.room_factory import RoomFactory
@@ -28,8 +31,16 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-async def di_container() -> AsyncGenerator[DiContainer, None]:
-    di_container = DiContainer(repository_container=RepositoryMemoryContainer())
+def config() -> ConfigTest:
+    return ConfigTest()
+
+
+@pytest.fixture
+async def di_container(config: ConfigTest) -> AsyncGenerator[DiContainer, None]:
+    di_container = DiContainer(
+        repository_container=RepositoryMemoryContainer(),
+        eventbus_container=EventbusRabbitmqContainer(config=config.rabbitmq),
+    )
     await di_container.init_resources()
 
     yield di_container
@@ -39,17 +50,17 @@ async def di_container() -> AsyncGenerator[DiContainer, None]:
 
 @pytest.fixture
 async def command_bus(di_container: DiContainer) -> CommandBusMemory:
-    return di_container.command_bus()
+    return await di_container.command_container.command_bus()
 
 
 @pytest.fixture
 async def query_bus(di_container: DiContainer) -> QueryBusMemory:
-    return di_container.query_bus()
+    return await di_container.query_container.query_bus()
 
 
 @pytest.fixture
 async def domain_event_bus(di_container: DiContainer) -> QueryBusMemory:
-    return di_container.domain_event_bus()
+    return await di_container.domain_event_container.domain_event_bus()
 
 
 @pytest.fixture
@@ -65,6 +76,11 @@ def subscription_repository(di_container: DiContainer) -> SubscriptionMemoryRepo
 @pytest.fixture
 def gym_repository(di_container: DiContainer) -> GymMemoryRepository:
     return di_container.repository_container.gym_repository()
+
+
+@pytest.fixture
+def domain_event_repository(di_container: DiContainer) -> DomainEventMemoryRepository:
+    return di_container.repository_container.domain_event_repository()
 
 
 @pytest.fixture

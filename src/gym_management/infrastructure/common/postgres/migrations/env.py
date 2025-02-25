@@ -21,7 +21,7 @@ target_metadata = BaseModel.metadata
 
 if not (full_url := config.get_main_option("sqlalchemy.url")):
     domegym_config = load_config()
-    full_url = domegym_config.database.full_url
+    full_url = domegym_config.database.get_full_url(safe=False)
 
 
 def run_migrations_offline() -> None:

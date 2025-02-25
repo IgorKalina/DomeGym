@@ -23,7 +23,7 @@ class SubscriptionRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def get_multi(self) -> List[Subscription]:
+    async def list(self) -> List[Subscription]:
         pass
 
     @abc.abstractmethod

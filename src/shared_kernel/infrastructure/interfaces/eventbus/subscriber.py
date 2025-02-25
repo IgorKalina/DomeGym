@@ -1,7 +1,7 @@
 import abc
 from abc import abstractmethod
 
-from src.shared_kernel.infrastructure.eventbus.interfaces.broker import EventHandler
+from src.shared_kernel.infrastructure.interfaces.eventbus.broker import EventHandler
 
 
 class EventSubscriber(abc.ABC):

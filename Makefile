@@ -28,12 +28,12 @@ lint:
 build-app:
 	docker-compose --profile api build
 
-.PHONY: build-dependency
-build-dependency:
+.PHONY: run-docker-dependency
+run-docker-dependency:
 	docker-compose --profile dependency up --build
 
-.PHONY: stop-dependency
-stop-dependency:
+.PHONY: stop-docker-dependency
+stop-docker-dependency:
 	docker-compose --profile dependency down
 
 .PHONY: build-lint
@@ -45,8 +45,8 @@ build-test:
 	@${TEARDOWN_TEST_CONTAINER}
 	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile runner build
 
-.PHONY: build-test-dependency
-build-test-dependency:
+.PHONY: run-test-dependency
+run-test-dependency:
 	@${MAKE} stop-test-dependency
 	docker-compose -f docker-compose.test.yaml --env-file .env.test --profile dependency up -d --build
 

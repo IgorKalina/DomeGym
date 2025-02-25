@@ -13,7 +13,7 @@ from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import (
     RabbitmqSubscribeOptions,
     RabbitmqTopicOptions,
 )
-from src.shared_kernel.infrastructure.eventbus.interfaces.broker import EventBroker, EventHandler
+from src.shared_kernel.infrastructure.interfaces.eventbus.broker import EventBroker, EventHandler
 
 logger = logging.getLogger(__name__)
 

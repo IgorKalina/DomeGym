@@ -6,7 +6,7 @@ from src.gym_management.application.common.interfaces.repository.subscription_re
 )
 from src.gym_management.application.subscription.exceptions import SubscriptionDoesNotExistError
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from tests.common.gym_management.common.repository_state import RepositorySharedState
+from tests.common.gym_management.common.repository_state_memory import RepositorySharedState
 
 
 class SubscriptionMemoryRepository(SubscriptionRepository):
@@ -32,7 +32,7 @@ class SubscriptionMemoryRepository(SubscriptionRepository):
     async def create(self, subscription: Subscription) -> None:
         self.__subscriptions.append(subscription)
 
-    async def get_multi(self) -> List[Subscription]:
+    async def list(self) -> List[Subscription]:
         return list(self.__subscriptions)
 
     async def update(self, subscription: Subscription) -> Subscription:

@@ -1,13 +1,10 @@
 import asyncio
+import uuid
 from unittest.mock import Mock
 
 import aio_pika
 import pytest
 
-from src.gym_management.infrastructure.common.background_services.domain_events.mappers import (
-    domain_event_to_rabbitmq_event,
-    rabbitmq_event_to_domain_event,
-)
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.broker import RabbitmqEventBroker
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.dto.event import RabbitmqEvent
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.exceptions import (
@@ -19,7 +16,6 @@ from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import (
     RabbitmqPublishOptions,
     RabbitmqSubscribeOptions,
 )
-from tests.common.gym_management.gym.factory.gym_domain_event_factory import GymDomainEventFactory
 
 
 @pytest.mark.asyncio
@@ -32,21 +28,19 @@ class TestRabbitmqEventBroker:
         self._subscribe_options = RabbitmqSubscribeOptions(
             queue_name="domain_events", exchange_name="domain_events", routing_key="domain_events"
         )
-        self._event = domain_event_to_rabbitmq_event(GymDomainEventFactory.create_gym_removed_event())
+        self._event = RabbitmqEvent(id=uuid.uuid4(), data={"dummy_data": "dummy_data"}, event_type="dummy_event")
 
     async def test_when_message_published_should_be_consumed_by_subscriber(self) -> None:
         # Arrange
         mock = Mock()
 
-        async def simple_handler(event: RabbitmqEvent) -> None:
-            rabbitmq_event_to_domain_event(event)
+        async def simple_handler(event: RabbitmqEvent) -> None:  # noqa: ARG001
             mock()
 
         await self._broker.subscribe(simple_handler, options=self._subscribe_options)
-        event = domain_event_to_rabbitmq_event(GymDomainEventFactory.create_gym_removed_event())
 
         # Act
-        await self._broker.publish(event=event, options=self._publish_options)
+        await self._broker.publish(event=self._event, options=self._publish_options)
 
         # Assert
         await asyncio.sleep(0.5)
@@ -56,8 +50,7 @@ class TestRabbitmqEventBroker:
         # Arrange
         mock = Mock()
 
-        async def simple_handler(event: RabbitmqEvent) -> None:
-            rabbitmq_event_to_domain_event(event)
+        async def simple_handler(event: RabbitmqEvent) -> None:  # noqa: ARG001
             mock()
 
         # Act
@@ -85,8 +78,7 @@ class TestRabbitmqEventBroker:
 
         async def simple_handler(message: aio_pika.IncomingMessage) -> None:
             # async with message.process():
-            event = RabbitmqEvent.from_pika_message(message)
-            rabbitmq_event_to_domain_event(event)
+            RabbitmqEvent.from_pika_message(message)
 
         # Act
         with pytest.raises(BrokerNotConnectedError) as err:
@@ -120,9 +112,7 @@ class TestRabbitmqEventBroker:
         )
 
         async def simple_handler(message: aio_pika.IncomingMessage) -> None:
-            # async with message.process():
-            event = RabbitmqEvent.from_pika_message(message)
-            rabbitmq_event_to_domain_event(event)
+            RabbitmqEvent.from_pika_message(message)
 
         # Act
         with pytest.raises(QueueDoesNotExistError) as err:

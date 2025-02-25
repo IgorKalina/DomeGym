@@ -21,6 +21,7 @@ class RabbitmqConnection:
 
         self.__connection: AbstractRobustConnection | None = None
         self.__channel_pool: Pool[AbstractRobustChannel] | None = None
+        self.__channel_pool_size: int = 10
 
     @property
     def options(self) -> RabbitmqBrokerOptions:
@@ -39,8 +40,8 @@ class RabbitmqConnection:
             raise BrokerAlreadyConnectedError()
 
         self.__connection = await aio_pika.connect_robust(self.__url)
-        self.__channel_pool = Pool(self.__create_channel, max_size=10)
-        logger.debug(f"Connection to RabbitMQ was established by URL: {self.__url}")
+        self.__channel_pool = Pool(self.__create_channel, max_size=self.__channel_pool_size)
+        logger.debug(f"Connection to RabbitMQ was established: {self.options.get_url()}")
 
     async def __create_channel(self) -> AbstractRobustChannel:
         if self.__connection is None:

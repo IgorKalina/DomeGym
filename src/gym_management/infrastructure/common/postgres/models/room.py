@@ -1,7 +1,7 @@
 import uuid
 from typing import Self
 
-from sqlalchemy import String
+from sqlalchemy import BigInteger, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.gym_management.domain.room.aggregate_root import Room as RoomAggregate
@@ -14,7 +14,7 @@ class Room(TimedBaseModel):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(64))
     gym_id: Mapped[uuid.UUID] = mapped_column()
-    max_daily_sessions: Mapped[int] = mapped_column()
+    max_daily_sessions: Mapped[int] = mapped_column(BigInteger)
 
     def __repr__(self) -> str:
         return (

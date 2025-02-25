@@ -45,7 +45,8 @@ class EventHandlerAlreadyExistsError(AppError):
 @dataclass(kw_only=True, frozen=True)
 class EventualConsistencyError(AppError):
     title: str = "Eventual Consistency Error"
+    error_detail: str
 
     @property
     def detail(self) -> str:
-        return "Eventual consistency error"
+        return self.error_detail

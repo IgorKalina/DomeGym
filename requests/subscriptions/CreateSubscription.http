@@ -1,4 +1,4 @@
-@admin_id=c5d67d39-be2c-49f8-a021-7e20d32af439
+@admin_id=c5d67d39-be2c-49f8-a021-7e20d32af448
 
 
 POST http://localhost:8000/v1/subscriptions

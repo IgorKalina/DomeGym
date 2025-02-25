@@ -13,6 +13,6 @@ class DatabaseConfig(BaseModel):
     name: str
     driver: str
 
-    @property
-    def full_url(self) -> str:
-        return f"{self.driver}://{self.user.name}:{self.user.password.get_secret_value()}@{self.host}:{self.port}/{self.name}"
+    def get_full_url(self, safe: bool = True) -> str:
+        password = self.user.password if safe else self.user.password.get_secret_value()
+        return f"{self.driver}://{self.user.name}:{password}@{self.host}:{self.port}/{self.name}"

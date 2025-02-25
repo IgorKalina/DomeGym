@@ -1,7 +1,7 @@
 from aio_pika import ExchangeType
 from pydantic import BaseModel, SecretStr
 
-from src.shared_kernel.infrastructure.eventbus.interfaces.options import (
+from src.shared_kernel.infrastructure.interfaces.eventbus.options import (
     BrokerOptions,
     PublishOptions,
     SubscribeOptions,

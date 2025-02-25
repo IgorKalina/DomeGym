@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Self
 
-from sqlalchemy import ForeignKey, String, UniqueConstraint
+from sqlalchemy import BigInteger, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.gym_management.domain.gym.aggregate_root import Gym as GymAggregate
@@ -14,13 +14,13 @@ class Gym(TimedBaseModel):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(64))
     subscription_id: Mapped[uuid.UUID] = mapped_column()
-    max_rooms: Mapped[int] = mapped_column()
+    max_rooms: Mapped[int] = mapped_column(BigInteger)
 
     room_ids: Mapped[List["GymRoomIds"]] = relationship(
-        "GymRoomIds", back_populates="gym", cascade="all, delete-orphan"
+        "GymRoomIds", back_populates="gym", cascade="all, delete-orphan", passive_deletes=True
     )
     trainer_ids: Mapped[List["GymTrainerIds"]] = relationship(
-        "GymTrainerIds", back_populates="gym", cascade="all, delete-orphan"
+        "GymTrainerIds", back_populates="gym", cascade="all, delete-orphan", passive_deletes=True
     )
 
     def __repr__(self) -> str:
@@ -53,9 +53,10 @@ class Gym(TimedBaseModel):
 class GymRoomIds(BaseModel):
     __tablename__ = "gym_room_ids"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    room_id: Mapped[uuid.UUID] = mapped_column(nullable=False)
-    gym_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("gym.id"), nullable=False)
+    gym_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("gym.id", ondelete="CASCADE"), nullable=False, primary_key=True
+    )
+    room_id: Mapped[uuid.UUID] = mapped_column(nullable=False, primary_key=True)
 
     # Relationship: A GymRoomIds belongs to one Gym
     gym: Mapped[Gym] = relationship("Gym", back_populates="room_ids")
@@ -77,12 +78,15 @@ class GymRoomIds(BaseModel):
 class GymTrainerIds(BaseModel):
     __tablename__ = "gym_trainer_ids"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    trainer_id: Mapped[uuid.UUID] = mapped_column(nullable=False)
-    gym_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("gym.id"), nullable=False)
+    gym_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("gym.id", ondelete="CASCADE"), nullable=False, primary_key=True
+    )
+    trainer_id: Mapped[uuid.UUID] = mapped_column(nullable=False, primary_key=True)
 
     # Relationship: A GymRoomIds belongs to one Gym
     gym: Mapped[Gym] = relationship("Gym", back_populates="trainer_ids")
+
+    __table_args__ = (UniqueConstraint("trainer_id", "gym_id", name="uq_trainer_gym"),)
 
     @classmethod
     def from_domain(cls, aggregate: GymAggregate) -> List[Self]:

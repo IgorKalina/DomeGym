@@ -1,5 +1,5 @@
-@subscriptionId=ef0619cc-3155-4694-9d46-6367739f99aa
-@gymId=6e4d4bbb-9c4e-4c04-bda3-e4cec951378c
+@subscriptionId=6366e777-0f99-44ce-ae1b-3d3a6cf15eb6
+@gymId=3bc7548b-c438-42c5-b77c-1a8bc59dc203
 
 
 POST http://localhost:8000/v1/subscriptions/{{subscriptionId}}/gyms/{{gymId}}/rooms

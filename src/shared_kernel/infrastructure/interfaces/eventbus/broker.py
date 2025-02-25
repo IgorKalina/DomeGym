@@ -3,8 +3,8 @@ from abc import abstractmethod
 from typing import Awaitable, Callable
 
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import PublishOptions, SubscribeOptions
-from src.shared_kernel.infrastructure.eventbus.interfaces.event import Event
-from src.shared_kernel.infrastructure.eventbus.interfaces.options import BrokerOptions, TopicOptions
+from src.shared_kernel.infrastructure.interfaces.eventbus.event import Event
+from src.shared_kernel.infrastructure.interfaces.eventbus.options import BrokerOptions, TopicOptions
 
 EventHandler = Callable[[Event], Awaitable[None]]
 

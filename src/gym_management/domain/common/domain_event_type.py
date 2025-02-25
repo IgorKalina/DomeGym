@@ -8,3 +8,4 @@ class DomainEventType(StrEnum):
     GYM_ADDED = "gym_added"
     ROOM_ADDED = "room_added"
     ROOM_REMOVED = "room_removed"
+    SOME_EVENT = "some_event"

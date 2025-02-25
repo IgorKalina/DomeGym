@@ -3,11 +3,13 @@ import uuid
 
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
+from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
+    DomainEventRepository,
+)
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.domain.subscription.aggregate_root import Subscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 logger = logging.getLogger(__name__)
 
@@ -21,10 +23,10 @@ class CreateSubscriptionHandler(CommandHandler):
     def __init__(
         self,
         admin_repository: AdminRepository,
-        domain_event_bus: DomainEventBus,
+        domain_event_repository: DomainEventRepository,
     ) -> None:
         self.__admin_repository = admin_repository
-        self.__event_bus = domain_event_bus
+        self.__domain_event_repository = domain_event_repository
 
     async def handle(self, command: CreateSubscription) -> Subscription:
         admin: Admin = await self.__get_or_create_admin(command)
@@ -32,7 +34,7 @@ class CreateSubscriptionHandler(CommandHandler):
         admin.set_subscription(subscription)
 
         await self.__admin_repository.update(admin)
-        await self.__event_bus.publish(admin.pop_domain_events())
+        await self.__domain_event_repository.bulk_create(admin.pop_domain_events())
         return subscription
 
     async def __get_or_create_admin(self, command: CreateSubscription) -> Admin:

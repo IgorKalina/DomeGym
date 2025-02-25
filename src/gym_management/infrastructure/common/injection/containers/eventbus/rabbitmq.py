@@ -2,7 +2,6 @@ from typing import AsyncGenerator
 
 from dependency_injector import providers
 
-from src.gym_management.infrastructure.common.background_services.domain_events.publisher import DomainEventPublisher
 from src.gym_management.infrastructure.common.config.rabbitmq import RabbitmqConfig
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.broker import RabbitmqEventBroker
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.options import RabbitmqBrokerOptions
@@ -24,4 +23,3 @@ class EventbusRabbitmqContainer(EventbusContainer):
     config: providers.Dependency[RabbitmqConfig] = providers.Dependency()
 
     broker = providers.Resource(_init_rabbitmq_event_broker, config=config)
-    domain_event_publisher = providers.Factory(DomainEventPublisher, broker=broker)

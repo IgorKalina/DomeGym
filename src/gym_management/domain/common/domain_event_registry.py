@@ -2,13 +2,13 @@ from typing import Type
 
 from src.gym_management.domain.admin.events.subscription_set_event import SubscriptionSetEvent
 from src.gym_management.domain.admin.events.subscription_unset_event import SubscriptionUnsetEvent
-from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
-from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
-from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent
-from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
-from src.gym_management.infrastructure.common.background_services.domain_events.event_registry.domain_event_type import (  # noqa: E501
+from src.gym_management.domain.common.domain_event_type import (  # noqa: E501
     DomainEventType,
 )
+from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
+from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
+from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent, SomeEvent
+from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
 from src.shared_kernel.domain.common.event import DomainEvent
 
 
@@ -24,6 +24,8 @@ class DomainEventRegistry:
             # room
             DomainEventType.ROOM_ADDED: RoomAddedEvent,
             DomainEventType.ROOM_REMOVED: RoomRemovedEvent,
+            # other
+            DomainEventType.SOME_EVENT: SomeEvent,
         }
 
         self.__class_to_type = {event_class: event_type for event_type, event_class in self.__type_to_class.items()}

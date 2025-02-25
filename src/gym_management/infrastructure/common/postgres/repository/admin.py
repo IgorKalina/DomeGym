@@ -1,20 +1,22 @@
 import uuid
 
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.gym_management.application.admin.exceptions import AdminDoesNotExistError
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.domain.admin.aggregate_root import Admin
 from src.gym_management.infrastructure.common.postgres import models
-from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
 
-class AdminPostgresRepository(SQLAlchemyRepository, AdminRepository):
+class AdminPostgresRepository(AdminRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
     async def create(self, admin: Admin) -> None:
         admin = models.Admin.from_domain(admin)
         self._session.add(admin)
         await self._session.flush((admin,))
-        await self._session.commit()
 
     async def get(self, admin_id: uuid.UUID) -> Admin:
         admin: Admin | None = await self.get_or_none(admin_id)
@@ -35,5 +37,4 @@ class AdminPostgresRepository(SQLAlchemyRepository, AdminRepository):
 
         admin = models.Admin.from_domain(admin)
         await self._session.merge(admin)
-        await self._session.commit()
         return admin.to_domain()

@@ -7,7 +7,7 @@ from src.gym_management.domain.gym.aggregate_root import Gym
 from src.gym_management.domain.room.aggregate_root import Room
 from src.gym_management.domain.subscription import SubscriptionType
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.shared_kernel.infrastructure.eventbus.eventbus_memory import DomainEventBusMemory
+from src.shared_kernel.infrastructure.domain_event.domain_event_bus_memory import DomainEventBusMemory
 from tests.common.gym_management.common import constants
 from tests.common.gym_management.gym.factory.gym_domain_event_factory import GymDomainEventFactory
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
@@ -43,8 +43,7 @@ class TestGymRemovedHandler:
         event: GymRemovedEvent = GymDomainEventFactory.create_gym_removed_event(subscription=subscription, gym=gym)
 
         # Act
-        await self._domain_eventbus.publish([event])
-        await self._domain_eventbus.process_events()
+        await self._domain_eventbus.publish(event)
 
         # Assert
         actual_gym: Gym | None = await self._gym_repository.get_or_none(gym.id)
@@ -62,8 +61,7 @@ class TestGymRemovedHandler:
         event: GymRemovedEvent = GymDomainEventFactory.create_gym_removed_event(subscription=subscription, gym=gym)
 
         # Act
-        await self._domain_eventbus.publish([event])
-        await self._domain_eventbus.process_events()
+        await self._domain_eventbus.publish(event)
 
         # Assert
         rooms_by_existing_gym = await self._room_repository.get_by_gym_id(room.gym_id)

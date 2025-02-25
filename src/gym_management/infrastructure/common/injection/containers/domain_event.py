@@ -1,3 +1,5 @@
+from typing import Dict
+
 from dependency_injector import containers, providers
 
 from src.gym_management.application.gym.domain_events.gym_added_handler import GymAddedEventHandler
@@ -16,35 +18,44 @@ from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedE
 from src.gym_management.domain.subscription.events.gym_added_event import GymAddedEvent, SomeEvent
 from src.gym_management.domain.subscription.events.gym_removed_event import GymRemovedEvent
 from src.gym_management.infrastructure.common.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
+from src.shared_kernel.infrastructure.domain_event.domain_event_bus_memory import DomainEventBusMemory
+from src.shared_kernel.infrastructure.interfaces.unit_of_work import UnitOfWork
+
+
+async def _create_domain_event_bus(unit_of_work: UnitOfWork, domain_events: Dict) -> DomainEventBusMemory:
+    domain_event_bus = DomainEventBusMemory(unit_of_work=unit_of_work)
+    for domain_event, handlers in domain_events.items():
+        for handler in handlers:
+            await domain_event_bus.subscribe(domain_event, handler)
+    return domain_event_bus
 
 
 class DomainEventContainer(containers.DeclarativeContainer):
     repository_container: RepositoryContainer = providers.DependenciesContainer()
-    domain_event_bus = providers.Dependency(instance_of=DomainEventBus)
 
     # Subscription
     subscription_set_handler = providers.Factory(
         SubscriptionSetHandler,
         subscription_repository=repository_container.subscription_repository,
-        domain_event_bus=domain_event_bus,
     )
     subscription_unset_handler = providers.Factory(
         SubscriptionUnsetHandler,
         gym_repository=repository_container.gym_repository,
         subscription_repository=repository_container.subscription_repository,
-        domain_event_bus=domain_event_bus,
+        domain_event_repository=repository_container.domain_event_repository,
     )
 
     # Gym
     gym_added_handler = providers.Factory(
-        GymAddedEventHandler, gym_repository=repository_container.gym_repository, domain_event_bus=domain_event_bus
+        GymAddedEventHandler,
+        gym_repository=repository_container.gym_repository,
+        domain_event_repository=repository_container.domain_event_repository,
     )
     gym_removed_handler = providers.Factory(
         GymRemovedHandler,
         room_repository=repository_container.room_repository,
         gym_repository=repository_container.gym_repository,
-        domain_event_bus=domain_event_bus,
+        domain_event_repository=repository_container.domain_event_repository,
     )
 
     # Room
@@ -74,4 +85,10 @@ class DomainEventContainer(containers.DeclarativeContainer):
             # Other
             SomeEvent: providers.List(some_event_handler),
         }
+    )
+
+    domain_event_bus = providers.Factory(
+        _create_domain_event_bus,
+        unit_of_work=repository_container.unit_of_work,
+        domain_events=domain_events,
     )

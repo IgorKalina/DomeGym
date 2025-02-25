@@ -4,7 +4,7 @@ from typing import List
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.domain.room.aggregate_root import Room
 from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
-from tests.common.gym_management.common.repository_state import RepositorySharedState
+from tests.common.gym_management.common.repository_state_memory import RepositorySharedState
 
 
 class RoomMemoryRepository(RoomRepository):

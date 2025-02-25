@@ -1,12 +1,10 @@
 from dependency_injector import providers
 
 from src.gym_management.infrastructure.common.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.infrastructure.eventbus.failed_events_tinydb_repository import (
-    FailedDomainEventTinyDBRepository,
-)
 from tests.common.gym_management.admin.repository.memory import AdminMemoryRepository
-from tests.common.gym_management.common.repository_state import RepositorySharedState
-from tests.common.gym_management.domain_event.repository.memory import DomainEventOutboxMemoryRepository
+from tests.common.gym_management.common.repository_state_memory import RepositorySharedState
+from tests.common.gym_management.common.unit_of_work_memory import UnitOfWorkMemory
+from tests.common.gym_management.domain_event.repository.memory import DomainEventMemoryRepository
 from tests.common.gym_management.gym.repository.memory import GymMemoryRepository
 from tests.common.gym_management.room.repository.memory import RoomMemoryRepository
 from tests.common.gym_management.subscription.repository.memory import (
@@ -17,6 +15,7 @@ from tests.common.gym_management.subscription.repository.memory import (
 class RepositoryMemoryContainer(RepositoryContainer):
     repository_shared_state = providers.Singleton(RepositorySharedState)
 
+    unit_of_work = providers.Singleton(UnitOfWorkMemory)
     admin_repository = providers.Singleton(
         AdminMemoryRepository,
         shared_state=repository_shared_state,
@@ -33,5 +32,4 @@ class RepositoryMemoryContainer(RepositoryContainer):
         RoomMemoryRepository,
         shared_state=repository_shared_state,
     )
-    domain_event_outbox_repository = providers.Singleton(DomainEventOutboxMemoryRepository)
-    failed_domain_event_repository = providers.Singleton(FailedDomainEventTinyDBRepository)
+    domain_event_repository = providers.Singleton(DomainEventMemoryRepository)

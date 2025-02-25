@@ -34,7 +34,7 @@ router = APIRouter(
 async def create_gym(
     request: CreateGymRequest,
     subscription_id: uuid.UUID,
-    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> ORJSONResponse:
     command = CreateGym(name=request.name, subscription_id=subscription_id)
     gym: GymDB = await command_bus.invoke(command)
@@ -52,7 +52,7 @@ async def create_gym(
 async def get_gym(
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
-    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_container.query_bus]),
 ) -> ORJSONResponse:
     query = GetGym(gym_id=gym_id, subscription_id=subscription_id)
     gym: GymDB = await query_bus.invoke(query)
@@ -69,7 +69,7 @@ async def get_gym(
 @inject
 async def list_gyms(
     subscription_id: uuid.UUID,
-    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_container.query_bus]),
 ) -> ORJSONResponse:
     query = ListGyms(subscription_id=subscription_id)
     gyms: typing.List[GymDB] = await query_bus.invoke(query)
@@ -91,7 +91,7 @@ async def list_gyms(
 async def remove_gym(
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
-    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> ORJSONResponse:
     command = RemoveGym(gym_id=gym_id, subscription_id=subscription_id)
     await command_bus.invoke(command)

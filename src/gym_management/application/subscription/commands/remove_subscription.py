@@ -4,8 +4,10 @@ from typing import TYPE_CHECKING
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.domain.subscription.aggregate_root import Subscription
+from src.gym_management.infrastructure.common.postgres.repository.domain_event import (
+    DomainEventPostgresRepository,
+)
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 if TYPE_CHECKING:
     from src.gym_management.domain.admin.aggregate_root import Admin
@@ -20,12 +22,11 @@ class RemoveSubscriptionHandler(CommandHandler):
         self,
         subscription_repository: SubscriptionRepository,
         admin_repository: AdminRepository,
-        domain_event_bus: DomainEventBus,
+        domain_event_repository: DomainEventPostgresRepository,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository
-
-        self.__domain_event_bus = domain_event_bus
+        self.__domain_event_repository = domain_event_repository
 
     async def handle(self, command: RemoveSubscription) -> Subscription:
         subscription: Subscription = await self.__subscription_repository.get(command.subscription_id)
@@ -33,5 +34,5 @@ class RemoveSubscriptionHandler(CommandHandler):
         admin.unset_subscription(subscription)
 
         await self.__admin_repository.update(admin)
-        await self.__domain_event_bus.publish(admin.pop_domain_events())
+        await self.__domain_event_repository.bulk_create(admin.pop_domain_events())
         return subscription

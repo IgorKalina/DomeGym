@@ -11,26 +11,36 @@ from src.gym_management.application.common.dto.repository.domain_event_outbox.do
 from src.gym_management.application.common.dto.repository.domain_event_outbox.dto import DomainEventDB
 from src.gym_management.application.common.exceptions import DomainEventDoesNotExistError
 from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
-    DomainEventOutboxRepository,
+    DomainEventRepository,
 )
 from src.gym_management.infrastructure.common.postgres import models
-from src.gym_management.infrastructure.common.postgres.models.domain_event_outbox import DomainEventOutbox
+from src.gym_management.infrastructure.common.postgres.models.domain_event import DomainEventOutbox
 from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
+from src.shared_kernel.domain.common.event import DomainEvent
 
 
-class DomainEventOutboxPostgresRepository(SQLAlchemyRepository, DomainEventOutboxRepository):
-    async def create_multi(self, events: List[DomainEventDB]) -> None:
-        domain_event_outboxes = [DomainEventOutbox.from_domain(event) for event in events]
+class DomainEventPostgresRepository(SQLAlchemyRepository, DomainEventRepository):
+    async def bulk_create(self, events: List[DomainEvent]) -> None:
+        domain_events_dto = [DomainEventDB(event=domain_event) for domain_event in events]
+        domain_event_outboxes = [DomainEventOutbox.from_dto(dto) for dto in domain_events_dto]
         self._session.add_all(domain_event_outboxes)
-        await self._session.commit()
+        await self._session.flush(domain_event_outboxes)
 
-    async def get_multi(self, status: DomainEventProcessingStatus) -> List[DomainEventDB]:
+    async def get(self, event_id: uuid.UUID) -> DomainEventDB:
+        query = select(models.DomainEventOutbox).where(models.DomainEventOutbox.id == event_id)
+        result = await self._session.scalars(query)
+        domain_event: models.DomainEventOutbox | None = result.one_or_none()
+        if domain_event is None:
+            raise DomainEventDoesNotExistError(event_id=event_id)
+        return domain_event.to_dto()
+
+    async def list(self, status: DomainEventProcessingStatus) -> List[DomainEventDB]:
         try:
             result = await self._session.execute(
                 select(DomainEventOutbox).filter(DomainEventOutbox.processing_status == status)
             )
             domain_event_outboxes = result.scalars().all()
-            return [domain_event_outbox.to_domain() for domain_event_outbox in domain_event_outboxes]
+            return [domain_event_outbox.to_dto() for domain_event_outbox in domain_event_outboxes]
         except NoResultFound:
             return []
 
@@ -39,12 +49,11 @@ class DomainEventOutboxPostgresRepository(SQLAlchemyRepository, DomainEventOutbo
         if not domain_event_db:
             raise DomainEventDoesNotExistError(event_id=event.event.id)
 
-        domain_event_db_updated = models.DomainEventOutbox.from_domain(event)
+        domain_event_db_updated = models.DomainEventOutbox.from_dto(event)
         await self._session.merge(domain_event_db_updated)
-        await self._session.commit()
-        return domain_event_db_updated.to_domain()
+        await self._session.flush((domain_event_db_updated,))
+        return domain_event_db_updated.to_dto()
 
-    async def delete_multi(self, event_ids: List[uuid.UUID]) -> None:
+    async def bulk_delete(self, event_ids: List[uuid.UUID]) -> None:
         query = delete(DomainEventOutbox).where(DomainEventOutbox.id.in_(event_ids))
         await self._session.execute(query)
-        await self._session.commit()

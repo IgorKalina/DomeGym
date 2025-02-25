@@ -48,9 +48,8 @@ class Subscription(TimedBaseModel):
 class SubscriptionGymIds(BaseModel):
     __tablename__ = "subscription_gym_ids"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    gym_id: Mapped[uuid.UUID] = mapped_column(nullable=False)
-    subscription_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("subscription.id"), nullable=False)
+    gym_id: Mapped[uuid.UUID] = mapped_column(nullable=False, primary_key=True)
+    subscription_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("subscription.id"), nullable=False, primary_key=True)
 
     # Relationship: A GymRoomIds belongs to one Gym
     subscription: Mapped[Subscription] = relationship("Subscription", back_populates="gym_ids")
@@ -66,4 +65,5 @@ class SubscriptionGymIds(BaseModel):
                 subscription_id=aggregate.id,
             )
             for gym_id in aggregate.gym_ids
+            if gym_id
         ]

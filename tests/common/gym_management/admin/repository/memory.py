@@ -4,7 +4,7 @@ from typing import List
 from src.gym_management.application.admin.exceptions import AdminDoesNotExistError
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
 from src.gym_management.domain.admin.aggregate_root import Admin
-from tests.common.gym_management.common.repository_state import RepositorySharedState
+from tests.common.gym_management.common.repository_state_memory import RepositorySharedState
 
 
 class AdminMemoryRepository(AdminRepository):

@@ -6,15 +6,21 @@ from src.gym_management.application.common.dto.repository.domain_event_outbox.do
     DomainEventProcessingStatus,
 )
 from src.gym_management.application.common.dto.repository.domain_event_outbox.dto import DomainEventDB
+from src.shared_kernel.domain.common.event import DomainEvent
 
 
-class DomainEventOutboxRepository(ABC):
+# todo: split this into separate interfaces to follows ISP
+class DomainEventRepository(ABC):
     @abstractmethod
-    async def create_multi(self, events: List[DomainEventDB]) -> None:
+    async def bulk_create(self, events: List[DomainEvent]) -> None:
         pass
 
     @abstractmethod
-    async def get_multi(self, status: DomainEventProcessingStatus) -> List[DomainEventDB]:
+    async def get(self, event_id: uuid.UUID) -> DomainEventDB:
+        pass
+
+    @abstractmethod
+    async def list(self, status: DomainEventProcessingStatus) -> List[DomainEventDB]:
         pass
 
     @abstractmethod
@@ -22,5 +28,5 @@ class DomainEventOutboxRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete_multi(self, event_ids: List[uuid.UUID]) -> None:
+    async def bulk_delete(self, event_ids: List[uuid.UUID]) -> None:
         pass

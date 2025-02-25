@@ -14,11 +14,7 @@ class DomainEventDB(RepositoryDto):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     event: DomainEvent
     processing_status: DomainEventProcessingStatus = DomainEventProcessingStatus.PENDING
-    failure_reason: str | None = None
-
-    def set_to_published(self) -> Self:
-        self.processing_status = DomainEventProcessingStatus.PUBLISHED
-        return self
+    error: str | None = None
 
     def set_to_failed(self) -> Self:
         self.processing_status = DomainEventProcessingStatus.FAILED

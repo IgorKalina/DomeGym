@@ -37,7 +37,7 @@ async def create_room(
     request: CreateRoomRequest,
     subscription_id: uuid.UUID,
     gym_id: uuid.UUID,
-    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> ORJSONResponse:
     command = CreateRoom(name=request.name, gym_id=gym_id, subscription_id=subscription_id)
     room: Room = await command_bus.invoke(command)
@@ -55,7 +55,7 @@ async def create_room(
 async def list_rooms(
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
-    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_container.query_bus]),
 ) -> ORJSONResponse:
     query = ListRooms(gym_id=gym_id, subscription_id=subscription_id)
     rooms: List[Room] = await query_bus.invoke(query)
@@ -81,7 +81,7 @@ async def get_room(
     room_id: uuid.UUID,
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
-    query_bus: QueryBus = Depends(Provide[DiContainer.query_bus]),
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_container.query_bus]),
 ) -> ORJSONResponse:
     query = GetRoom(room_id=room_id, gym_id=gym_id, subscription_id=subscription_id)
     room: Room = await query_bus.invoke(query)
@@ -104,7 +104,7 @@ async def remove_room(
     room_id: uuid.UUID,
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
-    command_bus: CommandBus = Depends(Provide[DiContainer.command_bus]),
+    command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> ORJSONResponse:
     command = RemoveRoom(room_id=room_id, gym_id=gym_id, subscription_id=subscription_id)
     await command_bus.invoke(command)

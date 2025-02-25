@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncContextManager, AsyncGenerator, Callable
@@ -10,6 +11,9 @@ from fastapi.responses import (
     ORJSONResponse,
 )
 
+from src.gym_management.infrastructure.common.background_services.domain_events.process_domain_events import (
+    process_domain_events,
+)
 from src.gym_management.infrastructure.common.config.api import ApiConfig, UvicornConfig
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.main import setup_controllers
@@ -23,9 +27,8 @@ def api_lifespan(di_container: DiContainer) -> Callable[[FastAPI], AsyncContextM
     @asynccontextmanager
     async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
         await di_container.init_resources()
+        asyncio.create_task(process_domain_events())
         try:
-            # todo: init queues here instead of DI container
-            # todo: init AsyncIOScheduler here instead of DI container
             yield
         finally:
             await di_container.shutdown_resources()

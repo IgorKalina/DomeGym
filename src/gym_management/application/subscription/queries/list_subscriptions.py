@@ -16,4 +16,4 @@ class ListSubscriptionsHandler(QueryHandler):
         self.__subscription_repository = subscription_repository
 
     async def handle(self, query: Subscription) -> List[Subscription]:  # noqa: ARG002
-        return await self.__subscription_repository.get_multi()
+        return await self.__subscription_repository.list()

@@ -12,6 +12,13 @@ from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_rep
 
 
 class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
+    async def create(self, gym: Gym) -> None:
+        gym_model: models.Gym = models.Gym.from_domain(gym)
+        room_ids: List[models.GymRoomIds] = models.GymRoomIds.from_domain(gym)
+        trainer_ids: List[models.GymTrainerIds] = models.GymTrainerIds.from_domain(gym)
+        self._session.add_all([gym_model, *room_ids, *trainer_ids])
+        await self._session.flush((gym_model,))
+
     async def get(self, gym_id: uuid.UUID) -> Gym:
         gym: Gym | None = await self.get_or_none(gym_id)
         if gym is None:
@@ -31,14 +38,6 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
             return gym.to_domain()
         return None
 
-    async def create(self, gym: Gym) -> None:
-        gym_model: models.Gym = models.Gym.from_domain(gym)
-        room_ids: List[models.GymRoomIds] = models.GymRoomIds.from_domain(gym)
-        trainer_ids: List[models.GymTrainerIds] = models.GymTrainerIds.from_domain(gym)
-        self._session.add_all([gym_model, *room_ids, *trainer_ids])
-        await self._session.flush((gym_model,))
-        await self._session.commit()
-
     async def get_by_subscription_id(self, subscription_id: uuid.UUID) -> List[Gym]:
         query = (
             select(models.Gym)
@@ -50,15 +49,14 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
         return [gym.to_domain() for gym in result]
 
     async def update(self, gym: Gym) -> Gym:
-        subscription_model: models.Gym = await self._session.get(models.Gym, gym.id)
-        if not subscription_model:
+        existing_gym: models.Gym = await self._session.get(models.Gym, gym.id)
+        if not existing_gym:
             raise GymDoesNotExistError(gym_id=gym.id)
 
         gym_model_updated: models.Gym = models.Gym.from_domain(gym)
         gym_model_updated.room_ids = models.GymRoomIds.from_domain(gym)
         gym_model_updated.trainer_ids = models.GymTrainerIds.from_domain(gym)
         await self._session.merge(gym_model_updated)
-        await self._session.commit()
         return gym
 
     async def delete(self, gym: Gym) -> None:
@@ -66,4 +64,4 @@ class GymPostgresRepository(SQLAlchemyRepository, GymRepository):
         if not gym_model:
             raise GymDoesNotExistError(gym_id=gym.id)
         await self._session.delete(gym_model)
-        await self._session.commit()
+        await self._session.flush((gym_model,))

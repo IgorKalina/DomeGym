@@ -3,10 +3,12 @@ import uuid
 from typing import TYPE_CHECKING
 
 from src.gym_management.application.common.dto.repository import RoomDB
+from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
+    DomainEventRepository,
+)
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 if TYPE_CHECKING:
     from src.gym_management.domain.gym.aggregate_root import Gym
@@ -26,11 +28,11 @@ class RemoveRoomHandler(CommandHandler):
         self,
         room_repository: RoomRepository,
         gym_repository: GymRepository,
-        domain_event_bus: DomainEventBus,
+        domain_event_repository: DomainEventRepository,
     ) -> None:
         self.__room_repository = room_repository
         self.__gym_repository = gym_repository
-        self.__domain_event_bus = domain_event_bus
+        self.__domain_event_repository = domain_event_repository
 
     async def handle(self, command: RemoveRoom) -> RoomDB:
         gym: Gym = await self.__gym_repository.get(command.gym_id)
@@ -38,6 +40,6 @@ class RemoveRoomHandler(CommandHandler):
         gym.remove_room(room)
 
         await self.__gym_repository.update(gym)
-        await self.__domain_event_bus.publish(gym.pop_domain_events())
+        await self.__domain_event_repository.bulk_create(gym.pop_domain_events())
         logger.info(f"Removed room with id: {room.id}")
         return room

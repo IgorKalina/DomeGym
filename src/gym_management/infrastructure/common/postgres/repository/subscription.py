@@ -16,7 +16,6 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
         subscription_model: models.Subscription = models.Subscription.from_domain(subscription)
         self._session.add(subscription_model)
         await self._session.flush((subscription_model,))
-        await self._session.commit()
 
     async def get(self, subscription_id: uuid.UUID) -> Subscription:
         subscription: Subscription | None = await self.get_or_none(subscription_id)
@@ -48,7 +47,7 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
             raise SubscriptionDoesNotExistError()
         return subscription.to_domain()
 
-    async def get_multi(self) -> List[Subscription]:
+    async def list(self) -> List[Subscription]:
         query = select(models.Subscription).options(selectinload(models.Subscription.gym_ids))
         result: List[models.Subscription] = await self._session.scalars(query)
         return [subscription.to_domain() for subscription in result]
@@ -61,7 +60,6 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
         subscription_model_updated: models.Subscription = models.Subscription.from_domain(subscription)
         subscription_model_updated.gym_ids = models.SubscriptionGymIds.from_domain(subscription)
         await self._session.merge(subscription_model_updated)
-        await self._session.commit()
         return subscription
 
     async def delete(self, subscription: Subscription) -> None:
@@ -69,4 +67,3 @@ class SubscriptionPostgresRepository(SQLAlchemyRepository, SubscriptionRepositor
         if not subscription_model:
             raise SubscriptionDoesNotExistError()
         await self._session.delete(subscription_model)
-        await self._session.commit()

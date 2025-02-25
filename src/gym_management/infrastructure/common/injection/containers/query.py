@@ -1,3 +1,5 @@
+from typing import Dict
+
 from dependency_injector import containers, providers
 
 from src.gym_management.application.admin.queries.get_admin import GetAdmin, GetAdminHandler
@@ -11,12 +13,19 @@ from src.gym_management.application.subscription.queries.list_subscriptions impo
     ListSubscriptionsHandler,
 )
 from src.gym_management.infrastructure.common.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.application.query.interfaces.query_bus import QueryBus
+from src.shared_kernel.infrastructure.interfaces.unit_of_work import UnitOfWork
+from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
+
+
+async def _create_query_bus(unit_of_work: UnitOfWork, queries: Dict) -> QueryBusMemory:
+    query_bus = QueryBusMemory(unit_of_work=unit_of_work)
+    for query, handler in queries.items():
+        query_bus.register_query_handler(query, handler)
+    return query_bus
 
 
 class QueryContainer(containers.DeclarativeContainer):
     repository_container: RepositoryContainer = providers.DependenciesContainer()
-    query_bus: QueryBus = providers.Dependency(instance_of=QueryBus)
 
     # Admin
     get_admin_handler = providers.Factory(
@@ -70,4 +79,10 @@ class QueryContainer(containers.DeclarativeContainer):
             GetRoom: get_room_handler,
             ListRooms: list_rooms_handler,
         },
+    )
+
+    query_bus: providers.Factory[QueryBusMemory] = providers.Factory(
+        _create_query_bus,
+        unit_of_work=repository_container.unit_of_work,
+        queries=queries,
     )

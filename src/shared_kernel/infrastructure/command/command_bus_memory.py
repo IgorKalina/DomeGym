@@ -4,12 +4,14 @@ from typing import Dict, Type
 from src.shared_kernel.application.command.interfaces.command import Command, CommandHandler, CommandResult, CommandType
 from src.shared_kernel.application.command.interfaces.command_bus import CommandBus
 from src.shared_kernel.application.exceptions import HandlerNotFoundError
+from src.shared_kernel.infrastructure.interfaces.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
 
 class CommandBusMemory(CommandBus):
-    def __init__(self) -> None:
+    def __init__(self, unit_of_work: UnitOfWork) -> None:
+        self.__unit_of_work = unit_of_work
         self.__command_handlers: Dict[Type[Command], CommandHandler] = {}
 
     async def invoke(self, command: CommandType) -> CommandResult:
@@ -17,7 +19,10 @@ class CommandBusMemory(CommandBus):
         if handler is None:
             raise HandlerNotFoundError(handlee=command)
         logger.debug(f"Handling '{command.__class__.__name__}' command by '{handler.__class__.__name__}' handler")
-        return await handler.handle(command)
+        async with self.__unit_of_work:
+            command_result = await handler.handle(command)
+            await self.__unit_of_work.commit()
+        return command_result
 
     def register_command_handler(
         self, command: Type[CommandType], handler: CommandHandler[CommandType, CommandResult]

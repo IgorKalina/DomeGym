@@ -1,11 +1,13 @@
 import typing
 import uuid
 
+from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
+    DomainEventRepository,
+)
 from src.gym_management.application.common.interfaces.repository.gym_repository import GymRepository
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.domain.room.aggregate_root import Room
 from src.shared_kernel.application.command import Command, CommandHandler
-from src.shared_kernel.application.event.domain.event_bus import DomainEventBus
 
 if typing.TYPE_CHECKING:
     from src.gym_management.domain.gym.aggregate_root import Gym
@@ -25,12 +27,11 @@ class CreateRoomHandler(CommandHandler):
         self,
         subscription_repository: SubscriptionRepository,
         gym_repository: GymRepository,
-        domain_event_bus: DomainEventBus,
+        domain_event_repository: DomainEventRepository,
     ) -> None:
         self.__subscription_repository = subscription_repository
         self.__gym_repository = gym_repository
-
-        self.__domain_event_bus = domain_event_bus
+        self.__domain_event_repository = domain_event_repository
 
     async def handle(self, command: CreateRoom) -> Room:
         subscription: Subscription = await self.__subscription_repository.get(command.subscription_id)
@@ -39,5 +40,5 @@ class CreateRoomHandler(CommandHandler):
         gym.add_room(room)
 
         await self.__gym_repository.update(gym)
-        await self.__domain_event_bus.publish(gym.pop_domain_events())
+        await self.__domain_event_repository.bulk_create(gym.pop_domain_events())
         return room

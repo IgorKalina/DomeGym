@@ -46,11 +46,12 @@ async def di_container(config: ConfigTest) -> AsyncGenerator[DiContainer, None]:
         repository_container=repository_container,
         eventbus_container=eventbus_container,
     )
-    di_container.background_task_scheduler.override(lambda: None)
+    di_container.repository_container.override(repository_container)
+    di_container.eventbus_container.override(eventbus_container)
     await di_container.init_resources()
 
     yield di_container
 
-    session: AsyncSession = await repository_container.session_provider()
+    session: AsyncSession = await repository_container.session()
     await _truncate_all_tables(session)
     await di_container.shutdown_resources()
