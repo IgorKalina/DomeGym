@@ -20,9 +20,7 @@ class CommandBusMemory(CommandBus):
             raise HandlerNotFoundError(handlee=command)
         logger.debug(f"Handling '{command.__class__.__name__}' command by '{handler.__class__.__name__}' handler")
         async with self.__unit_of_work:
-            command_result = await handler.handle(command)
-            await self.__unit_of_work.commit()
-        return command_result
+            return await handler.handle(command)
 
     def register_command_handler(
         self, command: Type[CommandType], handler: CommandHandler[CommandType, CommandResult]

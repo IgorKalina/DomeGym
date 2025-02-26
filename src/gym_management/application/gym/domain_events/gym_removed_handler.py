@@ -37,6 +37,7 @@ class GymRemovedHandler(DomainEventHandler):
             logger.warning(f"Gym with id '{event.gym.id}' has been already removed")
             return
         await self.__remove_all_rooms(gym)
+        await self.__gym_repository.delete(gym)
 
     async def __remove_all_rooms(self, gym: Gym) -> None:
         logger.info(f"Removing all rooms for the removed gym with id: {gym.id}")
@@ -46,5 +47,4 @@ class GymRemovedHandler(DomainEventHandler):
             logger.info(f"Removed room with id '{room.id}' from gym id: {gym.id}")
 
         await self.__domain_event_repository.bulk_create(gym.pop_domain_events())
-        await self.__gym_repository.delete(gym)
         logger.info(f"All rooms have been removed for the gym id: {gym.id}")

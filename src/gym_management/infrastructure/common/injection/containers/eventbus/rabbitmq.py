@@ -1,6 +1,6 @@
 from typing import AsyncGenerator
 
-from dependency_injector import providers
+from dependency_injector import containers, providers
 
 from src.gym_management.infrastructure.common.config.rabbitmq import RabbitmqConfig
 from src.gym_management.infrastructure.common.eventbus.rabbitmq.broker import RabbitmqEventBroker
@@ -19,6 +19,7 @@ async def _init_rabbitmq_event_broker(config: RabbitmqConfig) -> AsyncGenerator[
         yield broker
 
 
+@containers.copy(EventbusContainer)
 class EventbusRabbitmqContainer(EventbusContainer):
     config: providers.Dependency[RabbitmqConfig] = providers.Dependency()
 

@@ -13,12 +13,11 @@ from src.gym_management.application.subscription.queries.list_subscriptions impo
     ListSubscriptionsHandler,
 )
 from src.gym_management.infrastructure.common.injection.containers.repository.base import RepositoryContainer
-from src.shared_kernel.infrastructure.interfaces.unit_of_work import UnitOfWork
 from src.shared_kernel.infrastructure.query.query_bus_memory import QueryBusMemory
 
 
-async def _create_query_bus(unit_of_work: UnitOfWork, queries: Dict) -> QueryBusMemory:
-    query_bus = QueryBusMemory(unit_of_work=unit_of_work)
+async def _create_query_bus(queries: Dict) -> QueryBusMemory:
+    query_bus = QueryBusMemory()
     for query, handler in queries.items():
         query_bus.register_query_handler(query, handler)
     return query_bus
@@ -83,6 +82,5 @@ class QueryContainer(containers.DeclarativeContainer):
 
     query_bus: providers.Factory[QueryBusMemory] = providers.Factory(
         _create_query_bus,
-        unit_of_work=repository_container.unit_of_work,
         queries=queries,
     )

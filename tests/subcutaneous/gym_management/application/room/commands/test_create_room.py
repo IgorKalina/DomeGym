@@ -36,7 +36,7 @@ class TestCreateRoom:
         self._room_repository = room_repository
 
         self._gym: Gym = gym
-        self._subscription_db: Subscription = subscription
+        self._subscription: Subscription = subscription
 
     @pytest.mark.asyncio
     async def test_create_room_when_valid_command_should_create_room(self) -> None:

@@ -5,10 +5,6 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.gym_management.infrastructure.common.injection.containers.eventbus.rabbitmq import EventbusRabbitmqContainer
-from src.gym_management.infrastructure.common.injection.containers.repository.postgres import (
-    RepositoryPostgresContainer,
-)
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.infrastructure.common.postgres.models.base_model import BaseModel
 from tests.common.gym_management.common.config.config import ConfigTest
@@ -40,18 +36,12 @@ async def _truncate_all_tables(session: AsyncSession) -> None:
 
 @pytest.fixture
 async def di_container(config: ConfigTest) -> AsyncGenerator[DiContainer, None]:  # noqa: ARG001
-    repository_container = RepositoryPostgresContainer(config=config.database)
-    eventbus_container = EventbusRabbitmqContainer(config=config.rabbitmq)
-    di_container = DiContainer(
-        repository_container=repository_container,
-        eventbus_container=eventbus_container,
-    )
-    di_container.repository_container.override(repository_container)
-    di_container.eventbus_container.override(eventbus_container)
+    di_container = DiContainer()
+    di_container.config.override(config)
     await di_container.init_resources()
 
     yield di_container
 
-    session: AsyncSession = await repository_container.session()
+    session: AsyncSession = await di_container.repository_container.session()
     await _truncate_all_tables(session)
     await di_container.shutdown_resources()
