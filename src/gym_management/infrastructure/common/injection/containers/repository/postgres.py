@@ -39,38 +39,12 @@ async def _init_engine(config: DatabaseConfig) -> AsyncEngine:
         logger.debug(f"Disconnected Postgres engine: {config.get_full_url()}")
 
 
-# async def _init_session(engine: AsyncEngine) -> AsyncSession:
-#     session_factory = async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
-#     async with session_factory() as session:
-#         await session.execute(select(1))
-#         logger.info("Postgres session has been established")
-#         yield session
-#
-
-
 def _create_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
 async def _init_session(session_factory: async_sessionmaker[AsyncSession]) -> AsyncSession:
     return session_factory()
-
-
-# async def _init_postgres_session(config: DatabaseConfig) -> AsyncSession:
-#     engine = create_async_engine(
-#         url=config.full_url,
-#         echo_pool=True,
-#         json_serializer=lambda data: orjson.dumps(data).decode(),
-#         json_deserializer=orjson.loads,
-#         pool_size=50,
-#     )
-#     session_factory = _build_sa_session_factory(engine)
-#     async with session_factory() as session:
-#         await session.execute(select(1))
-#         logger.info("Postgres session has been established")
-#         yield session
-#
-#     await engine.dispose()
 
 
 @containers.copy(RepositoryContainer)
