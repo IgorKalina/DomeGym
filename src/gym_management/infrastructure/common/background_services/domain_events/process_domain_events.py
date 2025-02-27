@@ -28,7 +28,6 @@ async def process_domain_events(
     ),
 ) -> None:
     async def handle_domain_event(dto: DomainEventDB) -> None:
-        """Handles a single domain event with error handling."""
         async with unit_of_work:
             try:
                 await domain_event_bus.publish(dto.event)
@@ -36,7 +35,8 @@ async def process_domain_events(
             except EventualConsistencyError as e:
                 dto.set_to_failed()
                 dto.error = e.detail
-            await domain_event_repository.update(dto)
+            finally:
+                await domain_event_repository.update(dto)
 
     while True:
         domain_events: List[DomainEventDB] = await domain_event_repository.list(
