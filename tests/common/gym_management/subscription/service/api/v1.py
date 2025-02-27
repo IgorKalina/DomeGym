@@ -1,3 +1,4 @@
+import uuid
 from http import HTTPStatus
 from typing import Tuple, TypeAlias
 
@@ -25,6 +26,18 @@ class SubscriptionV1ApiService:
     async def create(self, request: CreateSubscriptionRequest) -> Tuple[httpx.Response, ResponseData]:
         response = await self.__api_client.post(self.__url, json=request.model_dump())
         if response.status_code != HTTPStatus.CREATED:
+            return response, ErrorResponse(status=response.status_code, **response.json())
+        return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
+
+    async def get(self, subscription_id: uuid.UUID) -> Tuple[httpx.Response, ResponseData]:
+        response = await self.__api_client.get(f"{self.__url}/{subscription_id}")
+        if response.status_code != HTTPStatus.OK:
+            return response, ErrorResponse(status=response.status_code, **response.json())
+        return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
+
+    async def delete(self, subscription_id: uuid.UUID) -> Tuple[httpx.Response, ResponseData]:
+        response = await self.__api_client.delete(f"{self.__url}/{subscription_id}")
+        if response.status_code != HTTPStatus.OK:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[SubscriptionResponse](status=response.status_code, **response.json())
 

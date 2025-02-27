@@ -1,11 +1,12 @@
+import uuid
 from dataclasses import dataclass
 
+from src.gym_management.application.common.exceptions import AppError
 from src.shared_kernel.application.error_or import ErrorType
-from src.shared_kernel.domain.common.exceptions import DomainError
 
 
 @dataclass(kw_only=True, frozen=True)
-class RoomError(DomainError):
+class RoomAppError(AppError):
     entity_name: str = "Room"
 
     @property
@@ -14,9 +15,10 @@ class RoomError(DomainError):
 
 
 @dataclass(kw_only=True, frozen=True)
-class RoomDoesNotExistInGymError(RoomError):
+class RoomDoesNotExistError(RoomAppError):
+    room_id: uuid.UUID
     error_type: ErrorType = ErrorType.NOT_FOUND
 
     @property
     def detail(self) -> str:
-        return "Room does not exist in the gym"
+        return f"Room with the provided id does not exist: {self.room_id}"

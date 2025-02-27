@@ -1,4 +1,3 @@
-import time
 import uuid
 from datetime import datetime, timezone
 from typing import Any
@@ -27,9 +26,3 @@ class Entity(BaseModel):
         if not isinstance(other, Entity):
             return False
         return self.id == other.id
-
-
-if __name__ == "__main__":
-    e = Entity()
-    time.sleep(1)
-    e.id = uuid.uuid4()

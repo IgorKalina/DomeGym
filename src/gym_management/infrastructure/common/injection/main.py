@@ -1,7 +1,6 @@
-from dependency_injector import providers
+from dependency_injector import containers, providers
 
 from src.gym_management.infrastructure.common.config import load_config
-from src.gym_management.infrastructure.common.injection.base import DiBaseContainer
 from src.gym_management.infrastructure.common.injection.containers.command import CommandContainer
 from src.gym_management.infrastructure.common.injection.containers.domain_event import DomainEventContainer
 from src.gym_management.infrastructure.common.injection.containers.eventbus.base import EventbusContainer
@@ -13,7 +12,7 @@ from src.gym_management.infrastructure.common.injection.containers.repository.po
 )
 
 
-class DiContainer(DiBaseContainer):
+class DiContainer(containers.DeclarativeContainer):
     config = providers.Callable(load_config)
     repository_container: RepositoryContainer = providers.Container(
         RepositoryPostgresContainer, config=config.provided.database

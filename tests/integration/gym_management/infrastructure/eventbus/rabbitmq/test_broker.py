@@ -43,7 +43,7 @@ class TestRabbitmqEventBroker:
         await self._broker.publish(event=self._event, options=self._publish_options)
 
         # Assert
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.4)
         mock.assert_called_once()
 
     async def test_when_no_messages_published_should_not_execute_handler(self) -> None:

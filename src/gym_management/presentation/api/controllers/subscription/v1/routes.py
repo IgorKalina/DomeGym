@@ -7,7 +7,8 @@ from fastapi.routing import APIRouter
 
 from src.gym_management.application.admin.exceptions import AdminAlreadyExistsError
 from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
-from src.gym_management.application.subscription.commands.remove_subscription import RemoveSubscription
+from src.gym_management.application.subscription.commands.delete_subscription import RemoveSubscription
+from src.gym_management.application.subscription.queries.get_subscription import GetSubscription
 from src.gym_management.application.subscription.queries.list_subscriptions import ListSubscriptions
 from src.gym_management.infrastructure.common.injection.main import DiContainer
 from src.gym_management.presentation.api.controllers.common.responses.dto import ErrorResponse, OkResponse
@@ -52,6 +53,30 @@ async def create_subscription(
         updated_at=subscription.updated_at,
     )
     return OkResponse(status=status.HTTP_201_CREATED, data=[subscription_response]).to_orjson()
+
+
+@router.get(
+    "/{subscription_id}",
+    responses={
+        status.HTTP_200_OK: {"model": OkResponse[SubscriptionResponse]},
+    },
+    response_model=OkResponse[SubscriptionResponse],
+)
+@inject
+async def get_subscription(
+    subscription_id: uuid.UUID,
+    query_bus: QueryBus = Depends(Provide[DiContainer.query_container.query_bus]),
+) -> OkResponse[SubscriptionResponse]:
+    command = GetSubscription(subscription_id=subscription_id)
+    subscription: Subscription = await query_bus.invoke(command)
+    subscription_response = SubscriptionResponse(
+        id=subscription.id,
+        type=subscription.type,
+        admin_id=subscription.admin_id,
+        created_at=subscription.created_at,
+        updated_at=subscription.updated_at,
+    )
+    return OkResponse(status=status.HTTP_200_OK, data=[subscription_response]).to_orjson()
 
 
 @router.get(

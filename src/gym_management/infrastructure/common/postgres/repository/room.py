@@ -4,8 +4,9 @@ from typing import List
 from sqlalchemy import select
 
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
+from src.gym_management.application.room.expections import RoomDoesNotExistError
 from src.gym_management.domain.room.aggregate_root import Room
-from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
+from src.gym_management.domain.room.exceptions import RoomDoesNotExistInGymError
 from src.gym_management.infrastructure.common.postgres import models
 from src.gym_management.infrastructure.common.postgres.repository.sqlalchemy_repository import SQLAlchemyRepository
 
@@ -19,7 +20,7 @@ class RoomPostgresRepository(SQLAlchemyRepository, RoomRepository):
     async def get(self, room_id: uuid.UUID) -> Room:
         room = await self.get_or_none(room_id)
         if not room:
-            raise RoomDoesNotExistError()
+            raise RoomDoesNotExistError(room_id=room_id)
         return room
 
     async def get_or_none(self, room_id: uuid.UUID) -> Room | None:
@@ -38,6 +39,6 @@ class RoomPostgresRepository(SQLAlchemyRepository, RoomRepository):
     async def delete(self, room_id: uuid.UUID) -> None:
         room_model: models.Room = await self._session.get(models.Room, room_id)
         if not room_model:
-            raise RoomDoesNotExistError()
+            raise RoomDoesNotExistInGymError()
         await self._session.delete(room_model)
         await self._session.flush((room_model,))

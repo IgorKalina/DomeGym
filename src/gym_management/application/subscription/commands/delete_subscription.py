@@ -2,11 +2,11 @@ import uuid
 from typing import TYPE_CHECKING
 
 from src.gym_management.application.common.interfaces.repository.admin_repository import AdminRepository
+from src.gym_management.application.common.interfaces.repository.domain_event_outbox_repository import (
+    DomainEventRepository,
+)
 from src.gym_management.application.common.interfaces.repository.subscription_repository import SubscriptionRepository
 from src.gym_management.domain.subscription.aggregate_root import Subscription
-from src.gym_management.infrastructure.common.postgres.repository.domain_event import (
-    DomainEventPostgresRepository,
-)
 from src.shared_kernel.application.command import Command, CommandHandler
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ class RemoveSubscriptionHandler(CommandHandler):
         self,
         subscription_repository: SubscriptionRepository,
         admin_repository: AdminRepository,
-        domain_event_repository: DomainEventPostgresRepository,
+        domain_event_repository: DomainEventRepository,
     ) -> None:
         self.__admin_repository = admin_repository
         self.__subscription_repository = subscription_repository

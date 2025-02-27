@@ -61,5 +61,11 @@ def run_api(
 ) -> None:
     logger.info("Running API")
     uvicorn.run(
-        app, factory=factory, host=config.host, port=config.port, log_level=config.log_level, reload=config.reload
+        app,
+        factory=factory,
+        host=config.host,
+        port=config.port,
+        log_level=config.log_level,
+        reload=config.reload,
+        loop="uvloop",
     )

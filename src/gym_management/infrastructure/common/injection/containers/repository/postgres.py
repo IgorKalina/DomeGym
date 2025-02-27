@@ -1,7 +1,7 @@
 import logging
 
 import orjson
-from dependency_injector import containers, providers
+from dependency_injector import providers
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from src.gym_management.infrastructure.common.config.database import DatabaseConfig
@@ -47,7 +47,6 @@ async def _init_session(session_factory: async_sessionmaker[AsyncSession]) -> As
     return session_factory()
 
 
-@containers.copy(RepositoryContainer)
 class RepositoryPostgresContainer(RepositoryContainer):
     config: providers.Dependency[DatabaseConfig] = providers.Dependency()
 

@@ -89,10 +89,10 @@ async def get_room(
         id=room.id,
         name=room.name,
         gym_id=room.gym_id,
-        subscription_id=room.subscription_id,
+        subscription_id=subscription_id,
         created_at=room.created_at,
     )
-    return OkResponse(status=status.HTTP_200_OK, data=response).to_orjson()
+    return OkResponse(status=status.HTTP_200_OK, data=[response]).to_orjson()
 
 
 @router.delete(
@@ -100,12 +100,19 @@ async def get_room(
     response_model=OkResponse[RoomResponse],
 )
 @inject
-async def remove_room(
+async def delete_room(
     room_id: uuid.UUID,
     gym_id: uuid.UUID,
     subscription_id: uuid.UUID,
     command_bus: CommandBus = Depends(Provide[DiContainer.command_container.command_bus]),
 ) -> ORJSONResponse:
     command = RemoveRoom(room_id=room_id, gym_id=gym_id, subscription_id=subscription_id)
-    await command_bus.invoke(command)
-    return OkResponse(status=status.HTTP_204_NO_CONTENT).to_orjson()
+    room: Room = await command_bus.invoke(command)
+    response: RoomResponse = RoomResponse(
+        id=room.id,
+        name=room.name,
+        gym_id=room.gym_id,
+        subscription_id=subscription_id,
+        created_at=room.created_at,
+    )
+    return OkResponse(status=status.HTTP_200_OK, data=[response]).to_orjson()

@@ -10,7 +10,7 @@ from src.gym_management.application.subscription.commands.create_subscription im
     CreateSubscription,
     CreateSubscriptionHandler,
 )
-from src.gym_management.application.subscription.commands.remove_subscription import (
+from src.gym_management.application.subscription.commands.delete_subscription import (
     RemoveSubscription,
     RemoveSubscriptionHandler,
 )
@@ -69,6 +69,7 @@ class CommandContainer(containers.DeclarativeContainer):
         RemoveRoomHandler,
         room_repository=repository_container.room_repository,
         gym_repository=repository_container.gym_repository,
+        subscription_repository=repository_container.subscription_repository,
         domain_event_repository=repository_container.domain_event_repository,
     )
 

@@ -5,7 +5,7 @@ from src.gym_management.domain.gym.events.room_added_event import RoomAddedEvent
 from src.gym_management.domain.gym.events.room_removed_event import RoomRemovedEvent
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
 from src.gym_management.domain.room.aggregate_root import Room
-from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
+from src.gym_management.domain.room.exceptions import RoomDoesNotExistInGymError
 from src.shared_kernel.domain.common.aggregate_root import AggregateRoot
 
 
@@ -25,7 +25,7 @@ class Gym(AggregateRoot):
 
     def remove_room(self, room: Room) -> None:
         if room.id not in self.room_ids:
-            raise RoomDoesNotExistError()
+            raise RoomDoesNotExistInGymError()
         self.room_ids.remove(room.id)
         self._create_domain_event(RoomRemovedEvent(gym=self.model_copy(), room_id=room.id))
 

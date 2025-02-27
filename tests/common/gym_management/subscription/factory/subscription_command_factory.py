@@ -1,7 +1,7 @@
 import uuid
 
 from src.gym_management.application.subscription.commands.create_subscription import CreateSubscription
-from src.gym_management.application.subscription.commands.remove_subscription import RemoveSubscription
+from src.gym_management.application.subscription.commands.delete_subscription import RemoveSubscription
 from src.gym_management.domain.subscription.subscription_type import SubscriptionType
 from tests.common.gym_management.common import constants
 

@@ -37,5 +37,15 @@ class RoomV1ApiService:
             return response, ErrorResponse(status=response.status_code, **response.json())
         return response, OkResponse[RoomResponse](status=response.status_code, **response.json())
 
+    async def delete(
+        self, gym_id: uuid.UUID, subscription_id: uuid.UUID, room_id: uuid.UUID
+    ) -> Tuple[httpx.Response, ResponseData]:
+        url = self.__get_url(subscription_id=subscription_id, gym_id=gym_id)
+        room_url = f"{url}/{room_id}"
+        response = await self.__api_client.delete(room_url)
+        if response.status_code != HTTPStatus.OK:
+            return response, ErrorResponse(status=response.status_code, **response.json())
+        return response, OkResponse[RoomResponse](status=response.status_code, **response.json())
+
     def __get_url(self, subscription_id: uuid.UUID, gym_id: uuid.UUID) -> str:
         return f"{self.__version}/subscriptions/{subscription_id}/gyms/{gym_id}/rooms"

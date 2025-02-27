@@ -3,7 +3,7 @@ import uuid
 import pytest
 
 from src.gym_management.domain.gym.exceptions import GymCannotHaveMoreRoomsThanSubscriptionAllowsError
-from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
+from src.gym_management.domain.room.exceptions import RoomDoesNotExistInGymError
 from src.shared_kernel.application.error_or import ErrorType
 from tests.common.gym_management.gym.factory.gym_factory import GymFactory
 from tests.common.gym_management.room.factory.room_factory import RoomFactory
@@ -57,7 +57,7 @@ class TestGymAggregate:
         room1 = RoomFactory.create_room()
 
         # Act
-        with pytest.raises(RoomDoesNotExistError) as err:
+        with pytest.raises(RoomDoesNotExistInGymError) as err:
             gym.remove_room(room1)
 
         # Assert

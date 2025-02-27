@@ -3,7 +3,7 @@ from typing import List
 
 from src.gym_management.application.common.interfaces.repository.room_repository import RoomRepository
 from src.gym_management.domain.room.aggregate_root import Room
-from src.gym_management.domain.room.exceptions import RoomDoesNotExistError
+from src.gym_management.domain.room.exceptions import RoomDoesNotExistInGymError
 from tests.common.gym_management.common.repository_state_memory import RepositorySharedState
 
 
@@ -18,7 +18,7 @@ class RoomMemoryRepository(RoomRepository):
     async def get(self, room_id: uuid.UUID) -> Room:
         room: Room | None = await self.get_or_none(room_id)
         if room is None:
-            raise RoomDoesNotExistError()
+            raise RoomDoesNotExistInGymError()
         return room
 
     async def get_or_none(self, room_id: uuid.UUID) -> Room | None:
