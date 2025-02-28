@@ -23,8 +23,7 @@ class DomainEventBusMemory(DomainEventBus):
         logger.debug(f"Domain Event Handler '{handler.__class__.__name__}' is subscribed to '{event.__name__}' event")
 
     async def publish(self, event: DomainEvent) -> None:
-        async with self.__unit_of_work:
-            await self.__process_event(event)
+        await self.__process_event(event)
 
     async def __process_event(self, event: DomainEvent) -> None:
         subscribers: List[DomainEventHandler] = self.__subscribers[type(event)]
@@ -33,7 +32,8 @@ class DomainEventBusMemory(DomainEventBus):
                 f"Event '{event.__class__.__name__} is being handled by '{subscriber.__class__.__name__}' handler"
             )
             try:
-                await subscriber.handle(event.model_copy(deep=True))
+                async with self.__unit_of_work:
+                    await subscriber.handle(event.model_copy(deep=True))
             except Exception as e:
                 logger.exception(f"An error occurred while processing '{event}' domain event: {str(e)}")
                 raise EventualConsistencyError(error_detail=str(e)) from e
